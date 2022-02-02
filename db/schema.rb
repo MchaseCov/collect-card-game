@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_02_181947) do
+ActiveRecord::Schema.define(version: 2022_02_02_184854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "account_decks", force: :cascade do |t|
+    t.string "name"
+    t.bigint "user_id", null: false
+    t.integer "card_count"
+    t.bigint "archetype_id", null: false
+    t.bigint "race_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["archetype_id"], name: "index_account_decks_on_archetype_id"
+    t.index ["race_id"], name: "index_account_decks_on_race_id"
+    t.index ["user_id"], name: "index_account_decks_on_user_id"
+  end
 
   create_table "archetypes", force: :cascade do |t|
     t.string "name"
@@ -57,4 +70,7 @@ ActiveRecord::Schema.define(version: 2022_02_02_181947) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "account_decks", "archetypes"
+  add_foreign_key "account_decks", "races"
+  add_foreign_key "account_decks", "users"
 end
