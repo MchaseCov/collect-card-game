@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_02_184854) do
+ActiveRecord::Schema.define(version: 2022_02_02_185155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,12 @@ ActiveRecord::Schema.define(version: 2022_02_02_184854) do
     t.index ["archetype_id"], name: "index_account_decks_on_archetype_id"
     t.index ["race_id"], name: "index_account_decks_on_race_id"
     t.index ["user_id"], name: "index_account_decks_on_user_id"
+  end
+
+  create_table "account_decks_party_card_parents", id: false, force: :cascade do |t|
+    t.bigint "account_deck_id", null: false
+    t.bigint "party_card_parent_id", null: false
+    t.index ["account_deck_id", "party_card_parent_id"], name: "index_account_deck_cards_on_id"
   end
 
   create_table "archetypes", force: :cascade do |t|
