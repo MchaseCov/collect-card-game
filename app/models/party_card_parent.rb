@@ -8,10 +8,11 @@
 # attack_default          :integer
 # health_default          :integer
 # tribe                   :string
-# group                   :string
+# archetype               :string
 # body                    :text
 # timestamps              :datetime
 #
 
 class PartyCardParent < ApplicationRecord
+  validates_presence_of :name, :cost_default, :attack_default, :health_default, :tribe, :archetype
 end
