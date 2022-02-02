@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_02_180913) do
+ActiveRecord::Schema.define(version: 2022_02_02_181947) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "archetypes", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "resource_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "party_card_parents", force: :cascade do |t|
     t.string "name"
@@ -23,6 +31,16 @@ ActiveRecord::Schema.define(version: 2022_02_02_180913) do
     t.string "tribe"
     t.string "archetype"
     t.text "body"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "races", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.integer "health_modifier"
+    t.integer "cost_modifier"
+    t.integer "resource_modifier"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
