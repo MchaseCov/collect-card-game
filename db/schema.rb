@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_03_170157) do
+ActiveRecord::Schema.define(version: 2022_02_03_172812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,15 @@ ActiveRecord::Schema.define(version: 2022_02_03_170157) do
     t.string "resource_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.boolean "turn", default: true
+    t.boolean "ongoing", default: true
+    t.bigint "winner_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["winner_id"], name: "index_games_on_winner_id"
   end
 
   create_table "party_card_parents", force: :cascade do |t|
@@ -80,5 +89,6 @@ ActiveRecord::Schema.define(version: 2022_02_03_170157) do
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
+  add_foreign_key "games", "users", column: "winner_id"
   add_foreign_key "party_card_parents", "archetypes"
 end
