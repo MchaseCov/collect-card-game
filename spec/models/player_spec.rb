@@ -6,6 +6,7 @@ RSpec.describe Player, type: :model do
     it { should belong_to(:archetype) }
     it { should belong_to(:game) }
     it { should belong_to(:user) }
+    it { should have_one(:gamestate_deck) }
   end
   describe 'Validation Presence' do
     it { should validate_presence_of(:health_cap) }

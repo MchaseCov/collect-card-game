@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_03_174036) do
+ActiveRecord::Schema.define(version: 2022_02_03_182443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,16 @@ ActiveRecord::Schema.define(version: 2022_02_03_174036) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["winner_id"], name: "index_games_on_winner_id"
+  end
+
+  create_table "gamestate_decks", force: :cascade do |t|
+    t.integer "card_count"
+    t.bigint "player_id", null: false
+    t.bigint "game_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["game_id"], name: "index_gamestate_decks_on_game_id"
+    t.index ["player_id"], name: "index_gamestate_decks_on_player_id"
   end
 
   create_table "party_card_parents", force: :cascade do |t|
@@ -110,6 +120,8 @@ ActiveRecord::Schema.define(version: 2022_02_03_174036) do
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
   add_foreign_key "games", "users", column: "winner_id"
+  add_foreign_key "gamestate_decks", "games"
+  add_foreign_key "gamestate_decks", "players"
   add_foreign_key "party_card_parents", "archetypes"
   add_foreign_key "players", "archetypes"
   add_foreign_key "players", "games"
