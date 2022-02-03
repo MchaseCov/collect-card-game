@@ -28,4 +28,10 @@ class Player < ApplicationRecord
   belongs_to :game
   belongs_to :user
   has_one :gamestate_deck
+  has_many :party_card_gamestates, through: :gamestate_deck
+
+  # Method to use as futureproofing/reminder
+  def gamestate_cards
+    party_card_gamestates # .or(action_card_gamestates);
+  end
 end
