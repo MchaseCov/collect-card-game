@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_03_170157) do
+ActiveRecord::Schema.define(version: 2022_02_03_184029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,43 @@ ActiveRecord::Schema.define(version: 2022_02_03_170157) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "games", force: :cascade do |t|
+    t.boolean "turn", default: true
+    t.boolean "ongoing", default: true
+    t.bigint "winner_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["winner_id"], name: "index_games_on_winner_id"
+  end
+
+  create_table "gamestate_decks", force: :cascade do |t|
+    t.integer "card_count"
+    t.bigint "player_id", null: false
+    t.bigint "game_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["game_id"], name: "index_gamestate_decks_on_game_id"
+    t.index ["player_id"], name: "index_gamestate_decks_on_player_id"
+  end
+
+  create_table "party_card_gamestates", force: :cascade do |t|
+    t.integer "health_cap"
+    t.integer "health_current"
+    t.integer "cost_current"
+    t.integer "attack_cap"
+    t.integer "attack_current"
+    t.string "location"
+    t.string "status"
+    t.bigint "archetype_id", null: false
+    t.bigint "party_card_parent_id", null: false
+    t.bigint "gamestate_deck_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["archetype_id"], name: "index_party_card_gamestates_on_archetype_id"
+    t.index ["gamestate_deck_id"], name: "index_party_card_gamestates_on_gamestate_deck_id"
+    t.index ["party_card_parent_id"], name: "index_party_card_gamestates_on_party_card_parent_id"
+  end
+
   create_table "party_card_parents", force: :cascade do |t|
     t.string "name"
     t.integer "cost_default"
@@ -53,6 +90,26 @@ ActiveRecord::Schema.define(version: 2022_02_03_170157) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "archetype_id"
     t.index ["archetype_id"], name: "index_party_card_parents_on_archetype_id"
+  end
+
+  create_table "players", force: :cascade do |t|
+    t.integer "health_cap"
+    t.integer "health_current"
+    t.integer "cost_cap"
+    t.integer "cost_current"
+    t.integer "resource_cap"
+    t.integer "resource_current"
+    t.boolean "turn_order"
+    t.bigint "race_id", null: false
+    t.bigint "archetype_id", null: false
+    t.bigint "game_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["archetype_id"], name: "index_players_on_archetype_id"
+    t.index ["game_id"], name: "index_players_on_game_id"
+    t.index ["race_id"], name: "index_players_on_race_id"
+    t.index ["user_id"], name: "index_players_on_user_id"
   end
 
   create_table "races", force: :cascade do |t|
@@ -80,5 +137,15 @@ ActiveRecord::Schema.define(version: 2022_02_03_170157) do
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
+  add_foreign_key "games", "users", column: "winner_id"
+  add_foreign_key "gamestate_decks", "games"
+  add_foreign_key "gamestate_decks", "players"
+  add_foreign_key "party_card_gamestates", "archetypes"
+  add_foreign_key "party_card_gamestates", "gamestate_decks"
+  add_foreign_key "party_card_gamestates", "party_card_parents"
   add_foreign_key "party_card_parents", "archetypes"
+  add_foreign_key "players", "archetypes"
+  add_foreign_key "players", "games"
+  add_foreign_key "players", "races"
+  add_foreign_key "players", "users"
 end
