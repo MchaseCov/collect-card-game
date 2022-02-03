@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_02_185155) do
+ActiveRecord::Schema.define(version: 2022_02_03_170157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,10 +48,11 @@ ActiveRecord::Schema.define(version: 2022_02_02_185155) do
     t.integer "attack_default"
     t.integer "health_default"
     t.string "tribe"
-    t.string "archetype"
     t.text "body"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "archetype_id"
+    t.index ["archetype_id"], name: "index_party_card_parents_on_archetype_id"
   end
 
   create_table "races", force: :cascade do |t|
@@ -79,4 +80,5 @@ ActiveRecord::Schema.define(version: 2022_02_02_185155) do
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
+  add_foreign_key "party_card_parents", "archetypes"
 end

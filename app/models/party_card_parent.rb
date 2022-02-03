@@ -8,13 +8,13 @@
 # attack_default          :integer
 # health_default          :integer
 # tribe                   :string
-# archetype               :string
+# archetype_id            :sbigint      null: false, foreign key of archetype
 # body                    :text
 # timestamps              :datetime
 #
 
 class PartyCardParent < ApplicationRecord
   has_and_belongs_to_many :account_decks
-
-  validates_presence_of :name, :cost_default, :attack_default, :health_default, :tribe, :archetype
+  belongs_to :archetype
+  validates_presence_of :name, :cost_default, :attack_default, :health_default, :tribe
 end
