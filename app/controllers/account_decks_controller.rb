@@ -1,17 +1,26 @@
 class AccountDecksController < ApplicationController
-  def index; end
+  def index
+    @account_decks = current_user.account_decks.all
+  end
+
+  def show
+    @account_deck = current_user.account_decks.find(params[:id])
+  end
 
   def new
     @races = Race.all
     @archetypes = Archetype.where.not(name: 'Neutral').all
-    @account_deck = AccountDeck.new
+    @account_deck = current_user.account_decks.build
   end
 
   def create
-    @account_deck = AccountDeck.new(account_deck_params)
+    @account_deck = current_user.account_decks.build(account_deck_params)
     if @account_deck.save
       redirect_to @account_deck
     else
+      puts @account_deck.errors.full_messages
+      @races = Race.all
+      @archetypes = Archetype.where.not(name: 'Neutral').all
       render :new, status: :unprocessable_entity
     end
   end

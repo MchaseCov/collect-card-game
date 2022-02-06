@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_03_184029) do
+ActiveRecord::Schema.define(version: 2022_02_06_211555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2022_02_03_184029) do
   create_table "account_decks", force: :cascade do |t|
     t.string "name"
     t.bigint "user_id", null: false
-    t.integer "card_count"
+    t.integer "card_count", default: 0
     t.bigint "archetype_id", null: false
     t.bigint "race_id", null: false
     t.datetime "created_at", precision: 6, null: false
