@@ -4,6 +4,6 @@
   <p><%=@account_deck.archetype.name%></p>
   <%=@account_deck.card_count%>/30 Cards <br>
   <%@account_deck.party_card_parents.each do |card|%>
-    <%=card.name%>
+    <%=card.name%>: COST: <%=card.cost_default%>, ATK <%=card.attack_default%> HEALTH: <%=card.health_default%> TRIBE: <%=card.tribe%> <br>
   <% end %>
 </div>
