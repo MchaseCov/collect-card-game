@@ -38,4 +38,5 @@ RSpec.describe Archetype, type: :model do
     subject.resource_type = 'magic'
     expect(subject).to_not be_valid
   end
+  it { should validate_uniqueness_of(:name) }
 end
