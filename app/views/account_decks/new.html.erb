@@ -1,4 +1,20 @@
-<div>
-  <h1 class="font-bold text-4xl">AccountDecks#new</h1>
-  <p>Find me in app/views/account_decks/new.html.erb</p>
-</div>
+<%=form_with model:@account_deck do |form| %>
+  <div>
+    <h1 class="font-bold text-4xl">Creating A Deck:</h1>
+    <p>Name:</p>
+    <%= form.text_field :name %>
+    <p>Choose your race:</p>
+    <%@races.each do |race|%>
+      <div>
+        <%= form.radio_button :race_id, race.id %> <%=race.name%>: <%=race.description%>
+      </div>
+    <% end %>
+    <p>Choose your archetype:</p>
+    <%@archetypes.each do |archetype|%>
+      <div>
+        <%= form.radio_button :archetype_id, archetype.id %><%=archetype.name%>: <%=archetype.description%>
+      </div>
+    <% end %>
+    <%= form.submit %>
+  </div>
+<% end %>
