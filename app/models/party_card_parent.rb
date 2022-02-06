@@ -14,7 +14,8 @@
 #
 
 class PartyCardParent < ApplicationRecord
+  validates_presence_of :name, :cost_default, :attack_default, :health_default
+  validates_uniqueness_of :name
   has_and_belongs_to_many :account_decks
   belongs_to :archetype
-  validates_presence_of :name, :cost_default, :attack_default, :health_default, :tribe
 end

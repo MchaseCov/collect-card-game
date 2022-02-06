@@ -11,7 +11,7 @@
 #
 
 class Race < ApplicationRecord
+  validates_uniqueness_of :name
   validates_presence_of :name, :description, :health_modifier, :cost_modifier, :resource_modifier
   validates :health_modifier, :cost_modifier, :resource_modifier, numericality: { in: -10..10 }
-  validates :name, uniqueness: true
 end
