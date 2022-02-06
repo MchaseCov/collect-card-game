@@ -5,6 +5,8 @@ class AccountDecksController < ApplicationController
 
   def show
     @account_deck = current_user.account_decks.find(params[:id])
+    @neutral_cards = PartyCardParent.includes(:archetype).where(archetype: { name: 'Neutral' }).all
+    @archetype_cards = PartyCardParent.includes(:archetype).where(archetype: @account_deck.archetype).all
   end
 
   def new
