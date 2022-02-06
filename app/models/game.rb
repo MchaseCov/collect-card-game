@@ -9,6 +9,13 @@
 #
 
 class Game < ApplicationRecord
+  #=======================================|GAME CALLBACKS|==========================================
+  after_create_commit do
+    # Things
+  end
+
+  #=======================================|GAME ASSOCIATIONS|=======================================
+
   has_one :player_one, -> { where('turn_order = true') },
           class_name: :Player,
           foreign_key: :game_id,
@@ -25,4 +32,6 @@ class Game < ApplicationRecord
           inverse_of: :game
 
   belongs_to :winner, optional: true
+
+  #=======================================|GAME METHODS|=====================================
 end
