@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   root 'home#index'
 
   resources :games
-  resources :account_decks
+  resources :account_decks do
+    post 'insert_party_card'
+  end
   resources :party_card_parents, only: %i[index show]
   devise_for :users
   get 'home/index'

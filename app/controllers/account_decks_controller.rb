@@ -29,6 +29,14 @@ class AccountDecksController < ApplicationController
 
   def update; end
 
+  def insert_party_card
+    return unless params[:account_deck_id] && params[:card_id]
+
+    account_deck = current_user.account_decks.find(params[:account_deck_id])
+    card = PartyCardParent.find(params[:card_id])
+    account_deck.party_card_parents << card if card.archetype.name == 'Neutral' || account_deck.archetype.name
+  end
+
   def destroy; end
 
   private

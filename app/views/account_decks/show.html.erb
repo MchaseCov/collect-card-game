@@ -9,10 +9,10 @@
 </article>
 <section>
   <nav id="card-book-naviation">
-    <%= link_to party_card_parents_path(name:"Neutral"), 'data-turbo-frame': "party_cards_collection" do %>
+    <%= link_to party_card_parents_path(name:"Neutral", account_deck_id: @account_deck.id), 'data-turbo-frame': "party_cards_collection" do %>
       LINK NEUTRAL
     <% end %>
-    <%= link_to party_card_parents_path(name:@account_deck.archetype.name), 'data-turbo-frame': "party_cards_collection" do %>
+    <%= link_to party_card_parents_path(name:@account_deck.archetype.name, account_deck_id: @account_deck.id), 'data-turbo-frame': "party_cards_collection" do %>
       LINK ARCHETYPE
     <% end %>
   </nav>
