@@ -1,4 +1,6 @@
-<div>
-  <h1 class="font-bold text-4xl">PartyCardParents#index</h1>
-  <p>Find me in app/views/party_card_parents/index.html.erb</p>
-</div>
+<%=turbo_frame_tag id="party_cards_collection" do %>
+  <h1 class="font-bold text-4xl">List of all <%="#{params[:name]} "%>Party Cards</h1>
+  <section class="flex flex-row flex-wrap gap-x-5">
+    <%= render partial: "card", collection: @party_card_parents, cached: true %>
+  </section>
+<% end %>

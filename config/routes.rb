@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-  get 'party_card_parents/index'
-  get 'party_card_parents/show'
   root 'home#index'
 
   resources :games
   resources :account_decks
+  resources :party_card_parents, only: %i[index show]
   devise_for :users
   get 'home/index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

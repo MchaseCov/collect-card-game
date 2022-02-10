@@ -9,32 +9,16 @@
 </article>
 <section>
   <nav id="card-book-naviation">
-    <%= link_to  "Neutral Cards", '#' %>
-    <%= link_to "#{@account_deck.archetype.name} Cards", '#' %>
+    <%= link_to party_card_parents_path(name:"Neutral"), 'data-turbo-frame': "party_cards_collection" do %>
+      LINK NEUTRAL
+    <% end %>
+    <%= link_to party_card_parents_path(name:@account_deck.archetype.name), 'data-turbo-frame': "party_cards_collection" do %>
+      LINK ARCHETYPE
+    <% end %>
   </nav>
   <div>
-    <%@neutral_cards.each do |neutral_card|%>
-      <div class="w-40 h-60 bg-amber-600 bg-[url('https://image.shutterstock.com/image-vector/angry-cartoon-gnome-vector-clip-600w-1137956945.jpg')] bg-contain relative text-white border-2 border-black rounded">
-        <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10">
-          <%=neutral_card.cost_default%>
-        </div>
-        <div class="text-center text-xl absolute bottom-12 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-slate-700">
-          <%=neutral_card.name%>
-        </div>
-        <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10">
-          <%=neutral_card.attack_default%>
-        </div>
-        <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -right-2 z-10">
-          <%=neutral_card.health_default%>
-        </div>
-        <div class="text-center text-md absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-slate-700">
-          <%=neutral_card.tribe%>
-        </div>
-      </div>
-    <% end %>
-    <%@archetype_cards.each do |archetype_card|%>
-      <%=archetype_card.name%>
+    <%=turbo_frame_tag id="party_cards_collection" do %>
+      PLACEHOLDER
     <% end %>
   </div>
-</div>
 </section>
