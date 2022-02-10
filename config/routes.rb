@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'party_card_parents/index'
+  get 'party_card_parents/show'
   root 'home#index'
 
   resources :games
