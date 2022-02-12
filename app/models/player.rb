@@ -31,7 +31,7 @@ class Player < ApplicationRecord
   belongs_to :archetype
   belongs_to :game
   belongs_to :user
-  has_one :gamestate_deck
+  has_one :gamestate_deck, dependent: :destroy
   has_many :party_card_gamestates, through: :gamestate_deck
 
   # Method to use as futureproofing/reminder

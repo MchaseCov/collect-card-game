@@ -20,12 +20,14 @@ class Game < ApplicationRecord
   has_one :player_one, -> { where('turn_order = true') },
           class_name: :Player,
           foreign_key: :game_id,
-          inverse_of: :game
+          inverse_of: :game,
+          dependent: :destroy
 
   has_one :player_two, -> { where('turn_order = false') },
           class_name: :Player,
           foreign_key: :game_id,
-          inverse_of: :game
+          inverse_of: :game,
+          dependent: :destroy
 
   has_one :current_player, -> { where('turn_order = ?', turn) },
           class_name: :Player,
