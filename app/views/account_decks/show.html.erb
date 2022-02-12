@@ -1,10 +1,7 @@
 <article>
-  <h1 class="font-bold text-4xl"><%=@account_deck.name%></h1>
-  <p><%=@account_deck.race.name%></p>
-  <p><%=@account_deck.archetype.name%></p>
-  <%=@account_deck.card_count%>/30 Cards <br>
-  <%@account_deck.party_card_parents.each do |card|%>
-    <%=card.name%>: COST: <%=card.cost_default%>, ATK <%=card.attack_default%> HEALTH: <%=card.health_default%> TRIBE: <%=card.tribe%> <br>
+  <%= turbo_stream_from @account_deck %>
+  <%= turbo_frame_tag id="#{dom_id(@account_deck)}" do%>
+    <%= render @account_deck %>
   <% end %>
 </article>
 <section>
@@ -17,8 +14,7 @@
     <% end %>
   </nav>
   <div>
-    <%=turbo_frame_tag id="party_cards_collection" do %>
-      PLACEHOLDER
+    <%=turbo_frame_tag id="party_cards_collection", src:party_card_parents_path(name:"Neutral", account_deck_id: @account_deck.id) do %>
     <% end %>
   </div>
 </section>

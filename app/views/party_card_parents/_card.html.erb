@@ -1,4 +1,4 @@
-<%= button_to account_deck_insert_party_card_path(account_deck_id: @account_deck&.id, card_id: card.id) do %>
+<%= button_to insert_party_card_account_deck_path(id: @account_deck&.id, card_id: card.id) do %>
   <div class="w-40 h-60 relative text-white border-2 border-black rounded">
     <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10">
       <%=card.cost_default%>

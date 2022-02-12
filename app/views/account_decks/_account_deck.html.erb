@@ -1,0 +1,9 @@
+<h1 class="font-bold text-4xl"><%=account_deck.name%></h1>
+<p><%=account_deck.race.name%></p>
+<p><%=account_deck.archetype.name%></p>
+<%=account_deck.card_count%>/30 Cards <br>
+<%account_deck.party_card_parents.each do |card|%>
+  <%= button_to remove_party_card_account_deck_path(id: account_deck&.id, card_id: card.id) do %>
+    <%=card.name%>: COST: <%=card.cost_default%>, ATK <%=card.attack_default%> HEALTH: <%=card.health_default%> TRIBE: <%=card.tribe%> <br>
+  <% end %>
+<% end %>

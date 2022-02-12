@@ -1,11 +1,12 @@
 class AccountDecksController < ApplicationController
+  before_action :set_current_user_account_deck, only: %i[show insert_party_card remove_party_card]
+  before_action :set_card, only: %i[insert_party_card remove_party_card]
+
   def index
     @account_decks = current_user.account_decks.all
   end
 
-  def show
-    @account_deck = current_user.account_decks.find(params[:id])
-  end
+  def show; end
 
   def new
     @races = Race.all
@@ -30,11 +31,11 @@ class AccountDecksController < ApplicationController
   def update; end
 
   def insert_party_card
-    return unless params[:account_deck_id] && params[:card_id]
+    @account_deck.add_party_card(@card)
+  end
 
-    account_deck = current_user.account_decks.find(params[:account_deck_id])
-    card = PartyCardParent.find(params[:card_id])
-    account_deck.party_card_parents << card if card.archetype.name == 'Neutral' || account_deck.archetype.name
+  def remove_party_card
+    @account_deck.destroy_party_card(@card)
   end
 
   def destroy; end
@@ -43,5 +44,13 @@ class AccountDecksController < ApplicationController
 
   def account_deck_params
     params.require(:account_deck).permit(:name, :race_id, :archetype_id)
+  end
+
+  def set_current_user_account_deck
+    @account_deck = current_user.account_decks.find(params[:id])
+  end
+
+  def set_card
+    @card = PartyCardParent.find(params[:card_id])
   end
 end

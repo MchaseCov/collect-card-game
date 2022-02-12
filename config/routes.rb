@@ -3,7 +3,10 @@ Rails.application.routes.draw do
 
   resources :games
   resources :account_decks do
-    post 'insert_party_card'
+    member do
+      post 'insert_party_card'
+      post 'remove_party_card'
+    end
   end
   resources :party_card_parents, only: %i[index show]
   devise_for :users
