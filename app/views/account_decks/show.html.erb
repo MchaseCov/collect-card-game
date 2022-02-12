@@ -1,16 +1,16 @@
-<article>
+<article class="basis-1/4 mr-5">
   <%= turbo_stream_from @account_deck %>
-  <%= turbo_frame_tag id="#{dom_id(@account_deck)}" do%>
+  <div id="<%=dom_id(@account_deck)%>" class="max-w-full">
     <%= render @account_deck %>
-  <% end %>
+  </div>
 </article>
 <section>
   <nav id="card-book-naviation">
     <%= link_to party_card_parents_path(name:"Neutral", account_deck_id: @account_deck.id), 'data-turbo-frame': "party_cards_collection" do %>
-      LINK NEUTRAL
+      Neutral | 
     <% end %>
     <%= link_to party_card_parents_path(name:@account_deck.archetype.name, account_deck_id: @account_deck.id), 'data-turbo-frame': "party_cards_collection" do %>
-      LINK ARCHETYPE
+      <%=@account_deck.archetype.name%>
     <% end %>
   </nav>
   <div>
