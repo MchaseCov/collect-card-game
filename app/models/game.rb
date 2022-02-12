@@ -11,7 +11,8 @@
 class Game < ApplicationRecord
   #=======================================|GAME CALLBACKS|==========================================
   after_create_commit do
-    # Things
+    build_player_one(turn_order: true)
+    build_player_two(turn_order: false)
   end
 
   #=======================================|GAME ASSOCIATIONS|=======================================
@@ -31,7 +32,25 @@ class Game < ApplicationRecord
           foreign_key: :game_id,
           inverse_of: :game
 
-  belongs_to :winner, optional: true
+  belongs_to :winner, optional: true,
+                      class_name: :User,
+                      foreign_key: :winner_id
 
   #=======================================|GAME METHODS|=====================================
+  def self.form_game(queued_deck_one, queued_deck_two)
+    new_game = Game.create!
+    new_game.populate_players(queued_deck_one, queued_deck_two)
+    new_game.populate_decks(queued_deck_one, queued_deck_two)
+    new_game
+  end
+
+  def populate_players(queued_deck_one, queued_deck_two)
+    player_one.prepare_player(queued_deck_one)
+    player_two.prepare_player(queued_deck_two)
+  end
+
+  def populate_decks(queued_deck_one, queued_deck_two)
+    player_one.gamestate_deck.prepare_deck(queued_deck_one)
+    player_two.gamestate_deck.prepare_deck(queued_deck_two)
+  end
 end

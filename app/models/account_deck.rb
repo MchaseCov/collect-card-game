@@ -36,4 +36,8 @@ class AccountDeck < ApplicationRecord
     decrement!(:card_count)
     touch
   end
+
+  def cards
+    party_card_parents # .or(action_card_parents);
+  end
 end
