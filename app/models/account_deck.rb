@@ -13,7 +13,8 @@ class AccountDeck < ApplicationRecord
   validates_presence_of :name
   validates :card_count, numericality: { in: 0..30 }
 
-  has_and_belongs_to_many :party_card_parents
+  has_many :account_deck_party_card_parents
+  has_many :party_card_parents, through: :account_deck_party_card_parents
   belongs_to :user
   belongs_to :archetype
   belongs_to :race

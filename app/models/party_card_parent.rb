@@ -16,6 +16,8 @@
 class PartyCardParent < ApplicationRecord
   validates_presence_of :name, :cost_default, :attack_default, :health_default
   validates_uniqueness_of :name
-  has_and_belongs_to_many :account_decks, counter_cache: true
+
+  has_many :account_deck_party_card_parents
+  has_many :account_decks, through: :account_deck_party_card_parents
   belongs_to :archetype
 end
