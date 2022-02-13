@@ -1,21 +1,26 @@
-Current turn = <%=@game.turn ? "Player 1" : "Player 2" %> <br>
-<div>
-  player 1 stats <br>
-  health <%=@game.player_one.health_current%>/<%=@game.player_one.health_cap%> <br>
-  gold to spend <%=@game.player_one.cost_current%>/<%=@game.player_one.cost_cap%> <br>
-  resource: <%=@game.player_one.resource_current%>/<%=@game.player_one.resource_cap%> <%=@game.player_one.archetype.resource_name%><br>
-  player 1 deck cards <br>
-  <% @game.player_one.gamestate_deck.cards.each do |c| %>
-    <%=c.party_card_parent.name%> <br>
-  <% end %>
+<div id="<%=dom_id(@game)%>">
+  <%= render @game, first_person_player: @first_person_player %>
 </div>
-<div>
-  player 2 stats <br>
-  health <%=@game.player_two.health_current%>/<%=@game.player_two.health_cap%> <br>
-  gold to spend <%=@game.player_two.cost_current%>/<%=@game.player_two.cost_cap%> <br>
-  resource: <%=@game.player_two.resource_current%>/<%=@game.player_two.resource_cap%> <%=@game.player_two.archetype.resource_name%><br>
-  player 2 deck cards <br>
-  <% @game.player_two.gamestate_deck.cards.each do |c| %>
-    <%=c.party_card_parent.name%> <br>
-  <% end %>
-</div>
+<article id="misc debug not final" class="flex hidden">
+  Current turn = <%=@game.turn ? "Player 1" : "Player 2" %> <br>
+  <div>
+    player 1 stats <br>
+    health <%=@game.player_one.health_current%>/<%=@game.player_one.health_cap%> <br>
+    gold to spend <%=@game.player_one.cost_current%>/<%=@game.player_one.cost_cap%> <br>
+    resource: <%=@game.player_one.resource_current%>/<%=@game.player_one.resource_cap%> <%=@game.player_one.archetype.resource_name%><br>
+    player 1 deck cards <br>
+    <% @game.player_one.gamestate_deck.cards.each do |c| %>
+      <%=c.party_card_parent.name%> <br>
+    <% end %>
+  </div>
+  <div>
+    player 2 stats <br>
+    health <%=@game.player_two.health_current%>/<%=@game.player_two.health_cap%> <br>
+    gold to spend <%=@game.player_two.cost_current%>/<%=@game.player_two.cost_cap%> <br>
+    resource: <%=@game.player_two.resource_current%>/<%=@game.player_two.resource_cap%> <%=@game.player_two.archetype.resource_name%><br>
+    player 2 deck cards <br>
+    <% @game.player_two.gamestate_deck.cards.each do |c| %>
+      <%=c.party_card_parent.name%> <br>
+    <% end %>
+  </div>
+</article>

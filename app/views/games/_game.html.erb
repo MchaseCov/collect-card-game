@@ -1,0 +1,15 @@
+<article class="flex flex-col justify-between w-full h-full">
+  <%=game.status%>
+  Current turn = <%=game.turn ? "Player 1" : "Player 2" %> <br>
+  <section>Opponent Hand Stuff</section>
+  <section>Game Board</section>
+  <section>
+    Your Hand Stuff
+    <section id="Cards In Hand">
+      In hand:<%=first_person_player.cards.where(location: "hand").size%>
+    </section>
+    <section id="Cards In Deck">
+      In Deck:<%=first_person_player.gamestate_deck.card_count%>
+    </section>
+  </section>
+</article>

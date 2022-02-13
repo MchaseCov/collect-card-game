@@ -16,21 +16,31 @@ class Game < ApplicationRecord
     build_player_two(turn_order: false)
   end
 
+  #=======================================|SCOPES|==========================================
+
+  scope :with_players_and_decks, lambda {
+                                   includes(player_one: { gamestate_deck: :party_card_gamestates },
+                                            player_two: { gamestate_deck: :party_card_gamestates })
+                                 }
+
   #=======================================|GAME ASSOCIATIONS|=======================================
+
+  has_many :players, class_name: :Player,
+                     foreign_key: :game_id,
+                     inverse_of: :game,
+                     dependent: :destroy
 
   has_one :player_one, -> { where('turn_order = true') },
           class_name: :Player,
           foreign_key: :game_id,
-          inverse_of: :game,
-          dependent: :destroy
+          inverse_of: :game
 
   has_one :player_two, -> { where('turn_order = false') },
           class_name: :Player,
           foreign_key: :game_id,
-          inverse_of: :game,
-          dependent: :destroy
+          inverse_of: :game
 
-  has_one :current_player, -> { where('turn_order = ?', turn) },
+  has_one :current_player, ->(game) { where('turn_order = ?', game.turn) },
           class_name: :Player,
           foreign_key: :game_id,
           inverse_of: :game
