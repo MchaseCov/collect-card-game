@@ -12,11 +12,13 @@ RSpec.describe Player, type: :model do
   end
 
   let(:queued_deck) do
-    AccountDeck.create!(name: 'rspec deck',
-                        user_id: user.id,
-                        card_count: 30,
-                        archetype_id: archetype.id,
-                        race_id: race.id)
+    deck = AccountDeck.create!(name: 'rspec deck',
+                               user_id: user.id,
+                               card_count: 30,
+                               archetype_id: archetype.id,
+                               race_id: race.id)
+    30.times { deck.party_card_parents << party_card_parent }
+    deck
   end
 
   let(:game) { Game.create! }
@@ -64,6 +66,67 @@ RSpec.describe Player, type: :model do
     it 'Creates valid Game Player from AccountDeck input' do
       game.player_one.prepare_player(queued_deck)
       expect(game.player_one).to be_valid
+    end
+  end
+
+  describe 'Mulligan Phase' do
+    subject do
+      game.player_one.prepare_player(queued_deck)
+      game.player_one.gamestate_deck.prepare_deck(queued_deck)
+      game.player_one
+    end
+    it 'Moves 3 cards from deck to mulligan stage for player_one' do
+      subject.draw_mulligan_cards
+      expect(subject.cards.in_mulligan.size).to eql(3)
+      expect(subject.cards.in_deck.size).to eql(27)
+    end
+    it 'Moves 4 cards from deck to mulligan stage for player_two' do
+      subject.turn_order = false
+      subject.draw_mulligan_cards
+      expect(subject.cards.in_mulligan.size).to eql(4)
+      expect(subject.cards.in_deck.size).to eql(26)
+    end
+    it 'Sets starting hand to mulligan cards' do
+      subject.draw_mulligan_cards
+      subject.set_starting_hand
+      expect(subject.cards.in_hand.size).to eql(subject.turn_order ? 3 : 4)
+      expect(subject.cards.in_mulligan.size).to eql(0)
+      expect(subject.cards.in_deck.size).to eql(subject.turn_order ? 27 : 26)
+    end
+    it 'Ends Mulligan Phase after player_two mulligan' do
+      subject.set_starting_hand
+      expect(game.status).to eql('mulligan')
+      game.turn = false
+      subject.set_starting_hand
+      expect(game.status).to eql('ongoing')
+    end
+  end
+
+  describe 'Prepare new turn' do
+    subject do
+      game.player_one.prepare_player(queued_deck)
+      game.player_one.gamestate_deck.prepare_deck(queued_deck)
+      game.player_one
+    end
+    it 'Increments player cost and resource' do
+      expect { subject.prepare_new_turn }.to change { subject.cost_cap }.by(1)
+      expect { subject.prepare_new_turn }.to change { subject.resource_cap }.by(1)
+    end
+    it 'Sets player cost and resource to their cap' do
+      expect { subject.prepare_new_turn }.to change { subject.cost_current }.to eql(subject.cost_cap + 1)
+      expect { subject.prepare_new_turn }.to change { subject.resource_current }.to eql(subject.resource_cap + 1)
+    end
+    it 'Cannot increment player cost past 10' do
+      subject.cost_cap = 10
+      expect { subject.prepare_new_turn }.to_not change { subject.cost_cap }
+    end
+    it 'Cannot increment player resource past 20' do
+      subject.resource_cap = 20
+      expect { subject.prepare_new_turn }.to_not change { subject.resource_cap }
+    end
+    it 'Draws 1 card from deck into hand' do
+      expect { subject.prepare_new_turn }.to change { subject.gamestate_deck.card_count }.by(-1)
+      expect { subject.prepare_new_turn }.to change { subject.cards.in_hand.count }.by(1)
     end
   end
 end
