@@ -16,6 +16,11 @@
 # timestamps              :datetime
 
 class PartyCardGamestate < ApplicationRecord
+  scope :in_mulligan, -> { where(location: 'mulligan') }
+  scope :in_hand, -> { where(location: 'hand') }
+  scope :in_deck, -> { where(location: 'deck') }
+  scope :in_battle, -> { where(location: 'battle') }
+
   validates_presence_of :health_cap, :health_current, :cost_current, :attack_cap, :attack_current,
                         :location, :status
   validates_numericality_of :health_cap, :attack_cap
@@ -29,4 +34,16 @@ class PartyCardGamestate < ApplicationRecord
 
   has_one :player, through: :gamestate_deck
   has_one :game, through: :gamestate_deck
+
+  def move_to_hand
+    update(location: 'hand')
+  end
+
+  def move_to_deck
+    update(location: 'deck')
+  end
+
+  def move_to_mulligan
+    update(location: 'mulligan')
+  end
 end
