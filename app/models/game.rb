@@ -16,6 +16,9 @@ class Game < ApplicationRecord
     build_player_two(turn_order: false)
   end
 
+  after_touch do
+    broadcast_update_later_to self, target: "game_#{id}", locals: { first_person_player: current_player }
+  end
   #=======================================|SCOPES|==========================================
 
   scope :with_players_and_decks, lambda {
