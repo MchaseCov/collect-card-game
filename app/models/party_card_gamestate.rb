@@ -47,4 +47,8 @@ class PartyCardGamestate < ApplicationRecord
   def move_to_mulligan
     update(location: 'mulligan')
   end
+
+  def move_to_battle
+    update(location: 'battle')
+  end
 end
