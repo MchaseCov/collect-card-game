@@ -13,3 +13,12 @@
     </section>
   </section>
 </article>
+<% if game.status == "mulligan" %>
+  MULLIGAN: 
+  <%=first_person_player.mulligan_cards.size%> <br>
+  <%first_person_player.mulligan_cards.each do |card|%>
+    <%=card.id%>: <%=card.party_card_parent.name%> <br>
+  <% end %>
+  <%= button_to "Keep cards", submit_mulligan_game_path(game) %>
+  <%= button_to "Redo cards", submit_mulligan_game_path(game, mulligan: true) %>
+<% end %>

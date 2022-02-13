@@ -35,8 +35,12 @@ class Player < ApplicationRecord
   has_many :party_card_gamestates, through: :gamestate_deck
 
   # Method to use as futureproofing/reminder
-  def gamestate_cards
+  def cards
     party_card_gamestates # .or(action_card_gamestates);
+  end
+
+  def mulligan_cards
+    party_card_gamestates.in_mulligan
   end
 
   def prepare_player(deck)
@@ -57,5 +61,40 @@ class Player < ApplicationRecord
       user: deck.user
     )
     save
+  end
+
+  def draw_mulligan_cards
+    initial_draw = (turn_order ? 3 : 4)
+    party_card_gamestates.in_mulligan.each(&:move_to_deck)
+    party_card_gamestates.sample(initial_draw).each(&:move_to_mulligan)
+  end
+
+  def set_starting_hand
+    party_card_gamestates.in_mulligan.each(&:move_to_hand)
+    recount_deck_size
+    game.update(status: 'ongoing') unless game.turn
+  end
+
+  def prepare_new_turn
+    increment_player_resources
+    draw_cards(1)
+    recount_deck_size
+  end
+
+  private
+
+  def increment_player_resources
+    increment!(:cost_cap) if cost_cap < 10
+    increment!(:resource_cap) if resource_cap < 20
+    # Interesting idea: What if resource does not replenish with turn and just goes up by X?
+    update(cost_current: cost_cap, resource_current: resource_cap)
+  end
+
+  def draw_cards(amount)
+    party_card_gamestates.in_deck.sample(amount).each(&:move_to_hand)
+  end
+
+  def recount_deck_size
+    gamestate_deck.update(card_count: party_card_gamestates.in_deck.size)
   end
 end

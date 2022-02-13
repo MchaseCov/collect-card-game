@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   before_action :validate_decks_for_game_creation, only: [:create]
   before_action :set_game_and_perspective, only: %i[show submit_mulligan]
+  before_action :conduct_mulligan, only: [:show], if: -> { @game.status == 'mulligan' }
 
   def show; end
 
@@ -12,11 +13,14 @@ class GamesController < ApplicationController
     redirect_to root_path
   end
 
-  def edit; end
+  def submit_mulligan
+    return unless current_users_turn
 
-  def update; end
+    @player.draw_mulligan_cards if params[:mulligan] # When player requests a new hand
+    @player.set_starting_hand
 
-  def destroy; end
+    @game.end_turn
+  end
 
   private
 
@@ -30,6 +34,12 @@ class GamesController < ApplicationController
     @game = Game.with_players_and_decks.find(params[:id])
     # Intended as a plan for spectating perspective but may not be compatible with actioncable turbo streaming
     @first_person_player = @game.players.find_by(user: current_user) || @game.player_one
+  end
+
+  def conduct_mulligan
+    return if !current_users_turn || @player.mulligan_cards.any?
+
+    @player.draw_mulligan_cards
   end
 
   def current_users_turn

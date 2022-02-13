@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   root 'home#index'
 
-  resources :games
+  resources :games do
+    member do
+      post 'submit_mulligan'
+    end
+  end
   resources :account_decks do
     member do
       post 'insert_party_card'

@@ -66,4 +66,16 @@ class Game < ApplicationRecord
     player_one.gamestate_deck.prepare_deck(queued_deck_one)
     player_two.gamestate_deck.prepare_deck(queued_deck_two)
   end
+
+  def end_turn
+    update(turn: !turn)
+    reload.current_player
+
+    start_of_turn_actions
+    touch
+  end
+
+  def start_of_turn_actions
+    current_player.prepare_new_turn if status == 'ongoing'
+  end
 end
