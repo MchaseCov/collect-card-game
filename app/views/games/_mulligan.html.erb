@@ -1,0 +1,15 @@
+<div class="mx-auto">
+  <% if first_person_player.turn_order == game.turn%>
+    <h2>You are going <%=first_person_player.turn_order ? "first" : "second"%></h2>
+    <h3>You can choose to keep this starting hand or to replace it once before starting</h3>
+    <div class="flex flex-row justify-center gap-x-5 mt-3">
+      <%= button_to "Keep cards", submit_mulligan_game_path(game) %>
+      <%= button_to "Redo cards", submit_mulligan_game_path(game, mulligan: true) %>
+    </div>
+  <% else %>
+    <h2> The opposing player is currently mulliganing, the game will start shortly</h2>
+  <% end %>
+  <section id="mulligan-cards" class="flex flex-row w-full justify-center gap-x-2">
+    <%= render partial: "games/party_card", collection:first_person_player.cards.in_mulligan , cached: true %>
+  </section>
+</div>

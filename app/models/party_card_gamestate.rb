@@ -16,6 +16,7 @@
 # timestamps              :datetime
 
 class PartyCardGamestate < ApplicationRecord
+  alias_attribute :parent, :party_card_parent
   scope :in_mulligan, -> { where(location: 'mulligan') }
   scope :in_hand, -> { where(location: 'hand') }
   scope :in_deck, -> { where(location: 'deck') }

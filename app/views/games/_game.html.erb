@@ -1,24 +1,30 @@
-<article class="flex flex-col justify-between w-full h-full">
+<aside id="sidebar grow">
   <%=game.status%>
   Current turn = <%=game.turn ? "Player 1" : "Player 2" %> <br>
-  <section>Opponent Hand Stuff</section>
-  <section>Game Board</section>
-  <section>
-    Your Hand Stuff
-    <section id="Cards In Hand">
-      In hand:<%=first_person_player.cards.where(location: "hand").size%>
+</aside>
+<article id="main-game-board" class="grid grid-cols-1 grid-rows-5 basis-5/6">
+  <section id="op-info" class="flex flex-row w-full">
+    <section id="Cards In Opponent Hand" class="flex flex-row w-full justify-center gap-x-2">
+      <%= render partial: "games/party_card", collection:opposing_player.cards.in_hand , cached: true %>
     </section>
-    <section id="Cards In Deck">
-      In Deck:<%=first_person_player.gamestate_deck.card_count%>
-    </section>
+    <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
+      In Deck:<%=opposing_player.gamestate_deck.card_count%>
+    </div>
   </section>
-</article>
-<% if game.status == "mulligan" %>
-  MULLIGAN: 
-  <%=first_person_player.mulligan_cards.size%> <br>
-  <%first_person_player.mulligan_cards.each do |card|%>
-    <%=card.id%>: <%=card.party_card_parent.name%> <br>
+</section>
+<section id="battlefield" class="flex flex-row w-full row-span-3">
+  <% if game.status == "mulligan" %>
+    <%= render 'mulligan', first_person_player: first_person_player, game: game%>
   <% end %>
-  <%= button_to "Keep cards", submit_mulligan_game_path(game) %>
-  <%= button_to "Redo cards", submit_mulligan_game_path(game, mulligan: true) %>
-<% end %>
+</section>
+<section id="fp-info" class="flex flex-row w-full">
+  <section id="Cards In Hand" class="flex flex-row w-full justify-center gap-x-2">
+    <%= render partial: "games/party_card", collection:first_person_player.cards.in_hand , cached: true %>
+  </section>
+  <section id="fp-deck">
+    <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
+      In Deck:<%=first_person_player.gamestate_deck.card_count%>
+    </div>
+  </section>
+</section>
+</article>

@@ -17,13 +17,15 @@ class Game < ApplicationRecord
   end
 
   after_touch do
-    broadcast_update_later_to self, target: "game_#{id}", locals: { first_person_player: current_player }
+    broadcast_update_later_to self, target: "game_#{id}", locals: { game: self,
+                                                                    first_person_player: current_player,
+                                                                    opposing_player: opposing_player_of(current_player) }
   end
   #=======================================|SCOPES|==========================================
 
   scope :with_players_and_decks, lambda {
-                                   includes(player_one: { gamestate_deck: :party_card_gamestates },
-                                            player_two: { gamestate_deck: :party_card_gamestates })
+                                   includes(player_one: { gamestate_deck: { party_card_gamestates: :archetype } },
+                                            player_two: { gamestate_deck: { party_card_gamestates: :archetype } })
                                  }
 
   #=======================================|GAME ASSOCIATIONS|=======================================
@@ -53,6 +55,11 @@ class Game < ApplicationRecord
                       foreign_key: :winner_id
 
   #=======================================|GAME METHODS|=====================================
+
+  def opposing_player_of(player)
+    player == player_one ? player_two : player_one
+  end
+
   def self.form_game(queued_deck_one, queued_deck_two)
     new_game = Game.create!
     new_game.populate_players(queued_deck_one, queued_deck_two)

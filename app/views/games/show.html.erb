@@ -1,6 +1,6 @@
 <%= turbo_stream_from @game %>
-<div id="<%=dom_id(@game)%>">
-  <%= render @game, first_person_player: @first_person_player %>
+<div id="<%=dom_id(@game)%>"class="w-full h-full flex flex-row justify-between">
+  <%= render @game, first_person_player: @first_person_player, opposing_player: @opposing_player %>
 </div>
 <article id="misc debug not final" class="flex hidden">
   Current turn = <%=@game.turn ? "Player 1" : "Player 2" %> <br>
