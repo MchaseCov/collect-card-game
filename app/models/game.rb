@@ -67,16 +67,6 @@ class Game < ApplicationRecord
     new_game
   end
 
-  def populate_players(queued_deck_one, queued_deck_two)
-    player_one.prepare_player(queued_deck_one)
-    player_two.prepare_player(queued_deck_two)
-  end
-
-  def populate_decks(queued_deck_one, queued_deck_two)
-    player_one.gamestate_deck.prepare_deck(queued_deck_one)
-    player_two.gamestate_deck.prepare_deck(queued_deck_two)
-  end
-
   def end_turn
     update(turn: !turn)
     reload.current_player
@@ -85,7 +75,26 @@ class Game < ApplicationRecord
     touch
   end
 
+  def put_card_in_play(card)
+    return unless current_player.spend_coins_on_card(card)
+
+    card.move_to_battle
+    touch
+  end
+
+  private
+
   def start_of_turn_actions
     current_player.prepare_new_turn if status == 'ongoing'
+  end
+
+  def populate_players(queued_deck_one, queued_deck_two)
+    player_one.prepare_player(queued_deck_one)
+    player_two.prepare_player(queued_deck_two)
+  end
+
+  def populate_decks(queued_deck_one, queued_deck_two)
+    player_one.gamestate_deck.prepare_deck(queued_deck_one)
+    player_two.gamestate_deck.prepare_deck(queued_deck_two)
   end
 end

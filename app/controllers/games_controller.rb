@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   before_action :validate_decks_for_game_creation, only: [:create]
-  before_action :set_game_and_perspective, only: %i[show submit_mulligan]
+  before_action :set_game_and_perspective, except: [:create]
   before_action :conduct_mulligan, only: [:show], if: -> { @game.status == 'mulligan' }
 
   def show; end
@@ -20,6 +20,14 @@ class GamesController < ApplicationController
     @player.set_starting_hand
 
     @game.end_turn
+  end
+
+  def play_card
+    return unless params[:card_type] && params[:card_id] && current_users_turn
+
+    # This looks like a strange check, but it's futureproof for "spell" cards
+    card = @player.party_card_gamestates.in_hand.find(params[:card_id]) if params[:card_type] == 'Party'
+    @game.put_card_in_play(card)
   end
 
   private

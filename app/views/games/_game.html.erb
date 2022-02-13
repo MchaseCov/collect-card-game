@@ -25,9 +25,10 @@
 </section>
 <section id="fp-info" class="flex flex-row w-full">
   <section id="fp-cards-hand" class="flex flex-row w-full justify-center gap-x-2">
-    <%= render partial: "games/party_card", collection:first_person_player.cards.in_hand , cached: true %>
+    <%= render partial: "party_card_gamestates/card_in_hand", collection:first_person_player.cards.in_hand, as: :card, locals:{game: game, first_person_player: first_person_player}, cached: true %>
   </section>
-  <section id="fp-deck">
+  <section id="fp-deck" class="flex flex-row gap-x-3">
+    <div class="min-w-max">Gold: <%=first_person_player.cost_current%> / <%=first_person_player.cost_cap%></div>
     <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
       In Deck:<%=first_person_player.gamestate_deck.card_count%>
     </div>

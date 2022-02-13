@@ -81,6 +81,12 @@ class Player < ApplicationRecord
     recount_deck_size
   end
 
+  def spend_coins_on_card(card)
+    return false if cost_current < card.cost_current
+
+    decrement!(:cost_current, card.cost_current)
+  end
+
   private
 
   def increment_player_resources

@@ -49,6 +49,6 @@ class PartyCardGamestate < ApplicationRecord
   end
 
   def move_to_battle
-    update(location: 'battle')
+    update(location: 'battle', status: 'in_play')
   end
 end
