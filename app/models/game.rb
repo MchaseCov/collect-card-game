@@ -17,16 +17,13 @@ class Game < ApplicationRecord
   end
 
   after_touch do
-    broadcast_update_later_to self, target: "game_#{id}", locals: { game: self,
-                                                                    first_person_player: current_player,
-                                                                    opposing_player: opposing_player_of(current_player) }
+    game = Game.with_players_and_decks.find(id)
+    broadcast_perspective_for(game.player_one)
+    broadcast_perspective_for(game.player_two)
   end
   #=======================================|SCOPES|==========================================
 
-  scope :with_players_and_decks, lambda {
-                                   includes(player_one: { gamestate_deck: { party_card_gamestates: :archetype } },
-                                            player_two: { gamestate_deck: { party_card_gamestates: :archetype } })
-                                 }
+  scope :with_players_and_decks, -> { includes(player_one: :gamestate_deck, player_two: :gamestate_deck) }
 
   #=======================================|GAME ASSOCIATIONS|=======================================
 
@@ -96,5 +93,11 @@ class Game < ApplicationRecord
   def populate_decks(queued_deck_one, queued_deck_two)
     player_one.gamestate_deck.prepare_deck(queued_deck_one)
     player_two.gamestate_deck.prepare_deck(queued_deck_two)
+  end
+
+  def broadcast_perspective_for(player)
+    broadcast_update_later_to [self, player.user], target: "game_#{id}_for_#{player.user.id}", locals: { game: self,
+                                                                                                         first_person_player: player,
+                                                                                                         opposing_player: opposing_player_of(player) }
   end
 end

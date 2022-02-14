@@ -12,7 +12,7 @@ class GamestateDeck < ApplicationRecord
 
   belongs_to :player
   belongs_to :game
-  has_many :party_card_gamestates, -> { includes(:party_card_parent) }, dependent: :destroy
+  has_many :party_card_gamestates, -> { includes(:party_card_parent, :archetype) }, dependent: :destroy
 
   def prepare_deck(queued_deck)
     queued_deck.party_card_parents.includes(:archetype).each do |card|
