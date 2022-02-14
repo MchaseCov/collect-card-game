@@ -53,6 +53,10 @@ class PartyCardGamestate < ApplicationRecord
     update(location: 'battle', status: 'in_play')
   end
 
+  def status_in_play
+    update(status: 'in_play')
+  end
+
   def set_to_attack
     update(status: 'attacking')
   end
@@ -63,6 +67,6 @@ class PartyCardGamestate < ApplicationRecord
 
   def take_damage(attack)
     decrement!(:health_current, attack)
-    set_to_graveyard if health_current <= 0
+    health_current <= 0 ? set_to_graveyard : status_in_play
   end
 end

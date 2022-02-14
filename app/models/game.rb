@@ -65,6 +65,7 @@ class Game < ApplicationRecord
   end
 
   def end_turn
+    current_player.put_cards_to_sleep
     update(turn: !turn)
     reload.current_player
 
@@ -92,12 +93,23 @@ class Game < ApplicationRecord
   def conduct_attack(attacking_card, defending_card)
     return unless attacking_card.status == 'attacking'
 
-    defending_card.take_damage(attacking_card.attack_current)
-    attacking_card.take_damage(defending_card.attack_current)
+    animate_attack_for_reciever(attacking_card, defending_card)
+    deal_attack_damage(attacking_card, defending_card)
     touch
   end
 
   private
+
+  def animate_attack_for_reciever(attacking_card, defending_card)
+    attacking_card.update(status: 'currently_attacking')
+    defending_card.update(status: 'currently_defending')
+    broadcast_immediate_perspective_for(defending_card.player)
+  end
+
+  def deal_attack_damage(attacking_card, defending_card)
+    defending_card.take_damage(attacking_card.attack_current)
+    attacking_card.take_damage(defending_card.attack_current)
+  end
 
   def start_of_turn_actions
     current_player.prepare_new_turn if status == 'ongoing'
@@ -107,5 +119,11 @@ class Game < ApplicationRecord
     broadcast_update_later_to [self, player.user], target: "game_#{id}_for_#{player.user.id}", locals: { game: self,
                                                                                                          first_person_player: player,
                                                                                                          opposing_player: opposing_player_of(player) }
+  end
+
+  def broadcast_immediate_perspective_for(player)
+    broadcast_update_to [self, player.user], target: "game_#{id}_for_#{player.user.id}", locals: { game: self,
+                                                                                                   first_person_player: player,
+                                                                                                   opposing_player: opposing_player_of(player) }
   end
 end

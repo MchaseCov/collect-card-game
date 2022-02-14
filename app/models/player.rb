@@ -88,6 +88,10 @@ class Player < ApplicationRecord
     decrement!(:cost_current, card.cost_current)
   end
 
+  def put_cards_to_sleep
+    party_card_gamestates.in_attack_mode.each(&:status_in_play)
+  end
+
   private
 
   def increment_player_resources

@@ -2,12 +2,15 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="drag-battle"
 export default class extends Controller {
-  static targets = ["activeMinion", "enemyMinion"]
+  static targets = ["activeMinion", "enemyMinion", "attackingMinion", "defendingMinion"]
   static values = { game: Number }
 
   initialize(){
     this.img = document.createElement("img");
     this.img.src = '/reticle.webp';
+  }
+  attackingMinionTargetConnected(element){
+    this.translateTo(element, this.defendingMinionTarget);
   }
 
   dragStart(event) {
@@ -24,7 +27,6 @@ export default class extends Controller {
     if (event.preventDefault) { 
       event.preventDefault(); 
     }
-    return false
   }
 
   dragOver(event) {
@@ -35,7 +37,6 @@ export default class extends Controller {
     if (event.preventDefault) { 
       event.preventDefault(); 
     }
-    return false
   }
 
 
@@ -46,7 +47,9 @@ export default class extends Controller {
   drop(event) {
     
     event.stopPropagation();
-  
+    this.translateTo(this.dragSrcEl, event.target);
+    // Wait 0.1 seconds before POSTing for the sake of the animation's playtmie
+    setTimeout(() => {  
   fetch(`/games/${this.gameValue}/minion_combat`, {
     method: "POST",
     credentials: "same-origin",
@@ -59,7 +62,8 @@ export default class extends Controller {
       dragged_id: this.dragSrcEl.dataset.id,
       target_id: event.target.dataset.id,
     }),
-    })
+    });
+  }, 100);
   }
 
   dragEnd() {
@@ -67,4 +71,15 @@ export default class extends Controller {
     this.activeMinionTargets.forEach(el => el.classList.remove("shadow-2xl"));
     this.enemyMinionTargets.forEach(el => el.classList.remove("shadow-2xl"));
   }
+
+  translateTo(attacker, target) {
+    let attacker_coords = attacker.getBoundingClientRect();
+    let target_coords = target.getBoundingClientRect();
+    let translation = {
+      "x": (target_coords.x - attacker_coords.x)*0.75,
+      "y": (target_coords.y - attacker_coords.y)*0.75,
+    };
+    attacker.style.transform = `translate(${~~translation.x}px, ${~~translation.y}px)`;
+  } 
+  
 }

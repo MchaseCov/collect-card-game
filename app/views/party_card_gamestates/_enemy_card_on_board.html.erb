@@ -1,22 +1,35 @@
-<div draggable="false" class="enemy-card w-40 h-60 relative text-white border-2 border-black rounded" data-drag-battle-target="enemyMinion" data-id="<%=card.id%>"
-data-action="drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd ">
-  <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
-    <%=card.cost_current%>
+<% if card.status == "currently_attacking" %>
+  <div
+  draggable="false"
+  class="z-30 enemy-card w-40 h-60 relative text-white border-2 border-black rounded attacking-card" 
+  data-drag-battle-target="attackingMinion"
+  >
+  <% else %>
+    <div
+    draggable="false"
+    class="z-30 enemy-card w-40 h-60 relative text-white border-2 border-black rounded"
+    data-drag-battle-target="enemyMinion"
+    data-id="<%=card.id%>"
+    data-action="drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd"
+      >
+    <% end %>
+    <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
+      <%=card.cost_current%>
+    </div>
+    <div class="text-center text-xl absolute bottom-12 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
+      <%=card.parent.name%>
+    </div>
+    <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
+      <%=card.attack_current%>
+    </div>
+    <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 <%=card.health_cap > card.health_current ? "text-red-500" : "text-white" %> absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
+      <%=card.health_current%>
+    </div>
+    <div class="text-center text-xs absolute bottom-8 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
+      <%=card.archetype.name%>
+    </div>
+    <div class="text-center text-md absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
+      <%=card.parent.tribe%>
+    </div>
+    <%=image_tag('cardplaceholder.webp', class:"w-max h-max select-none pointer-events-none", draggable:"false")%>
   </div>
-  <div class="text-center text-xl absolute bottom-12 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
-    <%=card.parent.name%>
-  </div>
-  <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
-    <%=card.attack_current%>
-  </div>
-  <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
-    <%=card.health_current%>
-  </div>
-  <div class="text-center text-xs absolute bottom-8 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
-    <%=card.archetype.name%>
-  </div>
-  <div class="text-center text-md absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
-    <%=card.parent.tribe%>
-  </div>
-  <%=image_tag('cardplaceholder.webp', class:"w-max h-max select-none pointer-events-none", draggable:"false")%>
-</div>

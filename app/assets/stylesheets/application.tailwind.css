@@ -9,3 +9,9 @@
 .has-tooltip:hover .tooltip {
   @apply visible z-50;
 }
+
+.attacking-card {
+  transition: transform 0.15s linear;
+  transform: translate(0px, 0);
+  will-change: transform;
+}
