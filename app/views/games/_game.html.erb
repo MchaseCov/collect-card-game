@@ -1,11 +1,16 @@
 <aside id="sidebar grow">
   <%=game.status%>
   Current turn = <%=game.turn ? "Player 1" : "Player 2" %> <br>
+  <% if game.status == "ongoing" %>
+    <%=button_to "End Turn",end_turn_game_path(game), disabled: !turn_of?(first_person_player, game), class:"bg-blue-500 text-white font-bold py-2 px-4 rounded disabled:bg-gray-200" %>
+  <% end %>
 </aside>
 <article id="main-game-board" class="grid grid-cols-1 grid-rows-4 basis-5/6 h-full gap-y-10">
   <section id="op-info" class="flex flex-row w-full">
     <section id="op-cards-hand" class="flex flex-row w-full justify-center gap-x-2">
-      <%= render partial: "games/party_card", collection:opposing_player.cards.in_hand , cached: true %>
+      <% opposing_player.cards.in_hand.size.times do%>
+        <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center"></div>
+      <% end %>
     </section>
     <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
       In Deck:<%=opposing_player.gamestate_deck.card_count%>

@@ -30,6 +30,12 @@ class GamesController < ApplicationController
     @game.put_card_in_play(card)
   end
 
+  def end_turn
+    return unless current_users_turn && @game.status == 'ongoing'
+
+    @game.end_turn
+  end
+
   private
 
   def validate_decks_for_game_creation

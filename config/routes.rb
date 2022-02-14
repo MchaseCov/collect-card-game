@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     member do
       post 'submit_mulligan'
       post 'play_card'
+      post 'end_turn'
     end
   end
   resources :account_decks do

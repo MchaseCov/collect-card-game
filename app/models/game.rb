@@ -79,12 +79,6 @@ class Game < ApplicationRecord
     touch
   end
 
-  private
-
-  def start_of_turn_actions
-    current_player.prepare_new_turn if status == 'ongoing'
-  end
-
   def populate_players(queued_deck_one, queued_deck_two)
     player_one.prepare_player(queued_deck_one)
     player_two.prepare_player(queued_deck_two)
@@ -93,6 +87,12 @@ class Game < ApplicationRecord
   def populate_decks(queued_deck_one, queued_deck_two)
     player_one.gamestate_deck.prepare_deck(queued_deck_one)
     player_two.gamestate_deck.prepare_deck(queued_deck_two)
+  end
+
+  private
+
+  def start_of_turn_actions
+    current_player.prepare_new_turn if status == 'ongoing'
   end
 
   def broadcast_perspective_for(player)
