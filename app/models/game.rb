@@ -89,6 +89,14 @@ class Game < ApplicationRecord
     player_two.gamestate_deck.prepare_deck(queued_deck_two)
   end
 
+  def conduct_attack(attacking_card, defending_card)
+    return unless attacking_card.status == 'attacking'
+
+    defending_card.take_damage(attacking_card.attack_current)
+    attacking_card.take_damage(defending_card.attack_current)
+    touch
+  end
+
   private
 
   def start_of_turn_actions

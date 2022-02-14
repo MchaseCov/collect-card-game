@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       post 'submit_mulligan'
       post 'play_card'
       post 'end_turn'
+      post 'minion_combat'
     end
   end
   resources :account_decks do

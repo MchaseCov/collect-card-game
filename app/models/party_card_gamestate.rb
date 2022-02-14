@@ -21,6 +21,7 @@ class PartyCardGamestate < ApplicationRecord
   scope :in_hand, -> { where(location: 'hand') }
   scope :in_deck, -> { where(location: 'deck') }
   scope :in_battle, -> { where(location: 'battle') }
+  scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
 
   validates_presence_of :health_cap, :health_current, :cost_current, :attack_cap, :attack_current,
                         :location, :status
@@ -50,5 +51,18 @@ class PartyCardGamestate < ApplicationRecord
 
   def move_to_battle
     update(location: 'battle', status: 'in_play')
+  end
+
+  def set_to_attack
+    update(status: 'attacking')
+  end
+
+  def set_to_graveyard
+    update(location: 'graveyard', status: 'dead')
+  end
+
+  def take_damage(attack)
+    decrement!(:health_current, attack)
+    set_to_graveyard if health_current <= 0
   end
 end

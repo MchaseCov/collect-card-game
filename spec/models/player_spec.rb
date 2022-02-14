@@ -1,28 +1,7 @@
 require 'rails_helper'
+require_relative 'game_scenario'
 
 RSpec.describe Player, type: :model do
-  let(:user) { User.create!(email: 'foo@bar.com', password: '123123123') }
-  let(:archetype) { Archetype.create!(name: 'Ranger', description: 'RangerDesc', resource_type: 'hybrid') }
-  let(:race) do
-    Race.create!(name: 'Human', description: 'Humandesc', health_modifier: 0, cost_modifier: 0, resource_modifier: 0)
-  end
-  let(:party_card_parent) do
-    PartyCardParent.create!(name: 'TestCard', cost_default: 1, attack_default: 1, health_default: 1,
-                            archetype_id: archetype.id)
-  end
-
-  let(:queued_deck) do
-    deck = AccountDeck.create!(name: 'rspec deck',
-                               user_id: user.id,
-                               card_count: 30,
-                               archetype_id: archetype.id,
-                               race_id: race.id)
-    30.times { deck.party_card_parents << party_card_parent }
-    deck
-  end
-
-  let(:game) { Game.create! }
-
   describe 'Associations' do
     it { should belong_to(:race) }
     it { should belong_to(:archetype) }
@@ -63,16 +42,18 @@ RSpec.describe Player, type: :model do
   end
 
   describe 'Player creation from deck' do
+    include_context 'Shared Game Scenario'
+
     it 'Creates valid Game Player from AccountDeck input' do
-      game.player_one.prepare_player(queued_deck)
+      game.player_one.prepare_player(queued_deck_user_one)
       expect(game.player_one).to be_valid
     end
   end
 
   describe 'Mulligan Phase' do
+    include_context 'Shared Game Scenario'
+
     subject do
-      game.player_one.prepare_player(queued_deck)
-      game.player_one.gamestate_deck.prepare_deck(queued_deck)
       game.player_one
     end
     it 'Moves 3 cards from deck to mulligan stage for player_one' do
@@ -103,9 +84,9 @@ RSpec.describe Player, type: :model do
   end
 
   describe 'Prepare new turn' do
+    include_context 'Shared Game Scenario'
+
     subject do
-      game.player_one.prepare_player(queued_deck)
-      game.player_one.gamestate_deck.prepare_deck(queued_deck)
       game.player_one
     end
     it 'Increments player cost and resource' do
@@ -127,6 +108,10 @@ RSpec.describe Player, type: :model do
     it 'Draws 1 card from deck into hand' do
       expect { subject.prepare_new_turn }.to change { subject.gamestate_deck.card_count }.by(-1)
       expect { subject.prepare_new_turn }.to change { subject.cards.in_hand.count }.by(1)
+    end
+    it 'Wakes attack cards' do
+      subject.prepare_new_turn
+      expect(subject.cards.in_battle.count).to eql(subject.cards.in_attack_mode.count)
     end
   end
 end

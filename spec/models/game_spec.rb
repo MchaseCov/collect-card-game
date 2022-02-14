@@ -1,33 +1,17 @@
 require 'rails_helper'
+require_relative 'game_scenario'
 
 RSpec.describe Game, type: :model do
-  let(:user) { User.create!(email: 'foo@bar.com', password: '123123123') }
-  let(:archetype) { Archetype.create!(name: 'Ranger', description: 'RangerDesc', resource_type: 'hybrid') }
-  let(:race) do
-    Race.create!(name: 'Human', description: 'Humandesc', health_modifier: 0, cost_modifier: 0, resource_modifier: 0)
-  end
-  let(:party_card_parent) do
-    PartyCardParent.create!(name: 'TestCard', cost_default: 1, attack_default: 1, health_default: 1,
-                            archetype_id: archetype.id)
-  end
-
-  let(:queued_deck) do
-    AccountDeck.create!(name: 'rspec deck',
-                        user_id: user.id,
-                        card_count: 30,
-                        archetype_id: archetype.id,
-                        race_id: race.id)
-  end
-
   describe 'Associations' do
     it { should belong_to(:winner).without_validating_presence }
     it { should have_one(:player_one) }
     it { should have_one(:player_two) }
   end
 
-  subject { described_class.create! }
-
   describe 'Game Creation' do
+    include_context 'Shared Game Scenario'
+
+    subject { game }
     it 'Creates player one' do
       expect(subject.player_one).to be_present
     end
@@ -35,18 +19,43 @@ RSpec.describe Game, type: :model do
       expect(subject.player_two).to be_present
     end
     it 'Prepares players to be valid' do
-      subject.populate_players(queued_deck, queued_deck)
       expect(subject.player_one).to be_valid
+      expect(subject.player_two).to be_valid
     end
-    it 'Creates a duplicate gamestate deck of player one' do
-      subject.populate_players(queued_deck, queued_deck)
-      subject.populate_decks(queued_deck, queued_deck)
+    it 'Creates a duplicate gamestate deck for both players' do
       expect(subject.player_one.gamestate_deck).to be_present
-    end
-    it 'Creates a duplicate gamestate deck of player two' do
-      subject.populate_players(queued_deck, queued_deck)
-      subject.populate_decks(queued_deck, queued_deck)
       expect(subject.player_two.gamestate_deck).to be_present
+    end
+  end
+
+  describe 'Card Attacking' do
+    include_context 'Shared Game Scenario'
+
+    subject { game }
+    let(:attacking_card) { subject.player_one.party_card_gamestates.first }
+    let(:defending_card) { subject.player_two.party_card_gamestates.first }
+
+    it 'Damages Both Cards' do
+      attacking_card.update(location: 'battle', status: 'attacking')
+      expect do
+        subject.conduct_attack(attacking_card, defending_card)
+      end.to change { defending_card.health_current }
+        .by(-attacking_card.attack_current)
+        .and change { attacking_card.health_current }
+        .by(-defending_card.attack_current)
+    end
+
+    it 'It Kills A Card With 0 Or Less Health' do
+      # Defending card has 4 health, Attacking Card has 5 attack.
+      attacking_card.update(location: 'battle', status: 'attacking')
+      subject.conduct_attack(attacking_card, defending_card)
+      expect(defending_card.location).to eql('graveyard')
+      expect(defending_card.status).to eql('dead')
+    end
+
+    it 'Returns if Attacking Card is not Attacking Status' do
+      expect(subject.conduct_attack(attacking_card, defending_card)).to eq(nil)
+      expect { subject.conduct_attack(attacking_card, defending_card) }.not_to change { defending_card }
     end
   end
 end

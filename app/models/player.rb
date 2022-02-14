@@ -77,6 +77,7 @@ class Player < ApplicationRecord
 
   def prepare_new_turn
     increment_player_resources
+    wake_up_party_cards
     draw_cards(1)
     recount_deck_size
   end
@@ -102,5 +103,9 @@ class Player < ApplicationRecord
 
   def recount_deck_size
     gamestate_deck.update(card_count: party_card_gamestates.in_deck.size)
+  end
+
+  def wake_up_party_cards
+    party_card_gamestates.in_battle.each(&:set_to_attack)
   end
 end

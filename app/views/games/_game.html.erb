@@ -17,15 +17,15 @@
     </div>
   </section>
 </section>
-<section id="battlefield" class="flex flex-row w-full row-span-2 grid grid-cols-1 grid-rows-2">
+<section id="battlefield" class="flex flex-row w-full row-span-2 grid grid-cols-1 grid-rows-2" data-controller="drag-battle", data-drag-battle-game-value=<%=game.id%>>
   <% if game.status == "mulligan" %>
     <%= render 'games/mulligan', first_person_player: first_person_player, game: game%>
   <% end %>
-  <div id="op-cards-battle" class="flex flex-row w-full justify-center gap-x-2">
-    <%= render partial: "games/party_card", collection:opposing_player.cards.in_battle , cached: true %>
+  <div id="op-cards-battle" class="flex flex-row w-full justify-center gap-x-5">
+    <%= render partial: "party_card_gamestates/enemy_card_on_board", collection:opposing_player.cards.in_battle, as: :card %>
   </div>
-  <div id="fp-cards-battle" class="flex flex-row w-full justify-center gap-x-2">
-    <%= render partial: "games/party_card", collection:first_person_player.cards.in_battle , cached: true %>
+  <div id="fp-cards-battle" class="flex flex-row w-full justify-center gap-x-5">
+    <%= render partial: "party_card_gamestates/card_on_board", collection:first_person_player.cards.in_battle, as: :card %>
   </div>
 </section>
 <section id="fp-info" class="flex flex-row w-full">

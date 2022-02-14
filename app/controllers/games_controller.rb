@@ -36,6 +36,15 @@ class GamesController < ApplicationController
     @game.end_turn
   end
 
+  def minion_combat
+    return unless current_users_turn
+
+    attacking_card = @player.party_card_gamestates.in_attack_mode.find(params[:dragged_id])
+    defending_card = @game.opposing_player_of(@player).party_card_gamestates.in_battle.find(params[:target_id])
+
+    @game.conduct_attack(attacking_card, defending_card) if attacking_card && defending_card
+  end
+
   private
 
   def validate_decks_for_game_creation
