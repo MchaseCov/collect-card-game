@@ -25,9 +25,7 @@ export default class extends Controller {
         element.classList.add('z-20');
         break
     }
-    if (element.dataset.healthCurrent < element.dataset.healthCap){
-      element.querySelector(".health-current").classList.add('text-red-500');
-    }
+
   }
 
   dragStart(event) {
