@@ -4,8 +4,7 @@ require_relative 'game_scenario'
 RSpec.describe Game, type: :model do
   describe 'Associations' do
     it { should belong_to(:winner).without_validating_presence }
-    it { should have_one(:player_one) }
-    it { should have_one(:player_two) }
+    it { should have_many(:players) }
   end
 
   describe 'Game Creation' do
@@ -56,6 +55,30 @@ RSpec.describe Game, type: :model do
     it 'Returns if Attacking Card is not Attacking Status' do
       expect(subject.conduct_attack(attacking_card, defending_card)).to eq(nil)
       expect { subject.conduct_attack(attacking_card, defending_card) }.not_to change { defending_card }
+    end
+  end
+
+  describe 'Playing Party Card From Hand To Board' do
+    include_context 'Shared Game Scenario'
+
+    subject { game }
+    let(:played_card) { subject.player_one.party_card_gamestates.first }
+    it 'Puts chosen card into battle' do
+      subject.put_card_in_play(played_card, 1)
+      expect(played_card.location).to eql('battle')
+    end
+    it 'Moves cards to right when desired position is already taken' do
+      subject.player_one.update(cost_cap: 20, cost_current: 20)
+      already_in_play = subject.player_one.party_card_gamestates.second
+      subject.put_card_in_play(already_in_play, 1)
+      expect do
+        subject.put_card_in_play(played_card, 1)
+      end.to change { already_in_play.reload.position }.by(1)
+    end
+    it 'Cannot play a card that costs more than user gold' do
+      subject.player_one.update(cost_cap: 0, cost_current: 0)
+      subject.put_card_in_play(played_card, 1)
+      expect { subject.put_card_in_play(played_card, 1) }.to_not change { played_card.location }
     end
   end
 end

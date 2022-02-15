@@ -1,7 +1,7 @@
 <% if card.status == "attacking" %>
-  <div class="z-40 w-40 h-60 relative text-white border-2 border-black rounded ring ring-lime-500 attacking-card" draggable="true" data-drag-battle-target="activeMinion" data-id="<%=card.id%>" data-action="dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd">
+  <div class="z-40 w-40 h-60 relative text-white border-2 border-black rounded ring ring-lime-500 attacking-card card-on-board mx-2.5" draggable="true" data-drag-battle-target="activeMinion" data-id="<%=card.id%>" data-action="dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd">
   <% else %>
-    <div class="z-20 w-40 h-60 relative text-white border-2 border-black rounded"  <%(card.status == "currently_defending") ? "data-drag-battle-target=\"defendingMinion\"" : "" %> >
+    <div class="z-20 w-40 h-60 relative text-white border-2 border-black rounded card-on-board mx-2.5"  <%=(card.status == "currently_defending") ? "data-drag-battle-target=defendingMinion" : "" %> >
     <% end %>
     <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
       <%=card.cost_current%>
@@ -23,3 +23,4 @@
     </div>
     <%=image_tag('cardplaceholder.webp', class:"w-max h-max select-none pointer-events-none", draggable:"false")%>
   </div>
+  <%= render "party_card_gamestates/board_space", position: card.position %>

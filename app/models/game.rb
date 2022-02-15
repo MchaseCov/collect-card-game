@@ -73,10 +73,11 @@ class Game < ApplicationRecord
     touch
   end
 
-  def put_card_in_play(card)
+  def put_card_in_play(card, position)
     return unless current_player.spend_coins_on_card(card)
 
-    card.move_to_battle
+    card.player.cards.in_battle.where('position >= ?', position).each(&:increment_position)
+    card.move_to_battle(position)
     touch
   end
 

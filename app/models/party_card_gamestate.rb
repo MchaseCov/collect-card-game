@@ -10,6 +10,7 @@
 # attack_current          :integer
 # location                :string
 # status                  :string
+# position                :integer
 # archetype_id            :bigint       null: false, foreign key
 # party_card_parent_id    :bigint       null: false, foreign key
 # gamestate_deck_id       :bigint       null: false, foreign key
@@ -49,8 +50,8 @@ class PartyCardGamestate < ApplicationRecord
     update(location: 'mulligan')
   end
 
-  def move_to_battle
-    update(location: 'battle', status: 'in_play')
+  def move_to_battle(position)
+    update(location: 'battle', status: 'in_play', position: position)
   end
 
   def status_in_play
@@ -63,6 +64,10 @@ class PartyCardGamestate < ApplicationRecord
 
   def set_to_graveyard
     update(location: 'graveyard', status: 'dead')
+  end
+
+  def increment_position
+    increment!(:position)
   end
 
   def take_damage(attack)

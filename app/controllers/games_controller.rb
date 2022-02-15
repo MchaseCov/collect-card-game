@@ -23,11 +23,13 @@ class GamesController < ApplicationController
   end
 
   def play_card
-    return unless params[:card_type] && params[:card_id] && current_users_turn
+    return unless params[:card_id] && current_users_turn
+    return if @player.cards.in_battle.size >= 7
 
-    # This looks like a strange check, but it's futureproof for "spell" cards
-    card = @player.party_card_gamestates.in_hand.find(params[:card_id]) if params[:card_type] == 'Party'
-    @game.put_card_in_play(card)
+    position = (params[:position].to_i + 1)
+
+    card = @player.party_card_gamestates.in_hand.find(params[:card_id])
+    @game.put_card_in_play(card, position) if card
   end
 
   def end_turn
