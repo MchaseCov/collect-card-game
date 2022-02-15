@@ -5,4 +5,6 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :account_decks
+  has_many :players
+  has_many :games, through: :players
 end

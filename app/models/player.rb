@@ -20,6 +20,8 @@ class Player < ApplicationRecord
   after_create_commit do
     build_gamestate_deck(game: game, card_count: 30)
   end
+  #=======================================|SCOPES|==========================================
+  scope :with_deck, -> { includes(:gamestate_deck) }
 
   validates_presence_of :health_cap, :health_current, :cost_cap, :cost_current, :resource_cap, :resource_current
   validates_numericality_of :health_cap, :cost_cap, :resource_cap
