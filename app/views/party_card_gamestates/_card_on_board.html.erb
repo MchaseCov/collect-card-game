@@ -1,26 +1,29 @@
-<% if card.status == "attacking" %>
-  <div class="z-40 w-40 h-60 relative text-white border-2 border-black rounded ring ring-lime-500 attacking-card card-on-board mx-2.5" draggable="true" data-drag-battle-target="activeMinion" data-id="<%=card.id%>" data-action="dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd">
-  <% else %>
-    <div class="z-20 w-40 h-60 relative text-white border-2 border-black rounded card-on-board mx-2.5"  <%=(card.status == "currently_defending") ? "data-drag-battle-target=defendingMinion" : "" %> >
-    <% end %>
-    <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
-      <%=card.cost_current%>
-    </div>
-    <div class="text-center text-xl absolute bottom-12 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
-      <%=card.parent.name%>
-    </div>
-    <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
-      <%=card.attack_current%>
-    </div>
-    <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 <%=card.health_cap > card.health_current ? "text-red-500" : "text-white" %> absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
-      <%=card.health_current%>
-    </div>
-    <div class="text-center text-xs absolute bottom-8 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
-      <%=card.archetype.name%>
-    </div>
-    <div class="text-center text-md absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
-      <%=card.parent.tribe%>
-    </div>
-    <%=image_tag('cardplaceholder.webp', class:"w-max h-max select-none pointer-events-none", draggable:"false")%>
+<div class="w-40 h-60 mx-2.5 relative text-white border-2 border-black rounded card-on-board" 
+  draggable="false"
+  data-drag-battle-target="activeMinion"
+  data-id="<%=card.id%>"
+  data-status="<%=card.status%>"
+  data-health-current="<%=card.health_current%>"
+  data-health-cap="<%=card.health_cap%>"
+  data-action="dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd">
+  <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
+    <%=card.cost_current%>
   </div>
-  <%= render "party_card_gamestates/board_space", position: card.position %>
+  <div class="text-center text-xl absolute bottom-12 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
+    <%=card.parent.name%>
+  </div>
+  <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
+    <%=card.attack_current%>
+  </div>
+  <div class="health-current border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
+    <%=card.health_current%>
+  </div>
+  <div class="text-center text-xs absolute bottom-8 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
+    <%=card.archetype.name%>
+  </div>
+  <div class="text-center text-md absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-slate-700 select-none pointer-events-none">
+    <%=card.parent.tribe%>
+  </div>
+  <%=image_tag('cardplaceholder.webp', class:"w-max h-max select-none pointer-events-none", draggable:"false")%>
+</div>
+<%= render "party_card_gamestates/board_space", position: card.position %>

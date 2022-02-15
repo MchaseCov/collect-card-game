@@ -11,19 +11,30 @@ export default class extends Controller {
     this.img.src = '/reticle.webp';
   }
 
-  attackingMinionTargetConnected(element) {
-    if (this.hasDefendingMinionTarget) {
-      this.translateTo(element, this.defendingMinionTarget);
+  activeMinionTargetConnected(element) {
+    switch (this.activeMinionTarget.dataset.status){
+      case 'attacking':
+        element.classList.add('z-40', 'board-animatable', 'ring', 'ring-lime-500');
+        element.setAttribute('draggable', true);
+        break
+      case 'currently_defending':
+        this.attackingMinionTarget.classList.add('board-animatable')
+        this.translateTo(this.attackingMinionTarget, element)
+        break
+      default:
+        element.classList.add('z-20');
+        break
     }
-  }
-
-  defendingMinionTargetConnected(element) {
-    if (this.hasAttackingMinionTarget) {
-      this.translateTo(this.attackingMinionTarget, element);
+    if (element.dataset.healthCurrent < element.dataset.healthCap){
+      element.querySelector(".health-current").classList.add('text-red-500');
     }
   }
 
   dragStart(event) {
+    if ((event.target.getAttribute('draggable')) === 'false') {
+      this.errorFeedback(event.target);
+      event.preventDefault();
+    } else {
     // Outline selected card, create drag image, set data for POST
     event.target.classList.add('shadow-2xl', 'shadow-lime-500');
     this.dragSrcEl = event.target;
@@ -31,6 +42,7 @@ export default class extends Controller {
     event.dataTransfer.setDragImage(this.img, 10, 10);
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('text/html', event.target.innerHTML);
+    }
   }
 
   dragEnter(event) {
@@ -88,5 +100,10 @@ export default class extends Controller {
       y: (targetCoords.y - attackerCoords.y) * 0.75,
     };
     attacker.style.transform = `translate(${~~translation.x}px, ${~~translation.y}px)`;
+  }
+
+  errorFeedback(target) {
+    target.classList.add('shake');
+    setTimeout(() => { target.classList.remove('shake'); }, 500);
   }
 }

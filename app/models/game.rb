@@ -21,7 +21,7 @@ class Game < ApplicationRecord
   # Players have a seperate websocket connection which allows us to broadcast to only
   # one player at certain points to control the information the player sees about game state.
   after_touch do
-    game = Game.with_players_and_decks.find(id)
+    game = Game.find(id)
     broadcast_perspective_for(game.player_one)
     broadcast_perspective_for(game.player_two)
   end
