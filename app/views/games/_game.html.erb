@@ -1,22 +1,39 @@
-<aside id="sidebar grow">
-  <%=game.status%>
-  Current turn = <%=game.turn ? "Player 1" : "Player 2" %> <br>
-  <% if game.status == "ongoing" %>
-    <%=button_to "End Turn",end_turn_game_path(game), disabled: !turn_of?(first_person_player, game), class:"bg-blue-500 text-white font-bold py-2 px-4 rounded disabled:bg-gray-200" %>
-  <% end %>
-</aside>
-<article id="main-game-board" class="grid grid-cols-1 grid-rows-4 basis-5/6 h-full gap-y-10" data-controller="drag-party-play style-cards" data-drag-party-play-game-value=<%=game.id%> data-drag-party-play-player-cost-value=<%=first_person_player.cost_current%> >
-  <section id="op-info" class="flex flex-row w-full">
-    <section id="op-cards-hand" class="flex flex-row w-full justify-center">
-      <% opposing_player.cards.in_hand.size.times do%>
-        <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center"></div>
-      <% end %>
-    </section>
+<aside id="sidebar w-max h-full relative top-0">
+  <section id="op-deck" class="flex flex-row gap-x-3 absolute top-5">
     <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
       In Deck:<%=opposing_player.gamestate_deck.card_count%>
     </div>
   </section>
-  <section id="battlefield" class="flex flex-row w-full row-span-2 grid grid-cols-1 grid-rows-2" data-controller="drag-battle", data-drag-battle-game-value=<%=game.id%>>
+  <section id="turn-button" class="absolute top-1/2 bottom 1/2">
+    <%=game.turn ? "Player 1" : "Player 2" %>'s Turn!<br>
+    <% if game.status == "ongoing" %>
+      <%=button_to "End Turn",end_turn_game_path(game), disabled: !turn_of?(first_person_player, game), class:"bg-blue-500 text-white font-bold py-2 px-4 rounded disabled:bg-gray-200" %>
+    <% end %>
+  </section>
+  <section id="fp-deck" class="flex flex-row gap-x-3 flex flex-col flex-nowrap absolute bottom-5">
+    <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
+      In Deck:<%=first_person_player.gamestate_deck.card_count%>
+    </div>
+    <div class="min-w-max">Gold: <%=first_person_player.cost_current%> / <%=first_person_player.cost_cap%></div>
+  </section>
+</aside>
+<article id="main-game-board"
+class="h-full flex flex-col flex-nowrap gap-y-2"
+data-controller="drag-party-play style-cards"
+data-drag-party-play-game-value=<%=game.id%>
+data-drag-party-play-player-cost-value=<%=first_person_player.cost_current%>
+data-drag-party-play-game-turn-value=<%=game.turn%>
+data-drag-party-play-player-turn-value=<%=first_person_player.turn_order%>
+>
+  <section id="op-info" class="flex flex-row flex-nowrap w-full max-h-72 max-h-[20%] flex-1">
+    <section id="op-cards-hand" class="w-full ml-auto text-center has-tooltip relative shrink flex-nowrap whitespace-nowrap flex-1">
+      <div class="tooltip left-0 right-0 -bottom-10 text-center" >Your opponent has <%=opposing_player.cards.in_hand.size%> cards in hand.</div>
+      <% opposing_player.cards.in_hand.size.times do%>
+        <div class="w-40 h-60 max-h-60 relative text-white border-2 border-black rounded bg-slate-700 inline-block -ml-10"></div>
+      <% end %>
+    </section>
+  </section>
+  <section id="battlefield" class="w-full grid grid-cols-1 grid-rows-2 h-3/5" data-controller="drag-battle", data-drag-battle-game-value=<%=game.id%>>
     <% if game.status == "mulligan" %>
       <%= render 'games/mulligan', first_person_player: first_person_player, game: game%>
     <% end %>
@@ -28,15 +45,9 @@
       <%= render partial: "party_card_gamestates/card_on_board", collection:first_person_player.cards.includes(:party_card_parent, :archetype).in_battle.order(:position), as: :card %>
     </div>
   </section>
-  <section id="fp-info" class="flex flex-row w-full">
-    <section id="fp-cards-hand" class="flex flex-row w-full justify-center gap-x-5">
+  <section id="fp-info" class="flex flex-row w-full mt-auto max-h-[20%] flex-nowrap">
+    <section id="fp-cards-hand" class="w-full ml-auto text-center whitespace-nowrap">
       <%= render partial: "party_card_gamestates/card_in_hand", collection:first_person_player.cards.in_hand, as: :card, locals:{game: game, first_person_player: first_person_player}, cached: true %>
-    </section>
-    <section id="fp-deck" class="flex flex-row gap-x-3">
-      <div class="min-w-max">Gold: <%=first_person_player.cost_current%> / <%=first_person_player.cost_cap%></div>
-      <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
-        In Deck:<%=first_person_player.gamestate_deck.card_count%>
-      </div>
     </section>
   </section>
 </article>

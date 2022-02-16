@@ -4,19 +4,19 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
   static targets = ['playableCard', 'boardSpace'];
 
-  static values = { game: Number, playerCost: Number };
+  static values = { game: Number, playerCost: Number, gameTurn: Boolean, playerTurn: Boolean };
 
   initialize() {
     // If there are no cards in play, make the play area very wide
     if (this.boardSpaceTargets.length === 1) {
       this.boardSpaceTarget.style.width = '100%';
     }
+    this.playerCanAct = (this.playerTurnValue === this.gameTurnValue)
   }
 
   playableCardTargetConnected(element) {
-    if (this.playableCardTarget.dataset.cost > this.playerCostValue || this.boardSpaceTargets.length === 8) {
-      element.classList.remove('ring');
-      element.setAttribute('draggable', false);
+    if (this.playableCardTarget.dataset.cost > this.playerCostValue || this.boardSpaceTargets.length === 8 || !this.playerCanAct) {
+      this.removeDragFromElement(element)
     }
   }
 
@@ -104,5 +104,10 @@ export default class extends Controller {
   errorFeedback(target) {
     target.classList.add('shake');
     setTimeout(() => { target.classList.remove('shake'); }, 500);
+  }
+
+  removeDragFromElement(element) {
+    element.classList.remove('ring');
+    element.setAttribute('draggable', false);
   }
 }

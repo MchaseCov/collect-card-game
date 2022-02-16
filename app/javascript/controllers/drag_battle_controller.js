@@ -18,14 +18,14 @@ export default class extends Controller {
         element.setAttribute('draggable', true);
         break
       case 'currently_defending':
-        this.attackingMinionTarget.classList.add('board-animatable')
-        this.translateTo(this.attackingMinionTarget, element)
+        const attacker = document.querySelector("[data-status='currently_attacking']");
+        attacker.classList.add('board-animatable');
+        this.translateTo(attacker, element);
         break
       default:
         element.classList.add('z-20');
         break
     }
-
   }
 
   dragStart(event) {
