@@ -46,7 +46,7 @@ export default class extends Controller {
     // Makes area lime. If not the "wide default area", make the hover region wide for visual
     event.target.classList.add('bg-lime-500');
     if (this.boardSpaceTargets.length > 1) {
-      event.target.style.width = '10rem';
+      event.target.style.width = '9rem';
     }
     if (event.preventDefault) {
       event.preventDefault();
