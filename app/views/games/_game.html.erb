@@ -18,7 +18,7 @@
   </section>
 </aside>
 <article id="main-game-board"
-class="h-full flex flex-col flex-nowrap gap-y-2"
+class="h-full flex flex-col flex-nowrap gap-y-2 overflow-clip"
 data-controller="drag-party-play style-cards"
 data-drag-party-play-game-value=<%=game.id%>
 data-drag-party-play-player-cost-value=<%=first_person_player.cost_current%>
@@ -46,7 +46,7 @@ data-drag-party-play-player-turn-value=<%=first_person_player.turn_order%>
     </div>
   </section>
   <section id="fp-info" class="flex flex-row w-full mt-auto max-h-[20%] flex-nowrap">
-    <section id="fp-cards-hand" class="w-full ml-auto text-center whitespace-nowrap">
+    <section id="fp-cards-hand" class="w-full ml-auto text-center whitespace-nowrap mt-24 hover:mt-2">
       <%= render partial: "party_card_gamestates/card_in_hand", collection:first_person_player.cards.in_hand, as: :card, locals:{game: game, first_person_player: first_person_player}, cached: true %>
     </section>
   </section>
