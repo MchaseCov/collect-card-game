@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .tooltip {
-  @apply invisible absolute;
+  @apply hidden absolute;
 }
 
 .has-tooltip:hover .tooltip {
-  @apply visible z-50;
+  @apply block z-50;
 }
 
 .board-animatable {

@@ -9,5 +9,8 @@ class PartyCardParentsController < ApplicationController
       end
   end
 
-  def show; end
+  # Could be used as a thumbnailing lazy loader but unsure if this worth doing when already joining to the PCParent table in game
+  # def show
+  # @card = PartyCardParent.includes(:archetype).find(params[:id])
+  # end
 end

@@ -23,7 +23,6 @@ export default class extends Controller {
         this.translateTo(attacker, element);
         break
       default:
-        element.classList.add('z-20');
         element.setAttribute('draggable', false);
         break
     }
