@@ -130,27 +130,27 @@ class Game < ApplicationRecord
   # Broadcasts attack animation to opposing player of attacker
   # (Through use of Stimulus controller that connects to status attribute)
   # THEN updates health attributes of cards in battle and broadcasts to both players
-  def conduct_attack(attacking_card, defending_card)
-    return unless attacking_card.status == 'attacking'
+  def conduct_attack(attacker, defender)
+    return unless attacker.status == 'attacking'
 
-    animate_attack_for_reciever(attacking_card, defending_card)
-    deal_attack_damage(attacking_card, defending_card)
+    animate_attack_for_reciever(attacker, defender)
+    deal_attack_damage(attacker, defender)
     touch
   end
 
   private
 
   # Updates status attribute for stimulus controller and broadcast
-  def animate_attack_for_reciever(attacking_card, defending_card)
-    attacking_card.update(status: 'currently_attacking')
-    defending_card.update(status: 'currently_defending')
-    broadcast_immediate_perspective_for(defending_card.player)
+  def animate_attack_for_reciever(attacker, defender)
+    attacker.update(status: 'currently_attacking')
+    defender.update(status: 'currently_defending')
+    broadcast_immediate_perspective_for((defender.is_a?(Player) ? defender : defender.player))
   end
 
   # Update health of cards in battle
-  def deal_attack_damage(attacking_card, defending_card)
-    defending_card.take_damage(attacking_card.attack_current)
-    attacking_card.take_damage(defending_card.attack_current)
+  def deal_attack_damage(attacker, defender)
+    defender.take_damage(attacker.attack_current)
+    attacker.take_damage(defender.attack_current)
   end
 
   # Broadcast game over websocket
@@ -168,5 +168,6 @@ class Game < ApplicationRecord
                                              locals: { game: self,
                                                        first_person_player: player,
                                                        opposing_player: opposing_player_of(player) }
+    sleep 0.2 # Prefer use of a JS listener to respond back to rails to request a broadcast, but this for now allows animations to complete before updating
   end
 end

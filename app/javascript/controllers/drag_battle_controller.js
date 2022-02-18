@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="drag-battle"
 export default class extends Controller {
-  static targets = ['activeMinion', 'enemyMinion', 'attackingMinion', 'defendingMinion'];
+  static targets = ['activeFriendlyActor', 'enemyActor'];
 
   static values = { game: Number };
 
@@ -11,8 +11,8 @@ export default class extends Controller {
     this.img.src = '/reticle.webp';
   }
 
-  activeMinionTargetConnected(element) {
-    switch (this.activeMinionTarget.dataset.status){
+  activeFriendlyActorTargetConnected(element) {
+    switch (element.dataset.status){
       case 'attacking':
         element.classList.add('z-40', 'board-animatable', 'ring', 'ring-lime-500');
         element.setAttribute('draggable', true);
@@ -24,6 +24,7 @@ export default class extends Controller {
         break
       default:
         element.classList.add('z-20');
+        element.setAttribute('draggable', false);
         break
     }
   }
@@ -66,28 +67,17 @@ export default class extends Controller {
   drop(event) {
     event.stopPropagation();
     this.translateTo(this.dragSrcEl, event.target);
-    // Wait 0.1 seconds before POSTing for the sake of the animation's playtmie
-    setTimeout(() => {
-      fetch(`/games/${this.gameValue}/minion_combat`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'text/vnd.turbo-stream.html',
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.head.querySelector("[name='csrf-token']").content,
-        },
-        body: JSON.stringify({
-          dragged_id: this.dragSrcEl.dataset.id,
-          target_id: event.target.dataset.id,
-        }),
-      });
-    }, 100);
+    if (event.target.dataset.playerId) {
+      this.postPlayerCombat(event.target)
+    } else {
+      this.postMinionCombat(event.target)
+    }
   }
 
   dragEnd() {
     // Remove all shadows from friendly cards and then enemy cards
-    this.activeMinionTargets.forEach((el) => el.classList.remove('shadow-2xl'));
-    this.enemyMinionTargets.forEach((el) => el.classList.remove('shadow-2xl'));
+    this.activeFriendlyActorTargets.forEach((el) => el.classList.remove('shadow-2xl'));
+    this.enemyActorTargets.forEach((el) => el.classList.remove('shadow-2xl'));
   }
 
   translateTo(attacker, target) {
@@ -103,5 +93,41 @@ export default class extends Controller {
   errorFeedback(target) {
     target.classList.add('shake');
     setTimeout(() => { target.classList.remove('shake'); }, 500);
+  }
+
+// Wait 0.1 seconds before POSTing for the sake of the animation's playtmie
+  postMinionCombat(target) {
+  setTimeout(() => {
+    fetch(`/games/${this.gameValue}/minion_combat`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'text/vnd.turbo-stream.html',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.head.querySelector("[name='csrf-token']").content,
+      },
+      body: JSON.stringify({
+        dragged_id: this.dragSrcEl.dataset.id,
+        target_id: target.dataset.id,
+      }),
+    });
+  }, 100);
+}
+  postPlayerCombat(target) {
+    setTimeout(() => {
+      fetch(`/games/${this.gameValue}/player_combat`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          Accept: 'text/vnd.turbo-stream.html',
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.head.querySelector("[name='csrf-token']").content,
+        },
+        body: JSON.stringify({
+          dragged_id: this.dragSrcEl.dataset.id,
+          target_id: target.dataset.playerId,
+        }),
+      });
+    }, 100);
   }
 }

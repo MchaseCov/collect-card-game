@@ -10,6 +10,8 @@
 # resource_cap            :integer
 # resource_current        :integer
 # turn_order              :boolean
+# status                  :string
+# attack_current          :integer
 # race_id                 :bigint       null: false, foreign key of race
 # archetype_id            :bigint       null: false, foreign key of archetype
 # game_id                 :bigint       null: false, foreign key of game
@@ -92,6 +94,11 @@ class Player < ApplicationRecord
 
   def put_cards_to_sleep
     party_card_gamestates.in_attack_mode.each(&:status_in_play)
+  end
+
+  def take_damage(attack)
+    decrement!(:health_current, attack)
+    health_current <= 0 ? game.update(status: 'over', ongoing: false) : update(status: 'default')
   end
 
   private

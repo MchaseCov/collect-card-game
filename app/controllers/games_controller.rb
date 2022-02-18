@@ -47,6 +47,13 @@ class GamesController < ApplicationController
     @game.conduct_attack(attacking_card, defending_card) if attacking_card && defending_card
   end
 
+  def player_combat
+    return unless current_users_turn && (@opposing_player.id == params[:target_id].to_i)
+
+    attacking_card = @player.party_card_gamestates.in_attack_mode.find(params[:dragged_id])
+    @game.conduct_attack(attacking_card, @opposing_player) if attacking_card
+  end
+
   private
 
   def validate_decks_for_game_creation

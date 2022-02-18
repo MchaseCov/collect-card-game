@@ -15,7 +15,7 @@ export default class extends Controller {
   }
 
   playableCardTargetConnected(element) {
-    if (this.playableCardTarget.dataset.cost > this.playerCostValue || this.boardSpaceTargets.length === 8 || !this.playerCanAct) {
+    if (element.dataset.cost > this.playerCostValue || this.boardSpaceTargets.length === 8 || !this.playerCanAct) {
       this.removeDragFromElement(element)
     }
   }

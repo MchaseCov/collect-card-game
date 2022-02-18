@@ -20,7 +20,8 @@
 <article id="main-game-board"
 class="h-full flex flex-col flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
 
-data-controller="drag-party-play style-cards"
+data-controller="drag-party-play style-cards drag-battle"
+data-drag-battle-game-value=<%=game.id%>
 data-drag-party-play-game-value=<%=game.id%>
 data-drag-party-play-player-cost-value=<%=first_person_player.cost_current%>
 data-drag-party-play-game-turn-value=<%=game.turn%>
@@ -33,16 +34,24 @@ data-drag-party-play-player-turn-value=<%=first_person_player.turn_order%>
         <div class="w-40 h-60 max-h-60 relative text-white border-2 border-black rounded bg-slate-700 inline-block -ml-10 -mt-12"></div>
       <% end %>
     </section>
-    <div id="op-player-info" class="w-40 h-48 bg-red-200 absolute left-0 right-0 mx-auto bottom-0 rounded-t-full">
-      <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
-        <%=opposing_player.resource_current%>
-      </div>
+    <div id="op-player-info"
+         class="w-40 h-48 bg-red-200 absolute left-0 right-0 mx-auto bottom-0 rounded-t-full enemy-card"
+         data-drag-battle-target="enemyActor"
+         data-player-id=<%=opposing_player.id%>
+         data-status="<%=opposing_player.status%>"
+         data-action="drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd"
+      >
+      <% if opposing_player.attack_current > 0%>
+        <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
+          <%=opposing_player.attack_current%>
+        </div>
+      <% end %>
       <div class="health-current border-2 border-lime-600 bg-lime-500 rounded-full h-12 w-12 text-4xl text-white text-center mt-1 pb-1 absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
         <%=opposing_player.health_current%>
       </div>
     </div>
   </section>
-  <section id="battlefield" class="w-full grid grid-cols-1 grid-rows-2 h-1/3" data-controller="drag-battle", data-drag-battle-game-value=<%=game.id%>>
+  <section id="battlefield" class="w-full grid grid-cols-1 grid-rows-2 h-1/3">
     <% if game.status == "mulligan" %>
       <%= render 'games/mulligan', first_person_player: first_person_player, game: game%>
     <% end %>
@@ -55,10 +64,18 @@ data-drag-party-play-player-turn-value=<%=first_person_player.turn_order%>
     </div>
   </section>
   <section id="fp-info" class="w-full mt-auto h-1/3 relative">
-    <div id="fp-player-info" class="w-40 h-48 bg-blue-200 absolute left-0 right-0 mx-auto top-0 rounded-t-full">
-      <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 select-none pointer-events-none">
-        <%=first_person_player.resource_current%>
-      </div>
+    <div id="fp-player-info"
+         class="w-40 h-48 bg-blue-200 absolute left-0 right-0 mx-auto top-0 rounded-t-full"
+         data-player-id=<%=first_person_player.id%>
+         data-drag-battle-target="activeFriendlyActor"
+         data-status="<%=first_person_player.status%>"
+
+    >
+      <% if first_person_player.attack_current > 0 %>
+        <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 select-none pointer-events-none">
+          <%=first_person_player.attack_current%>
+        </div>
+      <% end %>
       <div class="health-current border-2 border-lime-600 bg-lime-500 rounded-full h-12 w-12 text-4xl text-white text-center mt-1 pb-1 absolute -bottom-2 -right-2 select-none pointer-events-none">
         <%=first_person_player.health_current%>
       </div>

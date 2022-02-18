@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       post 'play_card'
       post 'end_turn'
       post 'minion_combat'
+      post 'player_combat'
     end
   end
   resources :account_decks do
