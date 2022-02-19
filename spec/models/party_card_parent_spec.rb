@@ -5,6 +5,7 @@ RSpec.describe PartyCardParent, type: :model do
     it { should belong_to(:archetype) }
     it { should have_many(:account_deck_party_card_parents) }
     it { should have_many(:account_decks).through(:account_deck_party_card_parents) }
+    it { should have_many(:keywords) }
   end
   describe 'Validations' do
     it { should validate_presence_of(:name) }

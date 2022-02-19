@@ -38,6 +38,10 @@ class PartyCardGamestate < ApplicationRecord
   has_one :player, through: :gamestate_deck
   has_one :game, through: :gamestate_deck
 
+  def keywords
+    party_card_parent.keywords
+  end
+
   def move_to_hand
     update(location: 'hand')
   end
