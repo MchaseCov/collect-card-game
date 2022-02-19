@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_19_180547) do
+ActiveRecord::Schema.define(version: 2022_02_19_182726) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2022_02_19_180547) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["party_card_parent_id"], name: "index_keywords_on_party_card_parent_id"
+    t.index ["type", "party_card_parent_id"], name: "index_keywords_on_type_and_party_card_parent_id", unique: true
   end
 
   create_table "party_card_gamestates", force: :cascade do |t|

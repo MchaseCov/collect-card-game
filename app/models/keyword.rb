@@ -12,9 +12,10 @@
 class Keyword < ApplicationRecord
   belongs_to :party_card_parent
 
-  validates_presence_of :type, :player_choice, :target, :modifier
+  validates_presence_of :type, :player_choice, :target, :modifier, :party_card_parent_id
   validates_numericality_of :modifier
-  validates :type, inclusion: { in: %w[Deathrattle Battlecry] }
+  validates :type, inclusion: { in: %w[Deathrattle Battlecry] },
+                   uniqueness: { scope: :party_card_parent_id }
 
   scope :deathrattle, -> { where(type: 'Deathrattle') }
   scope :battlecry, -> { where(type: 'Battlecry') }
