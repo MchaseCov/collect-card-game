@@ -19,8 +19,8 @@ class PartyCardParent < ApplicationRecord
 
   has_many :account_deck_party_card_parents
   has_many :account_decks, through: :account_deck_party_card_parents
-  has_many :keywords
   belongs_to :archetype
+  has_many :keywords
 
   delegate :battlecry, :deathrattle, to: :keywords
 end

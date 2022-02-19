@@ -15,7 +15,7 @@ RSpec.describe Keyword, type: :model do
     it 'Validates presence of attributes' do
       should validate_presence_of(:type)
       should validate_presence_of(:party_card_parent_id)
-      should validate_presence_of(:player_choice)
+
       should validate_presence_of(:target)
       should validate_presence_of(:modifier)
     end

@@ -122,6 +122,7 @@ class Game < ApplicationRecord
 
     card.player.cards.in_battle.where('position >= ?', position).each(&:increment_position)
     card.move_to_battle(position)
+    card.battlecry.trigger(card) if card.battlecry.present?
     touch
   end
 

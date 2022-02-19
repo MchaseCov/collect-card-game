@@ -28,7 +28,8 @@ class GamesController < ApplicationController
 
     position = (params[:position].to_i + 1)
 
-    card = @player.party_card_gamestates.in_hand.find(params[:card_id])
+    card = @player.party_card_gamestates.includes(:party_card_parent, :gamestate_deck,
+                                                  :archetype).find(params[:card_id])
     @game.put_card_in_play(card, position) if card
   end
 

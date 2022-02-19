@@ -56,11 +56,11 @@ data-drag-party-play-player-turn-value=<%=first_person_player.turn_order%>
       <%= render 'games/mulligan', first_person_player: first_person_player, game: game%>
     <% end %>
     <div id="op-cards-battle" class="flex flex-row w-full justify-center items-center">
-      <%= render partial: "party_card_gamestates/enemy_card_on_board", collection:opposing_player.cards.in_battle.includes(:party_card_parent).order(:position), as: :card %>
+      <%= render partial: "party_card_gamestates/enemy_card_on_board", collection:opposing_player.cards.in_battle.includes(party_card_parent: :archetype).order(:position), as: :card %>
     </div>
     <div id="fp-cards-battle" class="flex flex-row w-full justify-center items-center">
       <%= render "party_card_gamestates/board_space", position: 0 %>
-      <%= render partial: "party_card_gamestates/card_on_board", collection:first_person_player.cards.in_battle.includes(:party_card_parent).order(:position), as: :card %>
+      <%= render partial: "party_card_gamestates/card_on_board", collection:first_person_player.cards.in_battle.includes(party_card_parent: :archetype).order(:position), as: :card %>
     </div>
   </section>
   <section id="fp-info" class="w-full mt-auto h-1/3 relative">
