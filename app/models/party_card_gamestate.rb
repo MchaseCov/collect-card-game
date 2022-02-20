@@ -76,4 +76,9 @@ class PartyCardGamestate < ApplicationRecord
     decrement!(:health_current, attack)
     health_current <= 0 ? set_to_graveyard : status_in_play
   end
+
+  def increase_health_cap(amount)
+    increment!(:health_cap, amount)
+    increment!(:health_current, amount)
+  end
 end

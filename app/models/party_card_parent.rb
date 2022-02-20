@@ -20,7 +20,14 @@ class PartyCardParent < ApplicationRecord
   has_many :account_deck_party_card_parents
   has_many :account_decks, through: :account_deck_party_card_parents
   belongs_to :archetype
-  has_many :keywords
+  has_many :keywords, class_name: :Keyword,
+                      foreign_key: :party_card_parent_id,
+                      inverse_of: :party_card_parent,
+                      dependent: :destroy
 
-  delegate :battlecry, :deathrattle, to: :keywords
+  has_one :battlecry, -> { where(type: 'Battlecry') }, class_name: :Keyword,
+                                                       foreign_key: :party_card_parent_id,
+                                                       inverse_of: :party_card_parent
+
+  delegate :deathrattle, to: :keywords
 end

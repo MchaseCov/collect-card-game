@@ -23,14 +23,12 @@ class GamesController < ApplicationController
   end
 
   def play_card
-    return unless params[:card_id] && current_users_turn
-    return if @player.cards.in_battle.size >= 7
+    return unless current_users_turn && @player.cards.in_battle.size < 7
 
-    position = (params[:position].to_i + 1)
-
-    card = @player.party_card_gamestates.includes(:party_card_parent, :gamestate_deck,
-                                                  :archetype).find(params[:card_id])
-    @game.put_card_in_play(card, position) if card
+    card = @player.party_card_gamestates
+                  .includes(:party_card_parent, :gamestate_deck, :archetype)
+                  .find(params[:card_id])
+    @game.put_card_in_play(card, (params[:position].to_i + 1), params[:battlecry_target])
   end
 
   def end_turn

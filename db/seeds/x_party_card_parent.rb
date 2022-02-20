@@ -26,6 +26,15 @@ PartyCardParent.create(
       tribe: '',
       archetype: Archetype.find_by(name: 'Wizard'),
       body: ''
+    },
+    {
+      name: 'Beast Tamer',
+      cost_default: 3,
+      attack_default: 3,
+      health_default: 2,
+      tribe: 'Humanoid',
+      archetype: Archetype.find_by(name: 'Ranger'),
+      body: 'Give a friendly beast +2 health'
     }
   ]
 )

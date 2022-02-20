@@ -117,12 +117,12 @@ class Game < ApplicationRecord
   # Player must have enough gold to spend
   # Shifts position of cards to the right (increase position index) to make room for new card
   # Played card move from hand to battle in position
-  def put_card_in_play(card, position)
+  def put_card_in_play(card, position, target)
     return unless current_player.spend_coins_on_card(card)
 
     card.player.cards.in_battle.where('position >= ?', position).each(&:increment_position)
     card.move_to_battle(position)
-    card.battlecry.trigger(card) if card.battlecry.present?
+    card.battlecry.trigger(card, target) if card.battlecry.present?
     touch
   end
 

@@ -3,6 +3,11 @@
   data-drag-party-play-target="playableCard"
   data-id="<%=card.id%>"
   data-cost="<%=card.cost_current%>"
+  <% if  card.parent.battlecry.present? && card.parent.battlecry.player_choice%>
+  data-battlecry-select-target="playableBattlecryCard"
+  data-target="<%=card.battlecry.target.first%>"
+  data-compare="<%=card.battlecry.target.drop(1).join(",")%>"
+  <% end %>
   data-action="dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd"
   >
   <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">

@@ -2,21 +2,26 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="drag-party-play"
 export default class extends Controller {
-  static targets = ['playableCard', 'boardSpace'];
+  static targets = ['playableCard', 'boardSpace', 'friendlyCardInBattle'];
 
-  static values = { game: Number, playerCost: Number, gameTurn: Boolean, playerTurn: Boolean };
+  static values = {
+    playerCost: Number, gameTurn: Boolean, playerTurn: Boolean,
+  };
 
-  initialize() {
+  async initialize() {
     // If there are no cards in play, make the play area very wide
     if (this.boardSpaceTargets.length === 1) {
       this.boardSpaceTarget.style.width = '100%';
     }
-    this.playerCanAct = (this.playerTurnValue === this.gameTurnValue)
+    this.playerCanAct = (this.playerTurnValue === this.gameTurnValue);
+    // Gives the battlecry select controller .2s to be ready to recieve the dispatch
+    await new Promise((r) => setTimeout(r, 200));
+    this.dispatch('loadBattlecryController', { detail: { spaces: this.boardSpaceTargets, friendlyCards: this.friendlyCardInBattleTargets } });
   }
 
   playableCardTargetConnected(element) {
     if (element.dataset.cost > this.playerCostValue || this.boardSpaceTargets.length === 8 || !this.playerCanAct) {
-      this.removeDragFromElement(element)
+      this.removeDragFromElement(element);
     }
   }
 
@@ -25,12 +30,10 @@ export default class extends Controller {
       this.errorFeedback(event.target);
       event.preventDefault();
     } else {
-    // Outline selected card, set data for POST
       this.boardSpaceTargets.forEach((el) => el.classList.remove('hidden'));
-
       event.target.classList.add('shadow-2xl', 'shadow-lime-500');
       this.dragSrcEl = event.target;
-
+      this.validTargets = event.target.validTargets;
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/html', event.target.innerHTML);
     }
@@ -64,23 +67,15 @@ export default class extends Controller {
   drop(event) {
     event.stopPropagation();
 
-    this.translateTo(this.dragSrcEl, event.target);
+    if (this.validTargets) {
+      this.enableBattlecrySelectControllerAttributes(event.target);
+    } else {
+      this.translateTo(this.dragSrcEl, event.target);
     // Wait 0.15 seconds before POSTing for the sake of the animation's playtime
-    setTimeout(() => {
-      fetch(`/games/${this.gameValue}/play_card`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'text/vnd.turbo-stream.html',
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.head.querySelector("[name='csrf-token']").content,
-        },
-        body: JSON.stringify({
-          card_id: this.dragSrcEl.dataset.id,
-          position: event.target.dataset.id,
-        }),
-      });
-    }, 150);
+      setTimeout(() => {
+        this.postToPlayCardPath(event.target);
+      }, 150);
+    }
   }
 
   dragEnd() {
@@ -109,5 +104,31 @@ export default class extends Controller {
   removeDragFromElement(element) {
     element.classList.remove('ring');
     element.setAttribute('draggable', false);
+  }
+
+  enableBattlecrySelectControllerAttributes(chosenSpace) {
+    this.dragSrcEl.setAttribute('data-battlecry-select-target', 'inPlayBattlecry');
+    this.dragSrcEl.setAttribute('data-chosen-position', chosenSpace.dataset.id);
+    this.dragSrcEl.setAttribute('data-action', 'click->battlecry-select#cancelPlay dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd');
+    this.validTargets.forEach((el) => {
+      el.setAttribute('data-battlecry-select-target', 'validBattlecry');
+      el.setAttribute('data-action', 'click->battlecry-select#selectTarget');
+    });
+  }
+
+  postToPlayCardPath(chosenSpace) {
+    fetch(`/games/${this.element.dataset.game}/play_card`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'text/vnd.turbo-stream.html',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.head.querySelector("[name='csrf-token']").content,
+      },
+      body: JSON.stringify({
+        card_id: this.dragSrcEl.dataset.id,
+        position: chosenSpace.dataset.id,
+      }),
+    });
   }
 }

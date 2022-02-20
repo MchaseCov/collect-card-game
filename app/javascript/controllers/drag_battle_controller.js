@@ -4,8 +4,6 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
   static targets = ['activeFriendlyActor', 'enemyActor'];
 
-  static values = { game: Number };
-
   initialize() {
     this.img = document.createElement('img');
     this.img.src = '/reticle.webp';
@@ -97,7 +95,7 @@ export default class extends Controller {
 // Wait 0.1 seconds before POSTing for the sake of the animation's playtmie
   postMinionCombat(target) {
   setTimeout(() => {
-    fetch(`/games/${this.gameValue}/minion_combat`, {
+    fetch(`/games/${this.element.dataset.game}/minion_combat`, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {
