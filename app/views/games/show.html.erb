@@ -1,4 +1,8 @@
 <%= turbo_stream_from @game, current_user%>
 <div id="<%="#{dom_id(@game)}_for_#{current_user.id}"%>" class="w-full h-[99%] my-auto">
-  <%= render @game, first_person_player: @first_person_player, opposing_player: @opposing_player, last_played_card: nil %>
+  <%= render @game, first_person_player: @first_person_player,
+                    opposing_player: @opposing_player,
+                    last_played_card: nil,
+                    attacker: {PartyCardGamestate: 2118 },
+                    defender:{Player: 78 } %>
 </div>
