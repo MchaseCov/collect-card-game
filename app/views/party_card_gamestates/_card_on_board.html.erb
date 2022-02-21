@@ -7,7 +7,7 @@
   data-status="<%=card.status%>"
   data-health-current="<%=card.health_current%>"
   data-health-cap="<%=card.health_cap%>"
-  data-tribe=<%=card.party_card_parent.tribe%>
+  data-tribe="<%=card.party_card_parent.tribe%>"
   data-action="dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd">
   <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute bottom-0 -left-2 z-10 select-none pointer-events-none">
     <%=card.attack_current%>
