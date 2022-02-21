@@ -51,8 +51,8 @@ class Player < ApplicationRecord
     race = deck.race
     archetype = deck.archetype
     health = (race.health_modifier + 30)
-    cost = (race.cost_modifier + 1)
-    resource = (race.resource_modifier + 1)
+    cost = race.cost_modifier
+    resource = race.resource_modifier
     update(
       health_cap: health,
       health_current: health,
