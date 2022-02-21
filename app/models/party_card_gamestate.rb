@@ -72,6 +72,10 @@ class PartyCardGamestate < ApplicationRecord
     increment!(:position)
   end
 
+  def discard
+    update(location: 'discard', status: 'discarded')
+  end
+
   def take_damage(attack)
     decrement!(:health_current, attack)
     health_current <= 0 ? set_to_graveyard : status_in_play

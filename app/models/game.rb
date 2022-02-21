@@ -123,7 +123,8 @@ class Game < ApplicationRecord
     card.player.cards.in_battle.where('position >= ?', position).each(&:increment_position)
     card.move_to_battle(position)
     card.battlecry.trigger(card, target) if card.battlecry.present?
-    touch
+    broadcast_perspective_for(player_one, card)
+    broadcast_perspective_for(player_two, card)
   end
 
   #========|Party Card Battle|======
@@ -155,20 +156,22 @@ class Game < ApplicationRecord
   end
 
   # Broadcast game over websocket
-  def broadcast_perspective_for(player)
+  def broadcast_perspective_for(player, last_played_card = nil)
     broadcast_update_later_to [self, player.user], target: "game_#{id}_for_#{player.user.id}",
                                                    locals: { game: self,
                                                              first_person_player: player,
-                                                             opposing_player: opposing_player_of(player) }
+                                                             opposing_player: opposing_player_of(player),
+                                                             last_played_card: last_played_card }
   end
 
   # Broadcast game over websocket SYNC. Use only in specific scenarios needing order of broadcast chains
   # i.e Broadcasting a gamestate before immedately updating gamestate so broadcast uses the original game state
-  def broadcast_immediate_perspective_for(player)
+  def broadcast_immediate_perspective_for(player, last_played_card = nil)
     broadcast_update_to [self, player.user], target: "game_#{id}_for_#{player.user.id}",
                                              locals: { game: self,
                                                        first_person_player: player,
-                                                       opposing_player: opposing_player_of(player) }
+                                                       opposing_player: opposing_player_of(player),
+                                                       last_played_card: last_played_card }
     sleep 0.2 # Prefer use of a JS listener to respond back to rails to request a broadcast, but this for now allows animations to complete before updating
   end
 end

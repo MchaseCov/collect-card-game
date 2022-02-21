@@ -69,8 +69,8 @@ class Player < ApplicationRecord
 
   def draw_mulligan_cards
     initial_draw = (turn_order ? 3 : 4)
-    party_card_gamestates.in_mulligan.each(&:move_to_deck)
-    party_card_gamestates.sample(initial_draw).each(&:move_to_mulligan)
+    cards.in_mulligan.each(&:move_to_deck)
+    cards.sample(initial_draw).each(&:move_to_mulligan)
   end
 
   def set_starting_hand
@@ -110,8 +110,19 @@ class Player < ApplicationRecord
     update(cost_current: cost_cap, resource_current: resource_cap)
   end
 
+  # Using an amount loop rather than .sample(amount) to burn individual cards
   def draw_cards(amount)
-    party_card_gamestates.in_deck.sample(amount).each(&:move_to_hand)
+    amount.times do
+      next take_empty_deck_fatigue if party_card_gamestates.in_deck.size <= 0
+
+      topdeck = party_card_gamestates.in_deck.sample
+      cards.in_hand.size >= 10 ? topdeck.discard : topdeck.move_to_hand
+    end
+  end
+
+  def take_empty_deck_fatigue
+    update(health_current: (health_current / 2))
+    game.update(status: 'over', ongoing: false) if health_current <= 0
   end
 
   def recount_deck_size

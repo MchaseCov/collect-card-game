@@ -39,6 +39,21 @@
   100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 
+@keyframes played-card-animation {
+  0% { transform: translate(-100vw, -100vh) scale(1.0); }
+  10% { transform :scale(1.0);}
+  15% { transform: translate(0, 0) scale(1.5); }
+  80% { transform: translate(0, 0) scale(1.5); }
+  85% { transform :scale(1.0);}
+  100% { transform: translate(-100vw, 0) scale(1.0); }
+
+}
+
+#animated-card{
+  animation: played-card-animation 5.0s;
+  animation-fill-mode: forwards;
+}
+
 #fp-cards-hand{
   transition: bottom 0.3s ease-in;
 }
