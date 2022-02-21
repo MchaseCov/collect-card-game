@@ -2,15 +2,18 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['battlefield', 'player'];
+  static targets = ['animationValueHolder', 'battlefield', 'player'];
 
-  static values = {
-    attacker: Object, defender: Object,
-  };
+  animationValueHolderTargetConnected(element) {
+    const animationData = element.dataset;
+    if (animationData.attackerValue !== 'null') {
+      this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue));
+    }
+  }
 
-  defenderValueChanged() {
-    const defender = this.getActorFromObject(this.defenderValue);
-    const attacker = this.getActorFromObject(this.attackerValue);
+  animateBattle(attackerObj, defenderObj) {
+    const attacker = this.getActorFromObject(attackerObj);
+    const defender = this.getActorFromObject(defenderObj);
     const translation = this.findDifferenceInPositions(attacker, defender);
     this.translateToAndFrom(attacker, translation);
   }
@@ -24,7 +27,7 @@ export default class extends Controller {
       case 'PartyCardGamestate':
         return this.battlefieldTarget.querySelector(`[data-id="${id}"]`);
       case 'Player':
-        return this.playerTargets.find((el) => el.dataset.playerId === id);
+        return this.playerTargets.find((el) => el.dataset.playerId == id);
       default:
         return false;
     }

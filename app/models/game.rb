@@ -135,19 +135,18 @@ class Game < ApplicationRecord
   def conduct_attack(attacker, defender)
     return unless attacker.status == 'attacking'
 
-    animate_attack_for_reciever(attacker, defender)
+    touch and return unless broadcast_battle_animations(attacker, defender)
+
     deal_attack_damage(attacker, defender)
+    sleep 0.5
     touch
   end
 
-  private
-
-  # Updates status attribute for stimulus controller and broadcast
-  def animate_attack_for_reciever(attacker, defender)
-    attacker.update(status: 'currently_attacking')
-    defender.update(status: 'currently_defending')
-    broadcast_immediate_perspective_for((defender.is_a?(Player) ? defender : defender.player))
+  def broadcast_battle_animations(attacker, defender)
+    players.each { |p| broadcast_animation(p, attacker, defender) }
   end
+
+  private
 
   # Update health of cards in battle
   def deal_attack_damage(attacker, defender)
@@ -164,14 +163,12 @@ class Game < ApplicationRecord
                                                              last_played_card: last_played_card }
   end
 
-  # Broadcast game over websocket SYNC. Use only in specific scenarios needing order of broadcast chains
-  # i.e Broadcasting a gamestate before immedately updating gamestate so broadcast uses the original game state
-  def broadcast_immediate_perspective_for(player, last_played_card = nil)
-    broadcast_update_to [self, player.user], target: "game_#{id}_for_#{player.user.id}",
-                                             locals: { game: self,
-                                                       first_person_player: player,
-                                                       opposing_player: opposing_player_of(player),
-                                                       last_played_card: last_played_card }
-    sleep 0.2 # Prefer use of a JS listener to respond back to rails to request a broadcast, but this for now allows animations to complete before updating
+  # Broadcasts to the portion of the page that handles animation data for Stimulus. Passes no full objects, only IDs.
+  # animations_controller.js does the work of interpreting and animating the data
+  def broadcast_animation(player, attacker = nil, defender = nil)
+    broadcast_update_to [self, player.user], partial: 'games/animations',
+                                             target: 'animation-data',
+                                             locals: { attacker: { attacker.class.name => attacker.id },
+                                                       defender: { defender.class.name => defender.id } }
   end
 end

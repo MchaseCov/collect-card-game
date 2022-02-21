@@ -63,7 +63,6 @@ export default class extends Controller {
 
   drop(event) {
     event.stopPropagation();
-    this.translateTo(this.dragSrcEl, event.target);
     if (event.target.dataset.playerId) {
       this.postPlayerCombat(event.target)
     } else {
@@ -77,24 +76,13 @@ export default class extends Controller {
     this.enemyActorTargets.forEach((el) => el.classList.remove('shadow-2xl'));
   }
 
-  translateTo(attacker, target) {
-    const attackerCoords = attacker.getBoundingClientRect();
-    const targetCoords = target.getBoundingClientRect();
-    const translation = {
-      x: (targetCoords.x - attackerCoords.x) * 0.75,
-      y: (targetCoords.y - attackerCoords.y) * 0.75,
-    };
-    attacker.style.transform = `translate(${~~translation.x}px, ${~~translation.y}px)`;
-  }
 
   errorFeedback(target) {
     target.classList.add('shake');
     setTimeout(() => { target.classList.remove('shake'); }, 500);
   }
 
-// Wait 0.1 seconds before POSTing for the sake of the animation's playtmie
   postMinionCombat(target) {
-  //setTimeout(() => {
     fetch(`/games/${this.element.dataset.game}/minion_combat`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -108,10 +96,8 @@ export default class extends Controller {
         target_id: target.dataset.id,
       }),
     });
- // }, 100);
 }
   postPlayerCombat(target) {
-    //setTimeout(() => {
       fetch(`/games/${this.element.dataset.game}/player_combat`, {
         method: 'POST',
         credentials: 'same-origin',
@@ -125,6 +111,5 @@ export default class extends Controller {
           target_id: target.dataset.playerId,
         }),
       });
-   // }, 100);
   }
 }

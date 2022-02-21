@@ -1,3 +1,6 @@
+<div id="animation-data" class="hidden">
+  <%= render 'games/animations', attacker: nil, defender: nil  %>
+</div>
 <aside id="sidebar w-max h-full relative top-0">
   <section id="op-deck" class="flex flex-row gap-x-3 absolute top-5">
     <div class="w-40 h-60 relative text-white border-2 border-black rounded bg-slate-700 text-center">
@@ -20,13 +23,11 @@
 <article id="main-game-board"
 class="h-full flex flex-col flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
 
-data-controller="drag-party-play style-cards drag-battle battlecry-select animations"
+data-controller="drag-party-play style-cards drag-battle battlecry-select"
 data-game='<%=game.id%>'
 data-drag-party-play-player-cost-value='<%=first_person_player.cost_current%>'
 data-drag-party-play-game-turn-value='<%=game.turn%>'
 data-drag-party-play-player-turn-value='<%=first_person_player.turn_order%>'
-data-animations-attacker-value='<%= JSON(attacker)%>'
-data-animations-defender-value='<%= JSON(defender)%>'
 data-action="drag-party-play:loadBattlecryController->battlecry-select#loadController">
   <section id="op-info" class=" w-full h-1/3 relative">
     <section id="op-cards-hand" class="w-full ml-auto text-center has-tooltip shrink flex-nowrap whitespace-nowrap flex-1 absolute -top-16">
