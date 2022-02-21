@@ -94,7 +94,7 @@ export default class extends Controller {
 
 // Wait 0.1 seconds before POSTing for the sake of the animation's playtmie
   postMinionCombat(target) {
-  setTimeout(() => {
+  //setTimeout(() => {
     fetch(`/games/${this.element.dataset.game}/minion_combat`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -108,11 +108,11 @@ export default class extends Controller {
         target_id: target.dataset.id,
       }),
     });
-  }, 100);
+ // }, 100);
 }
   postPlayerCombat(target) {
-    setTimeout(() => {
-      fetch(`/games/${this.gameValue}/player_combat`, {
+    //setTimeout(() => {
+      fetch(`/games/${this.element.dataset.game}/player_combat`, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
@@ -125,6 +125,6 @@ export default class extends Controller {
           target_id: target.dataset.playerId,
         }),
       });
-    }, 100);
+   // }, 100);
   }
 }

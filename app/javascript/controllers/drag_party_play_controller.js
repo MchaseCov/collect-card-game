@@ -67,7 +67,7 @@ export default class extends Controller {
   drop(event) {
     event.stopPropagation();
 
-    if (this.validTargets) {
+    if (this.validTargets != undefined) {
       this.enableBattlecrySelectControllerAttributes(event.target);
     } else {
       this.translateTo(this.dragSrcEl, event.target);
