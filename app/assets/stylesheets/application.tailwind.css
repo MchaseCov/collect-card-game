@@ -25,6 +25,41 @@
   animation: shake 0.5s;
 }
 
+
+#animated-card{
+  animation: played-card-animation 5.0s;
+  animation-fill-mode: forwards;
+}
+
+#fp-cards-hand{
+  transition: bottom 0.3s ease-in;
+}
+
+.card-to-left{
+  animation: shift-cards-left 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.card-to-right{
+  animation: shift-cards-right 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.card-from-hand{
+  animation: card-from-hand 0.5s;
+  animation-fill-mode: forwards;
+  transition: transform 0.4s linear;
+  transform: translate(0px, 0);
+  will-change: transform;
+}
+
+.last-played-card{
+  opacity: 0;
+  transform: scale(0.25);
+  animation: card-fade-in 0.5s;
+  animation-fill-mode: forwards;
+}
+
 @keyframes shake {
   0% { transform: translate(1px, 1px) rotate(0deg); }
   10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -46,14 +81,24 @@
   80% { transform: translate(0, 0) scale(1.5); }
   85% { transform :scale(1.0);}
   100% { transform: translate(-100vw, 0) scale(1.0); }
-
 }
 
-#animated-card{
-  animation: played-card-animation 5.0s;
-  animation-fill-mode: forwards;
+@keyframes shift-cards-left {
+  from { transform: translate(0px, 0px); }
+  to { transform: translate(-82px, 0px); }
 }
 
-#fp-cards-hand{
-  transition: bottom 0.3s ease-in;
+@keyframes shift-cards-right {
+  from { transform: translate(0px, 0px); }
+  to { transform: translate(82px, 0px); }
+}
+
+@keyframes card-from-hand{
+  from {opacity: 1}
+  to {opacity: 0;}
+}
+
+@keyframes card-fade-in{
+  from   {transform: scale(.25);opacity: 0}
+  to  { transform: scale(1.0);opacity: 1;}
 }

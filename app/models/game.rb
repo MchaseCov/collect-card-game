@@ -21,9 +21,8 @@ class Game < ApplicationRecord
   # Players have a seperate websocket connection which allows us to broadcast to only
   # one player at certain points to control the information the player sees about game state.
   after_touch do
-    game = Game.find(id)
-    broadcast_perspective_for(game.player_one)
-    broadcast_perspective_for(game.player_two)
+    broadcast_perspective_for(player_one)
+    broadcast_perspective_for(player_two)
   end
 
   #=======================================|GAME ASSOCIATIONS|=======================================
@@ -120,11 +119,12 @@ class Game < ApplicationRecord
   def put_card_in_play(card, position, target)
     return unless current_player.spend_coins_on_card(card)
 
-    card.player.cards.in_battle.where('position >= ?', position).each(&:increment_position)
+    broadcast_card_play_animations(card, position)
+    card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
     card.move_to_battle(position)
     card.battlecry.trigger(card, target) if card.battlecry.present?
-    broadcast_perspective_for(player_one, card)
-    broadcast_perspective_for(player_two, card)
+    sleep 0.5
+    players.each { |p| broadcast_perspective_for(p, card) }
   end
 
   #========|Party Card Battle|======
@@ -143,7 +143,12 @@ class Game < ApplicationRecord
   end
 
   def broadcast_battle_animations(attacker, defender)
-    players.each { |p| broadcast_animation(p, attacker, defender) }
+    players.each { |p| broadcast_animation_battle(p, attacker, defender) }
+  end
+
+  def broadcast_card_play_animations(card, position)
+    broadcast_animation_played_card(card.player, 'fp', card.id, position)
+    broadcast_animation_played_card(opposing_player_of(card.player), 'op', card.id, position)
   end
 
   private
@@ -165,10 +170,24 @@ class Game < ApplicationRecord
 
   # Broadcasts to the portion of the page that handles animation data for Stimulus. Passes no full objects, only IDs.
   # animations_controller.js does the work of interpreting and animating the data
-  def broadcast_animation(player, attacker = nil, defender = nil)
+  def broadcast_animation_battle(player, attacker, defender)
     broadcast_update_to [self, player.user], partial: 'games/animations',
                                              target: 'animation-data',
                                              locals: { attacker: { attacker.class.name => attacker.id },
-                                                       defender: { defender.class.name => defender.id } }
+                                                       defender: { defender.class.name => defender.id },
+                                                       hand: nil,
+                                                       played_card_id: nil,
+                                                       target_id: nil }
+  end
+
+  # Intentionally using seperate methods for different animation types to discourage overlap & messy optional args
+  def broadcast_animation_played_card(player, hand, played_card_id, target_id)
+    broadcast_update_to [self, player.user], partial: 'games/animations',
+                                             target: 'animation-data',
+                                             locals: { attacker: nil,
+                                                       defender: nil,
+                                                       hand: hand,
+                                                       played_card_id: played_card_id,
+                                                       target_id: target_id }
   end
 end

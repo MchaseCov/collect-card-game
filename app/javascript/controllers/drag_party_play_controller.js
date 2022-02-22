@@ -30,7 +30,7 @@ export default class extends Controller {
       this.errorFeedback(event.target);
       event.preventDefault();
     } else {
-      this.boardSpaceTargets.forEach((el) => el.classList.remove('hidden'));
+      this.boardSpaceTargets.forEach((el) =>{ el.classList.add('w-5', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5')});
       event.target.classList.add('shadow-2xl', 'shadow-lime-500');
       this.dragSrcEl = event.target;
       this.validTargets = event.target.validTargets;
@@ -60,21 +60,19 @@ export default class extends Controller {
     // Remove lime color. Return to small size
     event.target.classList.remove('bg-lime-500');
     if (this.boardSpaceTargets.length > 1) {
-      event.target.style.width = '1.25rem';
+      event.target.style.width = '0rem';
     }
   }
 
   drop(event) {
     event.stopPropagation();
+    this.boardSpaceTargets.forEach((el) => el.className = "");
+    event.target.style.width = '0rem';
 
     if (this.validTargets != undefined) {
       this.enableBattlecrySelectControllerAttributes(event.target);
     } else {
-      this.translateTo(this.dragSrcEl, event.target);
-    // Wait 0.15 seconds before POSTing for the sake of the animation's playtime
-      setTimeout(() => {
         this.postToPlayCardPath(event.target);
-      }, 150);
     }
   }
 
@@ -82,18 +80,8 @@ export default class extends Controller {
     if (this.dragSrcEl) {
     // Remove all shadows from friendly cards and then enemy cards
       this.dragSrcEl.classList.remove('shadow-2xl', 'shadow-lime-500');
-      this.boardSpaceTargets.forEach((el) => el.classList.add('hidden'));
+      this.boardSpaceTargets.forEach((el) => el.classList.remove('w-5', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5'));
     }
-  }
-
-  translateTo(playedCard, target) {
-    const playedCardCoords = playedCard.getBoundingClientRect();
-    const targetCoords = target.getBoundingClientRect();
-    const translation = {
-      x: (targetCoords.x - playedCardCoords.x),
-      y: (targetCoords.y - playedCardCoords.y),
-    };
-    playedCard.style.transform = `translate(${translation.x}px, ${translation.y}px)`;
   }
 
   errorFeedback(target) {

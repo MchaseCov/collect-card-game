@@ -1,5 +1,5 @@
 <div id="animation-data" class="hidden">
-  <%= render 'games/animations', attacker: nil, defender: nil  %>
+  <%= render 'games/animations', attacker: nil, defender: nil, hand: nil, played_card_id: nil, target_id: nil  %>
 </div>
 <aside id="sidebar w-max h-full relative top-0">
   <section id="op-deck" class="flex flex-row gap-x-3 absolute top-5">
@@ -30,10 +30,10 @@ data-drag-party-play-game-turn-value='<%=game.turn%>'
 data-drag-party-play-player-turn-value='<%=first_person_player.turn_order%>'
 data-action="drag-party-play:loadBattlecryController->battlecry-select#loadController">
   <section id="op-info" class=" w-full h-1/3 relative">
-    <section id="op-cards-hand" class="w-full ml-auto text-center has-tooltip shrink flex-nowrap whitespace-nowrap flex-1 absolute -top-16">
+    <section id="op-cards-hand" class="w-full ml-auto text-center has-tooltip shrink flex-nowrap whitespace-nowrap flex-1 absolute -top-16" data-animations-target="hand">
       <div class="tooltip left-0 right-0 -bottom-10 text-center" >Your opponent has <%=opposing_player.cards.in_hand.size%> cards in hand.</div>
-      <% opposing_player.cards.in_hand.size.times do%>
-        <div class="w-40 h-60 max-h-60 relative text-white border-2 border-black rounded bg-slate-700 inline-block -ml-10 -mt-12"></div>
+      <% opposing_player.cards.in_hand.each do |c|%>
+        <div class="w-40 h-60 max-h-60 relative text-white border-2 border-black rounded bg-slate-700 inline-block -ml-10 -mt-12" data-id="<%=c.id%>"></div>
       <% end %>
     </section>
     <div id="op-player-info"
@@ -59,6 +59,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
     <%= render 'games/card_animation_window', card: last_played_card if last_played_card %>
     <%= render 'games/mulligan', first_person_player: first_person_player, game: game if game.status == "mulligan"%>
     <div id="op-cards-battle" class="flex flex-row w-full justify-center items-center">
+      <div class="hidden" data-id="0"></div>
       <%= render partial: "party_card_gamestates/enemy_card_on_board", collection:opposing_player.cards.in_battle.includes(party_card_parent: :archetype).order(:position), as: :card %>
     </div>
     <div id="fp-cards-battle" class="flex flex-row w-full justify-center items-center">
@@ -84,7 +85,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
         <%=first_person_player.health_current%>
       </div>
     </div>
-    <div id="fp-cards-hand" class="w-full ml-auto text-center whitespace-nowrap absolute -bottom-32 hover:bottom-0">
+    <div id="fp-cards-hand" class="w-full ml-auto text-center whitespace-nowrap absolute -bottom-32 hover:bottom-0" data-animations-target="hand">
       <%= render partial: "party_card_gamestates/card_in_hand", collection:first_person_player.cards.includes(:archetype, party_card_parent: :battlecry).in_hand.order(updated_at: :desc), as: :card, locals:{game: game, first_person_player: first_person_player}, cached: true %>
     </div>
   </section>

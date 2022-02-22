@@ -74,7 +74,6 @@ export default class extends Controller {
   }
 
   selectTarget(event) {
-    this.partyPlayController.translateTo(this.inPlayBattlecryTarget, event.target)
     fetch(`/games/${this.element.dataset.game}/play_card`, {
       method: 'POST',
       credentials: 'same-origin',

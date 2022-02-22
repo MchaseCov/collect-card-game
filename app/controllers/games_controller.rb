@@ -28,7 +28,7 @@ class GamesController < ApplicationController
     card = @player.party_card_gamestates
                   .includes(:party_card_parent, :gamestate_deck, :archetype)
                   .find(params[:card_id])
-    @game.put_card_in_play(card, (params[:position].to_i + 1), params[:battlecry_target])
+    @game.put_card_in_play(card, params[:position].to_i, params[:battlecry_target])
   end
 
   def end_turn
