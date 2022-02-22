@@ -65,11 +65,16 @@ class PartyCardGamestate < ApplicationRecord
   end
 
   def set_to_graveyard
+    player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
     update(location: 'graveyard', status: 'dead')
   end
 
   def increment_position
     increment!(:position)
+  end
+
+  def decrement_position
+    decrement!(:position)
   end
 
   def discard
