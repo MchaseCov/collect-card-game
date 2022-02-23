@@ -2,17 +2,18 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['animationValueHolder', 'battlefield', 'player', 'hand', 'lastPlayed'];
+  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'battlefield', 'player', 'hand', 'lastPlayed'];
 
-  animationValueHolderTargetConnected(element) {
+  battleAnimationValuesTargetConnected(element){
+    const animationData = element.dataset;
+    this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue));
+    element.remove()
+  }
+
+  fromHandAnimationValuesTargetConnected(element) {
     const animationData = element.dataset;
     if (this.lastPlayedCard) {this.lastPlayedCard.classList.remove('last-played-card')}
-    if (animationData.attackerValue !== 'null') {
-      this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue));
-    }
-    if (animationData.playedCardId) {
-      this.animateCardPlay(this.setCardAnimationValues(animationData));
-    }
+    this.animateCardPlay(this.setCardAnimationValues(animationData));
     element.remove()
   }
 

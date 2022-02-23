@@ -171,22 +171,17 @@ class Game < ApplicationRecord
   # Broadcasts to the portion of the page that handles animation data for Stimulus. Passes no full objects, only IDs.
   # animations_controller.js does the work of interpreting and animating the data
   def broadcast_animation_battle(player, attacker, defender)
-    broadcast_update_to [self, player.user], partial: 'games/animations',
+    broadcast_update_to [self, player.user], partial: 'games/animations/battle',
                                              target: 'animation-data',
                                              locals: { attacker: { attacker.class.name => attacker.id },
-                                                       defender: { defender.class.name => defender.id },
-                                                       hand: nil,
-                                                       played_card_id: nil,
-                                                       target_id: nil }
+                                                       defender: { defender.class.name => defender.id } }
   end
 
   # Intentionally using seperate methods for different animation types to discourage overlap & messy optional args
   def broadcast_animation_played_card(player, hand, played_card_id, target_id)
-    broadcast_update_to [self, player.user], partial: 'games/animations',
+    broadcast_update_to [self, player.user], partial: 'games/animations/from_hand',
                                              target: 'animation-data',
-                                             locals: { attacker: nil,
-                                                       defender: nil,
-                                                       hand: hand,
+                                             locals: { hand: hand,
                                                        played_card_id: played_card_id,
                                                        target_id: target_id }
   end
