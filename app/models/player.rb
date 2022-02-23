@@ -99,6 +99,7 @@ class Player < ApplicationRecord
   def take_damage(attack)
     decrement!(:health_current, attack)
     health_current <= 0 ? game.update(status: 'over', ongoing: false) : update(status: 'default')
+    nil
   end
 
   private

@@ -138,8 +138,7 @@ class Game < ApplicationRecord
     touch and return unless broadcast_battle_animations(attacker, defender)
 
     dead_cards = deal_attack_damage(attacker, defender)
-    broadcast_death_animations(dead_cards) if dead_cards
-    sleep 0.5
+    broadcast_death_animations(dead_cards) unless dead_cards.empty?
     touch
   end
 
@@ -163,7 +162,8 @@ class Game < ApplicationRecord
     dead = []
     dead << defender.take_damage(attacker.attack_current)
     dead << attacker.take_damage(defender.attack_current)
-    return dead unless dead.empty?
+    attacker.status_in_play
+    dead.compact
   end
 
   # Broadcast game over websocket

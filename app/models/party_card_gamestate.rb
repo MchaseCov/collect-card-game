@@ -84,6 +84,8 @@ class PartyCardGamestate < ApplicationRecord
   def take_damage(attack)
     decrement!(:health_current, attack)
     set_to_graveyard and return id if health_current <= 0
+
+    nil
   end
 
   def increase_health_cap(amount)

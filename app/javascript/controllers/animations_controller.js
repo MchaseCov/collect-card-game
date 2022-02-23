@@ -124,14 +124,10 @@ export default class extends Controller {
   }
 
   killCard(card){
-    const leftCards = this.collectRelatives(card, 'previousElementSibling');
-    const rightCards = this.collectRelatives(card, 'nextElementSibling');
-    card.classList.add('grayscale', 'dying-card');
-
-    card.onanimationend = () => {
-      this.animateCardsOnBoard(leftCards, 'right');
-      this.animateCardsOnBoard(rightCards, 'left');
-    };
+    card.classList.add('grayscale', 'dying-card', 'overflow-hidden');
+    card.nextElementSibling.style.width = "0px";
+    card.style.width = "0px";
+    card.style.margin = "0px";
   }
 
 }
