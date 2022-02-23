@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'battlefield', 'player', 'hand', 'lastPlayed'];
+  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'battlefield', 'player', 'hand', 'lastPlayed'];
 
   battleAnimationValuesTargetConnected(element){
     const animationData = element.dataset;
@@ -15,6 +15,12 @@ export default class extends Controller {
     if (this.lastPlayedCard) {this.lastPlayedCard.classList.remove('last-played-card')}
     this.animateCardPlay(this.setCardAnimationValues(animationData));
     element.remove()
+  }
+
+  cardDeathAnimationValuesTargetConnected(element) {
+    const dyingCardIds = JSON.parse(element.dataset.deadCards);
+    const dyingCards = dyingCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`))
+    dyingCards.forEach((card) => this.killCard(card))
   }
 
   lastPlayedTargetConnected(element){
@@ -71,7 +77,6 @@ export default class extends Controller {
   animateCardPlay(playedCardValues) {
     const leftCards = this.collectRelatives(playedCardValues.targetPosition, 'previousElementSibling');
     const rightCards = this.collectRelatives(playedCardValues.targetPosition, 'nextElementSibling');
-    console.log(leftCards, "and", rightCards)
     this.animateCardsOnBoard(leftCards, 'left');
     this.animateCardsOnBoard(rightCards, 'right');
     this.animateCardFromHand(playedCardValues);
@@ -116,6 +121,17 @@ export default class extends Controller {
       relatives.push(e);
     }
     return relatives;
+  }
+
+  killCard(card){
+    const leftCards = this.collectRelatives(card, 'previousElementSibling');
+    const rightCards = this.collectRelatives(card, 'nextElementSibling');
+    card.classList.add('grayscale', 'dying-card');
+
+    card.onanimationend = () => {
+      this.animateCardsOnBoard(leftCards, 'right');
+      this.animateCardsOnBoard(rightCards, 'left');
+    };
   }
 
 }

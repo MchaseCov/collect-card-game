@@ -137,7 +137,8 @@ class Game < ApplicationRecord
 
     touch and return unless broadcast_battle_animations(attacker, defender)
 
-    deal_attack_damage(attacker, defender)
+    dead_cards = deal_attack_damage(attacker, defender)
+    broadcast_death_animations(dead_cards) if dead_cards
     sleep 0.5
     touch
   end
@@ -151,12 +152,18 @@ class Game < ApplicationRecord
     broadcast_animation_played_card(opposing_player_of(card.player), 'op', card.id, position)
   end
 
+  def broadcast_death_animations(dead_cards)
+    players.each { |p| broadcast_animation_dead_cards(p, dead_cards) }
+  end
+
   private
 
   # Update health of cards in battle
   def deal_attack_damage(attacker, defender)
-    defender.take_damage(attacker.attack_current)
-    attacker.take_damage(defender.attack_current)
+    dead = []
+    dead << defender.take_damage(attacker.attack_current)
+    dead << attacker.take_damage(defender.attack_current)
+    return dead unless dead.empty?
   end
 
   # Broadcast game over websocket
@@ -177,12 +184,17 @@ class Game < ApplicationRecord
                                                        defender: { defender.class.name => defender.id } }
   end
 
-  # Intentionally using seperate methods for different animation types to discourage overlap & messy optional args
   def broadcast_animation_played_card(player, hand, played_card_id, target_id)
     broadcast_update_to [self, player.user], partial: 'games/animations/from_hand',
                                              target: 'animation-data',
                                              locals: { hand: hand,
                                                        played_card_id: played_card_id,
                                                        target_id: target_id }
+  end
+
+  def broadcast_animation_dead_cards(player, dead)
+    broadcast_update_to [self, player.user], partial: 'games/animations/card_death',
+                                             target: 'animation-data',
+                                             locals: { cards: dead }
   end
 end
