@@ -1,3 +1,6 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
 import "controllers"
+import turboStreamQueue from './turbo_stream_queuer'
+
+document.addEventListener('turbo:before-stream-render', async (event) => {turboStreamQueue(event)});

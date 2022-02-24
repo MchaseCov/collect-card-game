@@ -102,7 +102,6 @@ class Game < ApplicationRecord
     current_player.put_cards_to_sleep
     update(turn: !turn)
     reload.current_player
-
     start_of_turn_actions
     touch
   end
@@ -123,7 +122,6 @@ class Game < ApplicationRecord
     card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
     card.move_to_battle(position)
     card.battlecry.trigger(card, target) if card.battlecry.present?
-    sleep 0.5
     players.each { |p| broadcast_perspective_for(p, card) }
   end
 
@@ -178,23 +176,23 @@ class Game < ApplicationRecord
   # Broadcasts to the portion of the page that handles animation data for Stimulus. Passes no full objects, only IDs.
   # animations_controller.js does the work of interpreting and animating the data
   def broadcast_animation_battle(player, attacker, defender)
-    broadcast_update_to [self, player.user], partial: 'games/animations/battle',
-                                             target: 'animation-data',
-                                             locals: { attacker: { attacker.class.name => attacker.id },
-                                                       defender: { defender.class.name => defender.id } }
+    broadcast_update_later_to [self, player.user], partial: 'games/animations/battle',
+                                                   target: 'animation-data',
+                                                   locals: { attacker: { attacker.class.name => attacker.id },
+                                                             defender: { defender.class.name => defender.id } }
   end
 
   def broadcast_animation_played_card(player, hand, played_card_id, target_id)
-    broadcast_update_to [self, player.user], partial: 'games/animations/from_hand',
-                                             target: 'animation-data',
-                                             locals: { hand: hand,
-                                                       played_card_id: played_card_id,
-                                                       target_id: target_id }
+    broadcast_update_later_to [self, player.user], partial: 'games/animations/from_hand',
+                                                   target: 'animation-data',
+                                                   locals: { hand: hand,
+                                                             played_card_id: played_card_id,
+                                                             target_id: target_id }
   end
 
   def broadcast_animation_dead_cards(player, dead)
-    broadcast_update_to [self, player.user], partial: 'games/animations/card_death',
-                                             target: 'animation-data',
-                                             locals: { cards: dead }
+    broadcast_update_later_to [self, player.user], partial: 'games/animations/card_death',
+                                                   target: 'animation-data',
+                                                   locals: { cards: dead }
   end
 end

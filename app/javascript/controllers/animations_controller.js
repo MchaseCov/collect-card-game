@@ -7,17 +7,16 @@ export default class extends Controller {
   battleAnimationValuesTargetConnected(element){
     const animationData = element.dataset;
     this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue));
-    element.remove()
   }
 
   fromHandAnimationValuesTargetConnected(element) {
     const animationData = element.dataset;
     if (this.lastPlayedCard) {this.lastPlayedCard.classList.remove('last-played-card')}
     this.animateCardPlay(this.setCardAnimationValues(animationData));
-    element.remove()
   }
 
   cardDeathAnimationValuesTargetConnected(element) {
+    console.log(element.dataset.deadCards)
     const dyingCardIds = JSON.parse(element.dataset.deadCards);
     const dyingCards = dyingCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`))
     dyingCards.forEach((card) => this.killCard(card))
