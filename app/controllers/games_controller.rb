@@ -69,6 +69,7 @@ class GamesController < ApplicationController
   end
 
   def conduct_mulligan
+    # Safety check for if game is in mulligan but player does not have any mulligan cards.
     return if !current_users_turn || @player.mulligan_cards.any?
 
     @player.draw_mulligan_cards

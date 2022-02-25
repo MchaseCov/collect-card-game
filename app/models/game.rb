@@ -79,6 +79,7 @@ class Game < ApplicationRecord
     new_game = Game.create!
     new_game.populate_players(queued_deck_one, queued_deck_two)
     new_game.populate_decks(queued_deck_one, queued_deck_two)
+    new_game.draw_mulligan_cards
     new_game
   end
 
@@ -92,6 +93,10 @@ class Game < ApplicationRecord
   def populate_decks(queued_deck_one, queued_deck_two)
     @player_one.gamestate_deck.prepare_deck(queued_deck_one)
     @player_two.gamestate_deck.prepare_deck(queued_deck_two)
+  end
+
+  def draw_mulligan_cards
+    players.each(&:draw_mulligan_cards)
   end
 
   #========|Turn Changing|======
