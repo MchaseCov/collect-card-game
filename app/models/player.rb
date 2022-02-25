@@ -116,8 +116,13 @@ class Player < ApplicationRecord
     amount.times do
       next take_empty_deck_fatigue if party_card_gamestates.in_deck.size <= 0
 
-      topdeck = party_card_gamestates.in_deck.sample
-      cards.in_hand.size >= 10 ? topdeck.discard : topdeck.move_to_hand
+      topdeck = cards.includes(:gamestate_deck, :party_card_parent, :archetype, :player).in_deck.sample
+      if cards.in_hand.size >= 10
+        topdeck.discard
+      else
+        topdeck.move_to_hand
+        game.broadcast_card_draw_animations(topdeck)
+      end
     end
   end
 

@@ -158,6 +158,11 @@ class Game < ApplicationRecord
     players.each { |p| broadcast_animation_dead_cards(p, dead_cards) }
   end
 
+  def broadcast_card_draw_animations(card)
+    broadcast_animation_card_draw(card.player, 'fp', card)
+    broadcast_animation_card_draw(opposing_player_of(card.player), 'op')
+  end
+
   private
 
   # Update health of cards in battle
@@ -199,5 +204,12 @@ class Game < ApplicationRecord
     broadcast_update_later_to [self, player.user], partial: 'games/animations/card_death',
                                                    target: 'animation-data',
                                                    locals: { cards: dead }
+  end
+
+  def broadcast_animation_card_draw(player, tag, card = nil)
+    broadcast_update_later_to [self, player.user], partial: "games/animations/#{tag}_draw_card",
+                                                   target: 'animation-data',
+                                                   locals: { tag: tag,
+                                                             card: card }
   end
 end

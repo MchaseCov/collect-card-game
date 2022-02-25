@@ -2,29 +2,43 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'battlefield', 'player', 'hand', 'lastPlayed'];
+  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed'];
 
-  battleAnimationValuesTargetConnected(element){
+  // RELATED FUNCTIONS ARE LISTED IN ORDER OF CONNECTION FUNCTION
+
+  // ANIMATION FOR CARDS MEETING IN BATTLE
+  battleAnimationValuesTargetConnected(element) {
     const animationData = element.dataset;
     this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue));
+    element.remove()
   }
 
+  // ANIMATION FOR CARD MOVING FROM HAND TO BATTLEFIELD & FADING
   fromHandAnimationValuesTargetConnected(element) {
     const animationData = element.dataset;
-    if (this.lastPlayedCard) {this.lastPlayedCard.classList.remove('last-played-card')}
+    if (this.lastPlayedCard) { this.lastPlayedCard.classList.remove('last-played-card'); }
     this.animateCardPlay(this.setCardAnimationValues(animationData));
+    element.remove()
   }
 
+  // ANIMATION FOR CARDS DYING AND FADING FROM BATTLE
   cardDeathAnimationValuesTargetConnected(element) {
-    console.log(element.dataset.deadCards)
     const dyingCardIds = JSON.parse(element.dataset.deadCards);
-    const dyingCards = dyingCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`))
-    dyingCards.forEach((card) => this.killCard(card))
+    const dyingCards = dyingCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`));
+    dyingCards.forEach((card) => this.killCard(card));
+    element.remove()
   }
 
-  lastPlayedTargetConnected(element){
-    this.lastPlayedCard = this.battlefieldTarget.querySelector(`[data-id="${element.dataset.animationOf}"]`)
-    this.lastPlayedCard.classList.add('last-played-card')
+  // ANIMATION FOR CARD BEING DRAWN TO HAND
+  drawCardAnimationValuesTargetConnected(element) {
+    this.drawCardToHand(this.drawnCardTarget, element.dataset.playerIdentifier)
+    element.remove()
+  }
+  
+  // ANIMATION FOR EASING IN A CARD PLAYED TO BOARD
+  lastPlayedTargetConnected(element) {
+    this.lastPlayedCard = this.battlefieldTarget.querySelector(`[data-id="${element.dataset.animationOf}"]`);
+    this.lastPlayedCard.classList.add('last-played-card');
   }
 
   // BATTLE ANIMATION FUNCTIONS
@@ -82,10 +96,9 @@ export default class extends Controller {
   }
 
   animateCardFromHand(playedCardValues) {
-    let translation = this.findDifferenceInPositions(playedCardValues.cardElement, playedCardValues.targetPosition);
+    const translation = this.findDifferenceInPositions(playedCardValues.cardElement, playedCardValues.targetPosition);
     playedCardValues.cardElement.classList.add('card-from-hand');
     playedCardValues.cardElement.style.transform = `translate(${translation.x}px, ${translation.y}px)`;
-
   }
 
   animateCardsOnBoard(cards, direction) {
@@ -100,7 +113,7 @@ export default class extends Controller {
     return {
       cardElement: hand.querySelector(`[data-id="${animationData.playedCardId}"]`),
       targetPosition: battlefieldOfPlayer.querySelector(`[data-id="${animationData.targetId}"]`),
-      positionNumber: animationData.targetId
+      positionNumber: animationData.targetId,
     };
   }
 
@@ -122,11 +135,22 @@ export default class extends Controller {
     return relatives;
   }
 
-  killCard(card){
+  // CARD DEATH ANIMATION FUNCTION
+
+  killCard(card) {
     card.classList.add('grayscale', 'dying-card', 'overflow-hidden');
-    card.nextElementSibling.style.width = "0px";
-    card.style.width = "0px";
-    card.style.margin = "0px";
+    card.nextElementSibling.style.width = '0px';
+    card.style.width = '0px';
+    card.style.margin = '0px';
   }
 
+  // CARD DRAW ANIMATION FUNCTION
+
+  drawCardToHand(card, identifier){
+    const hand = this.handTargets.find((el) => el.id === `${identifier}-cards-hand`);
+    hand.appendChild(card)
+    const ytrans = (identifier == "fp" ? -8.6 : 8.6)
+    card.style.transform = `translate(33vw, ${ytrans}rem) rotateY(180deg)`;
+    card.classList.add('last-drawn');
+  }
 }

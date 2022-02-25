@@ -1,5 +1,5 @@
 <%= turbo_stream_from @game, current_user%>
-<div id="game-animations-container" class="w-full h-[99%] my-auto">
+<div id="game-animations-container" class="w-full h-full my-auto">
   <div id="<%="#{dom_id(@game)}_for_#{current_user.id}"%>" class="w-full h-full my-auto" data-controller="animations">
     <%= render @game, first_person_player: @first_person_player,
                       opposing_player: @opposing_player,
