@@ -1,5 +1,5 @@
 <div class="mx-auto z-50">
-  <% if first_person_player.turn_order == game.turn%>
+  <% if first_person_player.status == 'mulligan'%>
     <h2>You are going <%=first_person_player.turn_order ? "first" : "second"%></h2>
     <h3>You can choose to keep this starting hand or to replace it once before starting</h3>
     <div class="flex flex-row justify-center gap-x-5 mt-3">

@@ -14,12 +14,13 @@ class GamesController < ApplicationController
   end
 
   def submit_mulligan
-    return unless current_users_turn
+    @player = @game.players.find_by(user: current_user)
+    return unless @player && @player.status == 'mulligan'
 
     @player.draw_mulligan_cards if params[:mulligan] # When player requests a new hand
     @player.set_starting_hand
 
-    @game.end_turn
+    @game.players.in_mulligan? ? @game.touch : @game.begin_first_turn
   end
 
   def play_card

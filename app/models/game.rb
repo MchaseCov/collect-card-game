@@ -44,6 +44,10 @@ class Game < ApplicationRecord
                        def current_player(game)
                          find_by('turn_order = ?', game.turn)
                        end
+
+                       def in_mulligan?
+                         find_by(status: 'mulligan').present?
+                       end
                      end
 
   # "Alias" methods for the above associations.
@@ -97,6 +101,12 @@ class Game < ApplicationRecord
 
   def draw_mulligan_cards
     players.each(&:draw_mulligan_cards)
+  end
+
+  def begin_first_turn
+    update(status: 'ongoing')
+    start_of_turn_actions
+    touch
   end
 
   #========|Turn Changing|======
