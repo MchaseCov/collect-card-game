@@ -9,11 +9,9 @@ export default async function turboStreamQueue(event) {
     // and queue them to allow animations to proceed in order without interruption
     event.preventDefault();
     await new Promise((r) => setTimeout(r, (1000 * seconds)));
-    const newElementsArray = [...event.target.firstChild.content.children];
-    newElementsArray.forEach((element) => {
-      const match = document.getElementById(element.id);
-      match.replaceWith(element);
-    });
+    const target = document.getElementById(event.target.target);
+    target.innerHTML = '';
+    target.appendChild(event.target.firstChild.content);
   }
   await new Promise((r) => setTimeout(r, (1000)));
   streamCount--;
