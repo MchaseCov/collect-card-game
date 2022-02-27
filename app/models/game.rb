@@ -81,9 +81,9 @@ class Game < ApplicationRecord
   # Start of game creation. Input 2 decks. Output created
   def self.form_game(queued_deck_one, queued_deck_two)
     new_game = Game.create!
-    new_game.populate_players(queued_deck_one, queued_deck_two)
-    new_game.populate_decks(queued_deck_one, queued_deck_two)
-    new_game.draw_mulligan_cards and return new_game
+    new_game.send(:populate_players, queued_deck_one, queued_deck_two)
+    new_game.send(:populate_decks, queued_deck_one, queued_deck_two)
+    new_game.send(:draw_mulligan_cards) and return new_game
   end
 
   def begin_first_turn
@@ -134,6 +134,11 @@ class Game < ApplicationRecord
     touch
   end
 
+  def broadcast_card_draw_animations(card)
+    broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
+    broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
+  end
+
   private
 
   def broadcast_battle_animations(attacker, defender)
@@ -166,6 +171,7 @@ class Game < ApplicationRecord
 
   def start_of_turn_actions
     current_player.prepare_new_turn if status == 'ongoing'
+    update(turn_time: Time.now)
   end
 
   # Update health of cards in battle
@@ -188,11 +194,6 @@ class Game < ApplicationRecord
 
   def broadcast_death_animations(dead_cards)
     players.each { |p| broadcast_animations(p, 'card_death', { cards: dead_cards }) }
-  end
-
-  def broadcast_card_draw_animations(card)
-    broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
-    broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
   end
 
   def animate_end_of_mulligan

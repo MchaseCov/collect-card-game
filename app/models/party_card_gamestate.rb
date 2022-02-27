@@ -63,7 +63,7 @@ class PartyCardGamestate < ApplicationRecord
 
   def put_card_in_battle(position)
     move_to_battle
-    set_to_in_play
+    status_in_play
     update(position: position)
   end
 
