@@ -104,7 +104,10 @@ class Game < ApplicationRecord
   end
 
   def begin_first_turn
+    players.each(&:set_starting_hand)
     update(status: 'ongoing')
+    broadcast_animation_mulligan_end(player_one, player_two.cards.in_hand.size)
+    broadcast_animation_mulligan_end(player_two, player_one.cards.in_hand.size)
     start_of_turn_actions
     touch
   end
@@ -221,5 +224,11 @@ class Game < ApplicationRecord
                                                    target: 'animation-data',
                                                    locals: { tag: tag,
                                                              card: card }
+  end
+
+  def broadcast_animation_mulligan_end(player, count)
+    broadcast_update_later_to [self, player.user], partial: 'games/animations/end_mulligan',
+                                                   target: 'animation-data',
+                                                   locals: { count: count }
   end
 end

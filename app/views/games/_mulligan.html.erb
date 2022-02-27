@@ -1,14 +1,16 @@
-<div class="mx-auto z-50">
-  <% if first_person_player.status == 'mulligan'%>
-    <h2>You are going <%=first_person_player.turn_order ? "first" : "second"%></h2>
-    <h3>You can choose to keep this starting hand or to replace it once before starting</h3>
-    <div class="flex flex-row justify-center gap-x-5 mt-3">
-      <%= button_to "Keep cards", submit_mulligan_game_path(game) %>
-      <%= button_to "Redo cards", submit_mulligan_game_path(game, mulligan: true) %>
-    </div>
-  <% else %>
-    <h2> The opposing player is currently mulliganing, the game will start shortly</h2>
-  <% end %>
+<div id="mulliganRegion" class="z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center p-4 flex flex-col items-start h-72" data-gameboard-animations-target="mulliganRegion">
+  <div>
+    <% if first_person_player.status == 'mulligan'%>
+      <h2>You are going <%=first_person_player.turn_order ? "first" : "second"%></h2>
+      <h3>You can choose to keep this starting hand, or to replace it once before starting</h3>
+      <div class="flex flex-row justify-center gap-x-5 mt-3">
+        <%= button_to "Keep cards", submit_mulligan_game_path(game), class:"bg-green-500 rounded text-white px-5 py-2 my-2" %>
+        <%= button_to "Redo cards", submit_mulligan_game_path(game, mulligan: true), class:"bg-blue-500 rounded text-white px-5 py-2 my-2"%>
+      </div>
+    <% else %>
+      <h2> The opposing player is currently mulliganing, the game will start shortly</h2>
+    <% end %>
+  </div>
   <section id="mulligan-cards" class="flex flex-row w-full justify-center gap-x-2">
     <%= render partial: "games/party_card", collection:first_person_player.cards.includes(:archetype, :party_card_parent).in_mulligan , cached: true %>
   </section>

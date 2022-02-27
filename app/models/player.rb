@@ -77,7 +77,6 @@ class Player < ApplicationRecord
   def set_starting_hand
     party_card_gamestates.includes(:archetype, :party_card_parent, :gamestate_deck).in_mulligan.each(&:move_to_hand)
     recount_deck_size
-    update(status: 'default')
   end
 
   def prepare_new_turn

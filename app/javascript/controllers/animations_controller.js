@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed'];
+  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
 
   // RELATED FUNCTIONS ARE LISTED IN ORDER OF CONNECTION FUNCTION
 
@@ -39,6 +39,11 @@ export default class extends Controller {
   lastPlayedTargetConnected(element) {
     this.lastPlayedCard = this.battlefieldTarget.querySelector(`[data-id="${element.dataset.animationOf}"]`);
     this.lastPlayedCard.classList.add('last-played-card');
+  }
+
+  // ANIMATIONS FOR END OF MULLIGAN TRANSITION
+  mulliganEndingTargetConnected(element){
+    this.animateEndOfMulligan(this.setMulliganAnimationData(element))
   }
 
   // BATTLE ANIMATION FUNCTIONS
@@ -153,4 +158,58 @@ export default class extends Controller {
     card.style.transform = `translate(33vw, ${ytrans}rem) rotateY(180deg)`;
     card.classList.add('last-drawn');
   }
+
+  // END OF MULLIGAN TRANSITION FUNCTIONS
+
+  // SET ANIMATION DATA
+  setMulliganAnimationData(element){
+    const mulliganCardContainer = document.getElementById('mulligan-cards')
+    return {
+      mulliganContainer:document.getElementById('mulliganRegion'), // Top level mulligan container
+      mulliganCardContainer: mulliganCardContainer, // Top level mulligan container
+      mulliganCards: [...mulliganCardContainer.children], // Array of displayed card elements
+      hand: document.getElementById('fp-cards-hand'), // Friendly player hand
+      opponentHand:  document.getElementById('op-cards-hand'), // Opponent player hand
+      opponentCardCount: parseInt(element.dataset.opponentCardCount) // Amount of cards that opponent has in hand after mulligan phase ends.
+    };
+  }
+
+  // CREATE OPP CARDS, CHANGE MULLIGAN CARD PARENTS, TRANSLATE THEM DOWN
+  animateEndOfMulligan(data){
+    this.createOpponentCardsInHand(data.opponentHand, data.opponentCardCount)
+    data.mulliganCards.forEach((card) => {this.moveParentFromMulliganToHand(data.hand, card)})
+    this.animateBrightnessAndCardTranslate(data.mulliganContainer, data.mulliganCards)
+
+  }
+
+  // CREATE CARDS IN OPPONENTS HAND EQUAL TO AMOUNT THEY KEPT IN MULLIGAN
+  createOpponentCardsInHand(opponentHand, opponentCardCount){
+    for(let i = 0; i < opponentCardCount; i++){
+      const opponentCard = document.createElement('template')
+      opponentCard.innerHTML = '<div class="w-40 h-60 max-h-60 relative text-white border-2 border-black rounded bg-slate-700 inline-block -ml-10 -mt-12"></div>'
+      opponentHand.appendChild(opponentCard.content.firstChild)
+    }
+  }
+
+  // CHANGE PARENT OF CARDS IN MULLIGAN WINDOW TO PLAYER HAND CONTAINER, TRANSLATE UPWARDS TO KEEP RELATIVELY IN PLACE
+  // We break them out of the parent because we want to fade the parent's opacity away
+  moveParentFromMulliganToHand(hand, card){
+    hand.appendChild(card)
+    card.style.transform = "translate(0, -50vh)";
+    card.classList.add('inline-block', 'mx-1')
+  }
+    // Change each card's parent, translate them back up to 'not move', add appropriate classes
+    // Fade out mulligan container then slide cards down while brightening board
+  animateBrightnessAndCardTranslate(mulliganContainer, mulliganCards){
+    mulliganContainer.classList.add('fade-out');
+      mulliganContainer.onanimationend = () => {
+        this.element.classList.remove('brightness-50')
+        this.element.animate(
+          [{filter: 'brightness(0.5)'}, {filter: 'brightness(1)'}], 2000
+        )
+        mulliganCards.forEach((e) => {
+        e.classList.add("move-card-down")
+      })}
+  }
+
 }
