@@ -83,31 +83,13 @@ class Game < ApplicationRecord
     new_game = Game.create!
     new_game.populate_players(queued_deck_one, queued_deck_two)
     new_game.populate_decks(queued_deck_one, queued_deck_two)
-    new_game.draw_mulligan_cards
-    new_game
-  end
-
-  # Takes previously built players and allows their model to fill attributes and save
-  def populate_players(queued_deck_one, queued_deck_two)
-    @player_one.prepare_player(queued_deck_one)
-    @player_two.prepare_player(queued_deck_two)
-  end
-
-  # Takes previously built player model's game verison of decks and populates using queued deck data
-  def populate_decks(queued_deck_one, queued_deck_two)
-    @player_one.gamestate_deck.prepare_deck(queued_deck_one)
-    @player_two.gamestate_deck.prepare_deck(queued_deck_two)
-  end
-
-  def draw_mulligan_cards
-    players.each(&:draw_mulligan_cards)
+    new_game.draw_mulligan_cards and return new_game
   end
 
   def begin_first_turn
     players.each(&:set_starting_hand)
     update(status: 'ongoing')
-    broadcast_animations(player_one, 'end_mulligan', { count: player_two.cards.in_hand.size })
-    broadcast_animations(player_two, 'end_mulligan', { count: player_one.cards.in_hand.size })
+    animate_end_of_mulligan
     start_of_turn_actions
     touch
   end
@@ -118,14 +100,8 @@ class Game < ApplicationRecord
   # Current_player attributes updated for new turn
   def end_turn
     current_player.put_cards_to_sleep
-    update(turn: !turn)
-    reload.current_player
-    start_of_turn_actions
-    touch
-  end
-
-  def start_of_turn_actions
-    current_player.prepare_new_turn if status == 'ongoing'
+    update(turn: !turn) and reload.current_player
+    start_of_turn_actions and touch
   end
 
   #========|Party Card Play|======
@@ -158,6 +134,8 @@ class Game < ApplicationRecord
     touch
   end
 
+  private
+
   def broadcast_battle_animations(attacker, defender)
     players.each do |p|
       broadcast_animations(p, 'battle',
@@ -165,6 +143,41 @@ class Game < ApplicationRecord
                              defender: { defender.class.name => defender.id } })
     end
   end
+
+  ## GAME CREATION RELATED PRIVATE FUNCTIONS
+
+  # Takes previously built players and allows their model to fill attributes and save
+  def populate_players(queued_deck_one, queued_deck_two)
+    @player_one.prepare_player(queued_deck_one)
+    @player_two.prepare_player(queued_deck_two)
+  end
+
+  # Takes previously built player model's game verison of decks and populates using queued deck data
+  def populate_decks(queued_deck_one, queued_deck_two)
+    @player_one.gamestate_deck.prepare_deck(queued_deck_one)
+    @player_two.gamestate_deck.prepare_deck(queued_deck_two)
+  end
+
+  def draw_mulligan_cards
+    players.each(&:draw_mulligan_cards)
+  end
+
+  ## GAMEPLAY RELATED PRIVATE FUNCTIONS
+
+  def start_of_turn_actions
+    current_player.prepare_new_turn if status == 'ongoing'
+  end
+
+  # Update health of cards in battle
+  def deal_attack_damage(attacker, defender)
+    dead = []
+    dead << defender.take_damage(attacker.attack_current)
+    dead << attacker.take_damage(defender.attack_current)
+    attacker.status_in_play
+    dead.compact
+  end
+
+  ## BROADCAST RELATED PRIVATE FUNCTIONS
 
   def broadcast_card_play_animations(card, position)
     broadcast_animations(card.player, 'from_hand',
@@ -182,15 +195,9 @@ class Game < ApplicationRecord
     broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
   end
 
-  private
-
-  # Update health of cards in battle
-  def deal_attack_damage(attacker, defender)
-    dead = []
-    dead << defender.take_damage(attacker.attack_current)
-    dead << attacker.take_damage(defender.attack_current)
-    attacker.status_in_play
-    dead.compact
+  def animate_end_of_mulligan
+    broadcast_animations(player_one, 'end_mulligan', { count: player_two.cards.in_hand.size })
+    broadcast_animations(player_two, 'end_mulligan', { count: player_one.cards.in_hand.size })
   end
 
   # Broadcast game over websocket
