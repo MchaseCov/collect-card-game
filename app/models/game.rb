@@ -106,8 +106,8 @@ class Game < ApplicationRecord
   def begin_first_turn
     players.each(&:set_starting_hand)
     update(status: 'ongoing')
-    broadcast_animation_mulligan_end(player_one, player_two.cards.in_hand.size)
-    broadcast_animation_mulligan_end(player_two, player_one.cards.in_hand.size)
+    broadcast_animations(player_one, 'end_mulligan', { count: player_two.cards.in_hand.size })
+    broadcast_animations(player_two, 'end_mulligan', { count: player_one.cards.in_hand.size })
     start_of_turn_actions
     touch
   end
@@ -159,21 +159,27 @@ class Game < ApplicationRecord
   end
 
   def broadcast_battle_animations(attacker, defender)
-    players.each { |p| broadcast_animation_battle(p, attacker, defender) }
+    players.each do |p|
+      broadcast_animations(p, 'battle',
+                           { attacker: { attacker.class.name => attacker.id },
+                             defender: { defender.class.name => defender.id } })
+    end
   end
 
   def broadcast_card_play_animations(card, position)
-    broadcast_animation_played_card(card.player, 'fp', card.id, position)
-    broadcast_animation_played_card(opposing_player_of(card.player), 'op', card.id, position)
+    broadcast_animations(card.player, 'from_hand',
+                         { hand: 'fp', played_card_id: card.id, target_id: position })
+    broadcast_animations(opposing_player_of(card.player), 'from_hand',
+                         { hand: 'op', played_card_id: card.id, target_id: position })
   end
 
   def broadcast_death_animations(dead_cards)
-    players.each { |p| broadcast_animation_dead_cards(p, dead_cards) }
+    players.each { |p| broadcast_animations(p, 'card_death', { cards: dead_cards }) }
   end
 
   def broadcast_card_draw_animations(card)
-    broadcast_animation_card_draw(card.player, 'fp', card)
-    broadcast_animation_card_draw(opposing_player_of(card.player), 'op')
+    broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
+    broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
   end
 
   private
@@ -196,39 +202,27 @@ class Game < ApplicationRecord
                                                              last_played_card: last_played_card }
   end
 
-  # Broadcasts to the portion of the page that handles animation data for Stimulus. Passes no full objects, only IDs.
-  # animations_controller.js does the work of interpreting and animating the data
-  def broadcast_animation_battle(player, attacker, defender)
-    broadcast_update_later_to [self, player.user], partial: 'games/animations/battle',
+  # Broadcast animations by streaming an update to a specific div that passes data to a Stimulus controller.
+  # Current animation types:
+  #
+  # battle -- Animation for attackers meeting defenders and fighting
+  # locals: { attacker: { attacker.class.name => attacker.id }, defender: { defender.class.name => defender.id } }
+  #
+  # from_hand -- Animation for cards being played from hand to the game board
+  # locals: { hand: hand, played_card_id: played_card_id, target_id: target_id }
+  #
+  # card_death -- Animation for shaking and fading away a dying card from board
+  # locals: { cards: dead }
+  #
+  # [fp/op]_draw_card -- Animation for drawing a card from deck to hand
+  # locals: { tag: tag, card: card }
+  #
+  # end_mulligan -- Animation for ending mulligan by moving cards from stage to hand and fading mulligan menu
+  # locals: { count: count }
+  #
+  def broadcast_animations(player, animation_type, locals)
+    broadcast_update_later_to [self, player.user], partial: "games/animations/#{animation_type}",
                                                    target: 'animation-data',
-                                                   locals: { attacker: { attacker.class.name => attacker.id },
-                                                             defender: { defender.class.name => defender.id } }
-  end
-
-  def broadcast_animation_played_card(player, hand, played_card_id, target_id)
-    broadcast_update_later_to [self, player.user], partial: 'games/animations/from_hand',
-                                                   target: 'animation-data',
-                                                   locals: { hand: hand,
-                                                             played_card_id: played_card_id,
-                                                             target_id: target_id }
-  end
-
-  def broadcast_animation_dead_cards(player, dead)
-    broadcast_update_later_to [self, player.user], partial: 'games/animations/card_death',
-                                                   target: 'animation-data',
-                                                   locals: { cards: dead }
-  end
-
-  def broadcast_animation_card_draw(player, tag, card = nil)
-    broadcast_update_later_to [self, player.user], partial: "games/animations/#{tag}_draw_card",
-                                                   target: 'animation-data',
-                                                   locals: { tag: tag,
-                                                             card: card }
-  end
-
-  def broadcast_animation_mulligan_end(player, count)
-    broadcast_update_later_to [self, player.user], partial: 'games/animations/end_mulligan',
-                                                   target: 'animation-data',
-                                                   locals: { count: count }
+                                                   locals: locals
   end
 end
