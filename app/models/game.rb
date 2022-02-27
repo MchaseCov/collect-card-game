@@ -114,7 +114,7 @@ class Game < ApplicationRecord
 
     broadcast_card_play_animations(card, position)
     card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
-    card.move_to_battle(position)
+    card.put_card_in_battle(position)
     card.battlecry.trigger(card, target) if card.battlecry.present?
     players.each { |p| broadcast_perspective_for(p, card) }
   end

@@ -118,7 +118,7 @@ class Player < ApplicationRecord
 
       topdeck = cards.includes(:gamestate_deck, :party_card_parent, :archetype, :player).in_deck.sample
       if cards.in_hand.size >= 10
-        topdeck.discard
+        topdeck.move_to_discard
       else
         topdeck.move_to_hand
         game.broadcast_card_draw_animations(topdeck)
@@ -136,6 +136,6 @@ class Player < ApplicationRecord
   end
 
   def wake_up_party_cards
-    party_card_gamestates.in_battle.each(&:set_to_attack)
+    party_card_gamestates.in_battle.each(&:status_attacking)
   end
 end

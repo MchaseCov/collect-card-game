@@ -40,56 +40,46 @@ class PartyCardGamestate < ApplicationRecord
 
   delegate :battlecry, :deathrattle, :keywords, to: :party_card_parent
 
-  def move_to_hand
-    update(location: 'hand')
+  %i[hand deck mulligan battle graveyard discard].each do |location|
+    define_method "move_to_#{location}".to_sym do
+      update(location: location)
+    end
   end
 
-  def move_to_deck
-    update(location: 'deck')
+  %i[in_play attacking dead discarded].each do |status|
+    define_method "status_#{status}".to_sym do
+      update(status: status)
+    end
   end
 
-  def move_to_mulligan
-    update(location: 'mulligan')
+  %i[position health_cap health_current].each do |attribute|
+    define_method "increment_#{attribute}".to_sym do |amount = 1|
+      increment!(attribute, amount)
+    end
+    define_method "decrement_#{attribute}".to_sym do |amount = 1|
+      decrement!(attribute, amount)
+    end
   end
 
-  def move_to_battle(position)
-    update(location: 'battle', status: 'in_play', position: position)
-  end
-
-  def status_in_play
-    update(status: 'in_play')
-  end
-
-  def set_to_attack
-    update(status: 'attacking')
-  end
-
-  def set_to_graveyard
-    player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
-    update(location: 'graveyard', status: 'dead')
-  end
-
-  def increment_position
-    increment!(:position)
-  end
-
-  def decrement_position
-    decrement!(:position)
-  end
-
-  def discard
-    update(location: 'discard', status: 'discarded')
+  def put_card_in_battle(position)
+    move_to_battle
+    set_to_in_play
+    update(position: position)
   end
 
   def take_damage(attack)
-    decrement!(:health_current, attack)
-    set_to_graveyard and return id if health_current <= 0
-
-    nil
+    decrement_health_current(attack)
+    put_card_in_graveyard and return id if health_current <= 0
   end
 
   def increase_health_cap(amount)
-    increment!(:health_cap, amount)
-    increment!(:health_current, amount)
+    increment_health_cap(amount) and increment_health_current(amount)
+  end
+
+  private
+
+  def put_card_in_graveyard
+    player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
+    move_to_graveyard and status_dead
   end
 end
