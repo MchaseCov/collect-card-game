@@ -26,8 +26,8 @@ class="h-full flex flex-col flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
 data-controller="drag-party-play style-cards drag-battle battlecry-select gameboard-animations"
 data-game='<%=game.id%>'
 data-drag-party-play-player-cost-value='<%=first_person_player.cost_current%>'
-data-drag-party-play-game-turn-value='<%=game.turn%>'
-data-drag-party-play-player-turn-value='<%=first_person_player.turn_order%>'
+data-current-turn='<%=game.turn%>'
+data-player-turn='<%=first_person_player.turn_order%>'
 data-gameboard-animations-status-value='<%=game.status%>'
 data-gameboard-animations-turn-value='<%=game.turn_time%>'
 data-action="drag-party-play:loadBattlecryController->battlecry-select#loadController">

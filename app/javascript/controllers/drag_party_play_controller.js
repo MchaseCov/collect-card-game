@@ -4,19 +4,15 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
   static targets = ['playableCard', 'boardSpace', 'friendlyCardInBattle'];
 
-  static values = {
-    playerCost: Number, gameTurn: Boolean, playerTurn: Boolean,
-  };
+  static values = { playerCost: Number };
 
   async initialize() {
     // If there are no cards in play, make the play area very wide
     if (this.boardSpaceTargets.length === 1) {
       this.boardSpaceTarget.style.width = '100%';
+      this.hasNoCardsOnBoard = true;
     }
-    this.playerCanAct = (this.playerTurnValue === this.gameTurnValue);
-    // Gives the battlecry select controller .2s to be ready to recieve the dispatch
-    await new Promise((r) => setTimeout(r, 200));
-    this.dispatch('loadBattlecryController', { detail: { spaces: this.boardSpaceTargets, friendlyCards: this.friendlyCardInBattleTargets } });
+    this.playerCanAct = (this.element.dataset.currentTurn === this.element.dataset.playerTurn);
   }
 
   playableCardTargetConnected(element) {
@@ -30,55 +26,43 @@ export default class extends Controller {
       this.errorFeedback(event.target);
       event.preventDefault();
     } else {
-      this.boardSpaceTargets.forEach((el) =>{ el.classList.add('w-5', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5')});
-      event.target.classList.add('shadow-2xl', 'shadow-lime-500');
       this.dragSrcEl = event.target;
-      this.validTargets = event.target.validTargets;
+      this.boardSpaceTargets.forEach((el) => { el.classList.add('w-5', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5'); });
+      event.target.classList.add('shadow-2xl', 'shadow-lime-500');
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/html', event.target.innerHTML);
     }
   }
 
   dragEnter(event) {
-    if (event.preventDefault) {
-      event.preventDefault();
-    }
+    if (event.preventDefault) event.preventDefault();
   }
 
   dragOver(event) {
     // Makes area lime. If not the "wide default area", make the hover region wide for visual
     event.target.classList.add('bg-lime-500');
-    if (this.boardSpaceTargets.length > 1) {
-      event.target.style.width = '9rem';
-    }
-    if (event.preventDefault) {
-      event.preventDefault();
-    }
+    if (!this.hasNoCardsOnBoard) event.target.style.width = '9rem';
+    if (event.preventDefault) event.preventDefault();
   }
 
   dragLeave(event) {
     // Remove lime color. Return to small size
     event.target.classList.remove('bg-lime-500');
-    if (this.boardSpaceTargets.length > 1) {
-      event.target.style.width = '0rem';
-    }
+    if (!this.hasNoCardsOnBoard) event.target.style.width = '0rem';
   }
 
   drop(event) {
     event.stopPropagation();
-    this.boardSpaceTargets.forEach((el) => el.className = "");
     event.target.style.width = '0rem';
+    this.boardSpaceTargets.forEach((el) => el.className = '');
+    this.chosenSpace = event.target;
 
-    if (this.validTargets != undefined) {
-      this.enableBattlecrySelectControllerAttributes(event.target);
-    } else {
-        this.postToPlayCardPath(event.target);
-    }
+    this.dragSrcEl.dataset.hasTargets ? this.dragSrcEl.setAttribute('data-battlecry-select-target', 'inPlayBattlecry') : this.postToPlayCardPath();
   }
 
   dragEnd() {
-    if (this.dragSrcEl) {
     // Remove all shadows from friendly cards and then enemy cards
+    if (this.dragSrcEl) {
       this.dragSrcEl.classList.remove('shadow-2xl', 'shadow-lime-500');
       this.boardSpaceTargets.forEach((el) => el.classList.remove('w-5', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5'));
     }
@@ -86,7 +70,7 @@ export default class extends Controller {
 
   errorFeedback(target) {
     target.classList.add('shake');
-    setTimeout(() => { target.classList.remove('shake'); }, 500);
+    target.onanimationend = () => target.classList.remove('shake');
   }
 
   removeDragFromElement(element) {
@@ -94,17 +78,8 @@ export default class extends Controller {
     element.setAttribute('draggable', false);
   }
 
-  enableBattlecrySelectControllerAttributes(chosenSpace) {
-    this.dragSrcEl.setAttribute('data-battlecry-select-target', 'inPlayBattlecry');
-    this.dragSrcEl.setAttribute('data-chosen-position', chosenSpace.dataset.id);
-    this.dragSrcEl.setAttribute('data-action', 'click->battlecry-select#cancelPlay dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd');
-    this.validTargets.forEach((el) => {
-      el.setAttribute('data-battlecry-select-target', 'validBattlecry');
-      el.setAttribute('data-action', 'click->battlecry-select#selectTarget');
-    });
-  }
-
-  postToPlayCardPath(chosenSpace) {
+  // Target argument is passed from battlecry select controller when applicable
+  postToPlayCardPath(target = false) {
     fetch(`/games/${this.element.dataset.game}/play_card`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -115,8 +90,13 @@ export default class extends Controller {
       },
       body: JSON.stringify({
         card_id: this.dragSrcEl.dataset.id,
-        position: chosenSpace.dataset.id,
+        position: this.chosenSpace.dataset.id,
+        battlecry_target: target,
       }),
     });
+  }
+
+  get battlecrySelectController() {
+    return this.application.getControllerForElementAndIdentifier(this.element, 'battlecry-select');
   }
 }

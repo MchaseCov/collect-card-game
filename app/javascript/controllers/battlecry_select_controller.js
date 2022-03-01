@@ -2,95 +2,70 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="battlecry-select"
 export default class extends Controller {
-  static targets = ['playableBattlecryCard', 'inPlayBattlecry', 'validBattlecry', 'enemyMinionActor', 'opposingPlayer', 'friendlyPlayer'];
+  static targets = ['choosableBattlecry', 'inPlayBattlecry', 'enemyMinionActor', 'opposingPlayer', 'friendlyPlayer'];
 
   inPlayBattlecryTargetConnected(element) {
+    element.dataset.action += ' click->battlecry-select#cancelPlay';
+    this.battlecriesWithTarget[element.dataset.battlecry].forEach((id) => this.markAsValidTarget(document.querySelector(`[data-id="${id}"]`)));
     this.addGreyscaleToIneligableTargets();
-    element.classList.remove('hover:z-10', 'hover:bottom-8', 'hover:scale-125');
-    element.classList.add('ring', 'ring-red-600')
+    element.classList.remove('hover:z-10', 'hover:bottom-8', 'hover:scale-125', 'ring-lime-500');
+    element.classList.add('ring', 'ring-red-600');
   }
 
-  validBattlecryTargetConnected(element) {
-    element.classList.add('filter-none', 'ring', 'ring-orange-400');
+  markAsValidTarget(element) {
+    element.classList.add('filter-none');
+    element.setAttribute('data-action', 'click->battlecry-select#selectTarget'); // Intentionally erases old data to prevent strange action ordering by dragging card in this stage
   }
 
   addGreyscaleToIneligableTargets() {
-    if (this.enemyMinionActorTargets.length > 0) {
-      this.enemyMinionActorTargets.forEach((el) => { el.classList.add('grayscale'); });
-    }
-    if (this.friendlyCardInBattleTargets.length > 0) {
-      this.friendlyCardInBattleTargets.forEach((el) => { el.classList.add('grayscale'); });
-    }
-    this.opposingPlayerTarget.classList.add('grayscale');
-    this.friendlyPlayerTarget.classList.add('grayscale');
+    const targetGroups = [this.enemyMinionActorTargets, this.partyPlayController.friendlyCardInBattleTargets, this.partyPlayController.playableCardTargets, this.opposingPlayerTargets, this.friendlyPlayerTargets];
+    targetGroups.forEach((targetGroup) => {
+      if (targetGroup.length > 0) {
+        targetGroup.forEach((el) => el.classList.add('grayscale'));
+      }
+    });
   }
 
-  cancelPlay(){
+  cancelPlay() {
     location.reload();
   }
 
-  // Don't want this controller to begin doing anything until the base partyplay controller is fully loaded, so
-  // create custom "initialize" method to run start-of-class code after partyplay controller is ready
-  loadController({ detail: { spaces, friendlyCards } }) {
-    this.playableSpaces = spaces;
-    this.friendlyCardInBattleTargets = friendlyCards;
-    this.playableBattlecryCardTargets.forEach((el) => {
-      this.evaluateBattlecry(el);
-      el.validTargets = this.filteredTargets;
-    });
+  initialize() {
+    this.battlecriesWithTarget = {};
   }
 
-  evaluateBattlecry(element) {
-    const targets = this.evaluateTargets(element);
-    let result = false;
-    if (targets) {
-      const targetCompare = element.dataset.compare.split(',');
-      const validTargets = this.filterTargets(targets, targetCompare);
-      if (validTargets.length > 0) {
-        this.filteredTargets = validTargets;
-        result = true;
-      }
-    }
-    return result;
+  async connect() {
+    await new Promise((r) => setTimeout(r, 200)); // Gives time for the partyPlayController to always be loaded first, no race condition
+    if (!this.partyPlayController.playerCanAct) return; // Stop if not the player's turn
+    const battlecries = [];
+    this.choosableBattlecryTargets.forEach((e) => !battlecries.includes(e.dataset.battlecry) && battlecries.push(e.dataset.battlecry));
+    battlecries.forEach((id) => this.requestTargets(id));
   }
 
-  evaluateTargets(element) {
-    switch (element.dataset.target) {
-      case 'friendly_battle':
-        return this.friendlyCardInBattleTargets;
-      default:
-        return false;
-    }
-  }
-
-  filterTargets(targets, targetCompare) {
-    const validTargets = [];
-    targets.forEach((el) => {
-      if (el.dataset[targetCompare[0]] === targetCompare[1]) {
-        validTargets.push(el);
-      }
-    });
-    return validTargets;
-  }
-
-  selectTarget(event) {
-    fetch(`/games/${this.element.dataset.game}/play_card`, {
-      method: 'POST',
+  async requestTargets(id) {
+    const response = await fetch(`/battlecries/${id}/targets?game=${this.element.dataset.game}`, {
+      method: 'GET',
       credentials: 'same-origin',
       headers: {
-        Accept: 'text/vnd.turbo-stream.html',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'X-CSRF-Token': document.head.querySelector("[name='csrf-token']").content,
       },
-      body: JSON.stringify({
-        card_id: this.inPlayBattlecryTarget.dataset.id,
-        position: this.inPlayBattlecryTarget.dataset.chosenPosition,
-        battlecry_target: event.target.dataset.id,
-      }),
     });
+    if (response.ok) {
+      const json = await response.json();
+      if (json.ids.length > 0) {
+        this.battlecriesWithTarget[id] = json.ids;
+        this.choosableBattlecryTargets.filter((el) => el.dataset.battlecry === id).forEach((el) => el.dataset.hasTargets = true);
+      }
+    }
+  }
+
+  selectTarget(event) {
+    this.partyPlayController.postToPlayCardPath(event.target.dataset.id);
   }
 
   get partyPlayController() {
-    return this.application.getControllerForElementAndIdentifier(this.element, "drag-party-play")
+    return this.application.getControllerForElementAndIdentifier(this.element, 'drag-party-play');
   }
 }
