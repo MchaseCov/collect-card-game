@@ -66,7 +66,7 @@ class Game < ApplicationRecord
 
   # Input player, output opposing player in same game
   def opposing_player_of(player)
-    player == player_one ? player_two : player_one
+    players.find_by('id != ?', player.id)
   end
 
   #========|Game Winner|======

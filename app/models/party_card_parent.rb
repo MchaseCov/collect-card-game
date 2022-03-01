@@ -30,4 +30,8 @@ class PartyCardParent < ApplicationRecord
                                                        inverse_of: :party_card_parent
 
   delegate :deathrattle, to: :keywords
+
+  %i[Beast Humanoid].each do |tribe|
+    scope "#{tribe.downcase}_tribe".to_sym, -> { where(tribe: tribe) }
+  end
 end

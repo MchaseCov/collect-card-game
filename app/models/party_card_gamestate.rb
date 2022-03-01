@@ -18,10 +18,15 @@
 
 class PartyCardGamestate < ApplicationRecord
   alias_attribute :parent, :party_card_parent
-  scope :in_mulligan, -> { where(location: 'mulligan') }
-  scope :in_hand, -> { where(location: 'hand') }
-  scope :in_deck, -> { where(location: 'deck') }
-  scope :in_battle, -> { where(location: 'battle') }
+  %i[Beast Humanoid].each do |tribe|
+    scope "#{tribe.downcase}_tribe".to_sym, -> { includes(:party_card_parent).where('party_card_parent.tribe': tribe) }
+  end
+  %i[hand deck mulligan battle graveyard discard].each do |location|
+    scope "in_#{location}".to_sym, -> { where(location: location) }
+  end
+  %i[in_play attacking dead discarded].each do |status|
+    scope "is_#{status}".to_sym, -> { where(status: status) }
+  end
   scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
 
   validates_presence_of :health_cap, :health_current, :cost_current, :attack_cap, :attack_current,
