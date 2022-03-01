@@ -17,14 +17,6 @@ class Game < ApplicationRecord
     @player_two = players.build(turn_order: false)
   end
 
-  # Broadcasts over Websocket with a Turbo Stream response upon touch
-  # Players have a seperate websocket connection which allows us to broadcast to only
-  # one player at certain points to control the information the player sees about game state.
-  after_touch do
-    broadcast_perspective_for(player_one)
-    broadcast_perspective_for(player_two)
-  end
-
   #=======================================|GAME ASSOCIATIONS|=======================================
 
   #========|Game.players|======
@@ -91,7 +83,7 @@ class Game < ApplicationRecord
     update(status: 'ongoing')
     animate_end_of_mulligan
     start_of_turn_actions
-    touch
+    broadcast_basic_update
   end
 
   #========|Turn Changing|======
@@ -101,7 +93,7 @@ class Game < ApplicationRecord
   def end_turn
     current_player.put_cards_to_sleep
     update(turn: !turn) and reload.current_player
-    start_of_turn_actions and touch
+    start_of_turn_actions and broadcast_basic_update
   end
 
   #========|Party Card Play|======
@@ -116,7 +108,7 @@ class Game < ApplicationRecord
     card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
     card.put_card_in_battle(position)
     card.battlecry.trigger(card, target) if card.battlecry.present?
-    players.each { |p| broadcast_perspective_for(p, card) }
+    broadcast_basic_update(card)
   end
 
   #========|Party Card Battle|======
@@ -127,14 +119,15 @@ class Game < ApplicationRecord
   def conduct_attack(attacker, defender)
     return unless attacker.status == 'attacking'
 
-    touch and return unless broadcast_battle_animations(attacker, defender)
+    broadcast_basic_update and return unless broadcast_battle_animations(attacker, defender)
 
     dead_cards = deal_attack_damage(attacker, defender)
     broadcast_death_animations(dead_cards) unless dead_cards.empty?
-    touch
+    broadcast_basic_update
   end
 
   def broadcast_card_draw_animations(card)
+    touch
     broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
     broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
   end
@@ -142,6 +135,7 @@ class Game < ApplicationRecord
   private
 
   def broadcast_battle_animations(attacker, defender)
+    touch
     players.each do |p|
       broadcast_animations(p, 'battle',
                            { attacker: { attacker.class.name => attacker.id },
@@ -149,6 +143,11 @@ class Game < ApplicationRecord
     end
   end
 
+  def broadcast_basic_update(card = nil)
+    touch
+    broadcast_perspective_for(player_one, card)
+    broadcast_perspective_for(player_two, card)
+  end
   ## GAME CREATION RELATED PRIVATE FUNCTIONS
 
   # Takes previously built players and allows their model to fill attributes and save

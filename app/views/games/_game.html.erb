@@ -25,6 +25,7 @@ class="h-full flex flex-col flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
 
 data-controller="drag-party-play style-cards drag-battle battlecry-select gameboard-animations"
 data-game='<%=game.id%>'
+data-updated='<%=game.updated_at%>'
 data-drag-party-play-player-cost-value='<%=first_person_player.cost_current%>'
 data-current-turn='<%=game.turn%>'
 data-player-turn='<%=first_person_player.turn_order%>'

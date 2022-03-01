@@ -31,15 +31,19 @@ export default class extends Controller {
   }
 
   initialize() {
-    this.battlecriesWithTarget = {};
+    const localStorageValid = (+localStorage.getItem('battlecryDataTimestamp') === + new Date(this.element.dataset.updated))
+    this.battlecriesWithTarget = (localStorageValid ? JSON.parse(localStorage.getItem('battlecryData')) : {})
   }
 
   async connect() {
+    if (!Object.keys(this.battlecriesWithTarget).length === 0) return; // Stop if pulled local storage data
     await new Promise((r) => setTimeout(r, 200)); // Gives time for the partyPlayController to always be loaded first, no race condition
     if (!this.partyPlayController.playerCanAct) return; // Stop if not the player's turn
     const battlecries = [];
     this.choosableBattlecryTargets.forEach((e) => !battlecries.includes(e.dataset.battlecry) && battlecries.push(e.dataset.battlecry));
-    battlecries.forEach((id) => this.requestTargets(id));
+    await Promise.all(battlecries.map((id) => this.requestTargets(id)))
+    localStorage.setItem('battlecryData', JSON.stringify(this.battlecriesWithTarget)) // Stores battlecry target data in localstorage to reduce request spam
+    localStorage.setItem('battlecryDataTimestamp', + new Date(this.element.dataset.updated)) // Timestamp for comparison
   }
 
   async requestTargets(id) {
