@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_27_185705) do
+ActiveRecord::Schema.define(version: 2022_03_01_173947) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2022_02_27_185705) do
     t.bigint "party_card_parent_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "body_text"
     t.index ["party_card_parent_id"], name: "index_keywords_on_party_card_parent_id"
     t.index ["type", "party_card_parent_id"], name: "index_keywords_on_type_and_party_card_parent_id", unique: true
   end
