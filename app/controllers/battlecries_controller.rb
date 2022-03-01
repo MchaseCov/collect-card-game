@@ -1,0 +1,2 @@
+class BattlecriesController < ApplicationController
+end

@@ -10,6 +10,11 @@ Rails.application.routes.draw do
       post 'player_combat'
     end
   end
+  resources :battlecries, only: [] do
+    member do
+      get 'targets'
+    end
+  end
   resources :account_decks do
     member do
       post 'insert_party_card'
