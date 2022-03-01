@@ -19,34 +19,34 @@ class Keyword < ApplicationRecord
                    uniqueness: { scope: :party_card_parent_id }
 
   def trigger(invoking_card, target_input)
-    final_target = if player_choice
-                     find_target(invoking_card, target_input)
-                   else
-                     evaluate_target_chain(invoking_card)
-                   end
-    final_target&.send(action, modifier)
+    @invoking_card = invoking_card
+    @target_input = target_input if target_input
+    set_final_target.method(action).call(modifier)
   end
 
   private
 
-  def evaluate_target_chain(inital_target)
-    current_target = inital_target
-    target.each do |target_step|
-      call_and_params = target_step.split(',')
-      current_target = current_target.send(*call_and_params)
+  def find_valid_targets
+    evaluated_target = self
+    target.each do |target_scope|
+      evaluated_target = evaluated_target.send(target_scope)
     end
-    current_target
+    evaluated_target
   end
 
-  def find_target(invoking_card, target_input)
-    target_family = find_target_family(invoking_card)
-    target_family.find(target_input)
+  def set_final_target
+    valid_targets = find_valid_targets
+
+    return valid_targets.find(@target_input) if player_choice
+
+    valid_targets.respond_to?('sample') ? valid_targets.sample : valid_targets
   end
 
-  # Add to case statement when adding a new "type" of target, like friendy deck or enemy hero!
-  def find_target_family(invoking_card)
-    case target[0]
-    when 'friendly_battle' then invoking_card.player.cards.in_battle
-    end
+  def player_of_card
+    @invoking_card.player
+  end
+
+  def opponent_player_of_card
+    @invoking_card.game.opposing_player_of(player_of_card)
   end
 end
