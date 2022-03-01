@@ -24,6 +24,12 @@ class Keyword < ApplicationRecord
     set_final_target.method(action).call(modifier)
   end
 
+  def find_target_options(game)
+    @invoking_card = game.current_player.cards.in_hand.first # Arbitrary
+    target_data = find_valid_targets
+    { ids: target_data.map(&:id) }
+  end
+
   private
 
   def find_valid_targets
