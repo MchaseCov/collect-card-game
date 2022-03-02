@@ -3,4 +3,8 @@ import "@hotwired/turbo-rails"
 import "controllers"
 import turboStreamQueue from './turbo_stream_queuer'
 
-document.addEventListener('turbo:before-stream-render', async (event) => {turboStreamQueue(event)});
+
+if(window.location.pathname.split('/')[1] === 'games') {
+  document.addEventListener('turbo:before-stream-render', async (event) => {turboStreamQueue(event)});
+}
+
