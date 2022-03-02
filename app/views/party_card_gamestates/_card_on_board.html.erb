@@ -19,7 +19,7 @@
     <%=image_tag('cardplaceholder.webp', class:"object-contain w-40 h-auto select-none pointer-events-none", draggable:"false")%>
   </div>
   <div class="tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200">
-    <%= render 'party_card_parents/card_tooltip', card: card.party_card_parent, cached: true %>
+    <%= render card.party_card_parent, cached: true %>
   </div>
 </div>
 <%= render "party_card_gamestates/board_space", position: card.position %>

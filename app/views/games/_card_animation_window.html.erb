@@ -2,7 +2,7 @@
   <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10">
     <%=card.cost_current%>
   </div>
-  <div class="text-center text-xl absolute bottom-12 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-slate-700">
+  <div class="text-right text-md absolute top-0 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-<%=card.archetype.color%>-700">
     <%=card.parent.name%>
   </div>
   <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10">
@@ -11,13 +11,13 @@
   <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -right-2 z-10">
     <%=card.health_current%>
   </div>
-  <div class="text-center text-xs absolute bottom-8 inset-x-0 border-2 rounded border-slate-900 bg-slate-700">
-    <%=card.archetype.name%>
+  <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-<%=card.archetype.color%>-700 h-24">
+    <%card.parent.keywords.each do |k|%>
+      <p><strong><%=k.class%></strong>: <%=k.body_text%></p>
+    <% end %>
   </div>
-  <div class="text-center text-md absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-slate-700">
+  <div class="text-center text-xs absolute bottom-0 inset-x-0 bg-<%=card.archetype.color%>-700  h-4">
     <%=card.parent.tribe%>
   </div>
-  <div class="overflow-hidden w-full h-full select-none pointer-events-none">
-    <%=image_tag('cardplaceholder.webp', class:"object-contain w-40 h-auto select-none pointer-events-none", draggable:"false")%>
-  </div>
+  <%=image_tag('cardplaceholder.webp', class:"w-max h-max")%>
 </div>
