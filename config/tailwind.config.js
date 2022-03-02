@@ -6,6 +6,11 @@ module.exports = {
     './app/javascript/**/*.js',
     './app/views/**/*'
   ],
+    safelist: [
+    'bg-red-700',
+    'bg-slate-700',
+    'bg-sky-700',
+    'bg-emerald-700'],
   theme: {
     extend: {
       fontFamily: {
