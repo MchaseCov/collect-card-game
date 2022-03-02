@@ -132,6 +132,12 @@ class Game < ApplicationRecord
     broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
   end
 
+  def broadcast_basic_update(card = nil)
+    touch
+    broadcast_perspective_for(player_one, card)
+    broadcast_perspective_for(player_two, card)
+  end
+
   private
 
   def broadcast_battle_animations(attacker, defender)
@@ -141,12 +147,6 @@ class Game < ApplicationRecord
                            { attacker: { attacker.class.name => attacker.id },
                              defender: { defender.class.name => defender.id } })
     end
-  end
-
-  def broadcast_basic_update(card = nil)
-    touch
-    broadcast_perspective_for(player_one, card)
-    broadcast_perspective_for(player_two, card)
   end
   ## GAME CREATION RELATED PRIVATE FUNCTIONS
 
