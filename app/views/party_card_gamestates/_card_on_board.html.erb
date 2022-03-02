@@ -9,10 +9,10 @@
   data-health-cap="<%=card.health_cap%>"
   data-tribe="<%=card.party_card_parent.tribe%>"
   data-action="dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd">
-  <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute bottom-0 -left-2 z-10 select-none pointer-events-none">
+  <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute bottom-0 -left-2 z-10 select-none pointer-events-none">
     <%=card.attack_current%>
   </div>
-  <div class="health-current border-2 border-lime-600 bg-lime-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 absolute bottom-0 -right-2 z-10 select-none pointer-events-none">
+  <div id="health" class="health-current border-2 border-lime-600 bg-lime-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 absolute bottom-0 -right-2 z-10 select-none pointer-events-none">
     <%=card.health_current%>
   </div>
   <div class="overflow-hidden w-full h-full rounded-full select-none pointer-events-none">

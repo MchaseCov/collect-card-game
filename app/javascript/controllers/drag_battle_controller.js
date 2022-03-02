@@ -68,6 +68,7 @@ export default class extends Controller {
     } else {
       this.postMinionCombat(event.target)
     }
+    this.activeFriendlyActorTargets.forEach((el) => el.setAttribute('draggable', false));
   }
 
   dragEnd() {

@@ -53,6 +53,22 @@ export default class extends Controller {
     const defender = this.getActorFromObject(defenderObj);
     const translation = this.findDifferenceInPositions(attacker, defender);
     this.translateToAndFrom(attacker, translation);
+    this.createDamageIndicators(attacker, defender)
+  }
+  
+  async createDamageIndicators(attacker, defender){
+    const pairs = [[defender, (+attacker.querySelector('#attack').innerText)],[attacker,(+defender.querySelector('#attack').innerText)]]
+    await new Promise((r) => setTimeout(r, 200)); // Not quite enough time to use an .onAnimatonEnd listener
+    pairs.forEach((pair)=> this.indicateDamageTaken(pair));
+  }
+
+  indicateDamageTaken(pair){
+    if(pair[1] <= 0) return;
+    const indicator = document.createElement("div");
+    indicator.className = "absolute top-1/2 left-1/2 text-5xl text-white flex justify-center items-center burst-8 shake-indicator"
+    indicator.innerText = -pair[1]
+    pair[0].appendChild(indicator)
+    indicator.onanimationend = () => indicator.remove()
   }
 
   getActorFromObject(object) {

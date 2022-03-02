@@ -48,11 +48,9 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
          data-animations-target="player"
          data-action="drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd"
       >
-      <% if opposing_player.attack_current > 0%>
-        <div class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
-          <%=opposing_player.attack_current%>
-        </div>
-      <% end %>
+      <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none <%= (opposing_player.attack_current > 0) ? '' : "hidden" %>">
+        <%=opposing_player.attack_current%>
+      </div>
       <div class="health-current border-2 border-lime-600 bg-lime-500 rounded-full h-12 w-12 text-4xl text-white text-center mt-1 pb-1 absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
         <%=opposing_player.health_current%>
       </div>

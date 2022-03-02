@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.burst-8 {
+  z-index: 50;
+  background: orange;
+  width: 5rem;
+  height: 5rem;
+  transform: rotate(20deg) translate(-50%, -50%);
+}
+.burst-8:before {
+  z-index: -10;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5rem;
+  width: 5rem;
+  background: orange;
+  transform: rotate(135deg) ;
+}
+
+
 .tooltip {
   @apply hidden absolute;
 }
@@ -23,6 +44,9 @@
 
 .shake{
   animation: shake 0.5s;
+}
+.shake-indicator{
+  animation: shakeIndicator 0.75s;
 }
 
 .dying-card{
@@ -117,6 +141,22 @@
   90% { transform: translate(1px, 2px) rotate(0deg); }
   100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
+
+
+@keyframes shakeIndicator {
+  0% { transform: translate(-51%, -50%) rotate(20deg); }
+  10% { transform: translate(-47%, -60%) rotate(25deg); }
+  20% { transform: translate(-49%, -70%) rotate(25deg); }
+  30% { transform: translate(-50%, -80%) rotate(20deg); }
+  40% { transform: translate(-51%, -90%) rotate(25deg); }
+  51% { transform: translate(-47%, -100%) rotate(25deg); }
+  60% { transform: translate(-47%, -110%) rotate(20deg); }
+  70% { transform: translate(-51%, -120%) rotate(25deg); opacity: 1; }
+  80% { transform: translate(-49%, -130%) rotate(25deg); }
+  90% { transform: translate(-50%, -140%) rotate(20deg); }
+  100% { transform: translate(-50%, -150%) rotate(25deg); opacity: 0}
+}
+
 
 @keyframes played-card-animation {
   0% { transform: translate(-100vw, -100vh) scale(1.0); }
