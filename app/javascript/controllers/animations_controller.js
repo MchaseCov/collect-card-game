@@ -68,6 +68,7 @@ export default class extends Controller {
     indicator.className = "absolute top-1/2 left-1/2 text-5xl text-white flex justify-center items-center burst-8 shake-indicator"
     indicator.innerText = -pair[1]
     pair[0].appendChild(indicator)
+    pair[0].classList.add('shake')
     indicator.onanimationend = () => indicator.remove()
   }
 
