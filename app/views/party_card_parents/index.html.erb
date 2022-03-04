@@ -1,5 +1,5 @@
 <%=turbo_frame_tag id="party_cards_collection" do %>
-  <h1 class="font-bold text-4xl">List of all <%="#{params[:name]} "%>Party Cards</h1>
+  <h1 class="text-4xl font-bold">List of all <%="#{params[:name]} "%>Party Cards</h1>
   <section class="flex flex-row flex-wrap gap-x-5">
     <%@party_card_parents.each do |card|%>
       <%= button_to insert_party_card_account_deck_path(id: @account_deck&.id, card_id: card.id) do %>

@@ -1,14 +1,14 @@
-<div class="w-40 h-60 relative text-white border-2 border-black rounded z-50">
-  <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10">
+<div class="relative z-50 w-40 text-white border-2 border-black rounded h-60">
+  <div class="absolute z-10 w-10 h-10 text-3xl text-center text-white border-2 rounded-full border-amber-600 bg-amber-500 -top-2 -left-2">
     <%=party_card_parent.cost_default%>
   </div>
   <div class="text-right text-md absolute top-0 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-<%=party_card_parent.archetype.color%>-700">
     <%=party_card_parent.name%>
   </div>
-  <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10">
+  <div class="absolute z-10 w-10 h-10 pb-1 mt-1 text-3xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full -bottom-2 -left-2">
     <%=party_card_parent.attack_default%>
   </div>
-  <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -right-2 z-10">
+  <div class="absolute z-10 w-10 h-10 pb-1 mt-1 text-3xl text-center text-white border-2 rounded-full border-lime-600 bg-lime-500 -bottom-2 -right-2">
     <%=party_card_parent.health_default%>
   </div>
   <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-<%=party_card_parent.archetype.color%>-700 h-24">

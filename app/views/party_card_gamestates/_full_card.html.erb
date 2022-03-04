@@ -1,18 +1,18 @@
 <%= content_tag :div,
                 id: local_assigns[:id],
                 data: (card.decorate.method(local_assigns[:decorator_data_method]).call if local_assigns[:decorator_data_method]),
-                class: 'w-40 h-60 text-white border-2 border-black rounded ' + local_assigns[:class],
+                class: 'w-40 text-white border-2 border-black rounded h-60 ' + local_assigns[:class],
                 draggable: local_assigns[:draggable] do %>
-  <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
+  <div class="absolute z-10 w-10 h-10 text-3xl text-center text-white border-2 rounded-full pointer-events-none select-none border-amber-600 bg-amber-500 -top-2 -left-2">
     <%=card.cost_current%>
   </div>
   <div class="text-right text-md absolute top-0 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-<%=card.archetype.color%>-700 select-none pointer-events-none">
     <%=card.parent.name%>
   </div>
-  <div class="border-2 border-red-600 bg-red-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none">
+  <div class="absolute z-10 w-10 h-10 pb-1 mt-1 text-3xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -bottom-2 -left-2">
     <%=card.attack_current%>
   </div>
-  <div class="border-2 border-lime-600 bg-lime-500 rounded-full h-10 w-10 text-3xl text-center mt-1 pb-1 text-white absolute -bottom-2 -right-2 z-10 select-none pointer-events-none">
+  <div class="absolute z-10 w-10 h-10 pb-1 mt-1 text-3xl text-center text-white border-2 rounded-full pointer-events-none select-none border-lime-600 bg-lime-500 -bottom-2 -right-2">
     <%=card.health_current%>
   </div>
   <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-<%=card.archetype.color%>-700 h-24 whitespace-normal">

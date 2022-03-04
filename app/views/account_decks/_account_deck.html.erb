@@ -1,10 +1,10 @@
-<div class="has-tooltip relative border-2 border-slate-900">
-  <section class="tooltip absolute -left-56 border-2 border-slate-900 bg-slate-700 rounded mt-4 text-white">
+<div class="relative border-2 has-tooltip border-slate-900">
+  <section class="absolute mt-4 text-white border-2 rounded tooltip -left-56 border-slate-900 bg-slate-700">
     <p>Starting Health: <%=account_deck.race.health_modifier + 30 %></p>
     <p>Starting Gold: <%=account_deck.race.cost_modifier + 1 %></p>
     <p>Starting <%=account_deck.archetype.resource_name%>: <%=account_deck.race.health_modifier + 1 %></p>
   </section>
-  <h1 class="font-bold text-4xl"><%=account_deck.name%></h1>
+  <h1 class="text-4xl font-bold"><%=account_deck.name%></h1>
   <div class="flex flex-row items-end">
     <h2><%=account_deck.race.name%> <%=account_deck.archetype.name%></h2>
     <p class="ml-auto"><%=account_deck.card_count%> of 30 Cards </p>
@@ -13,25 +13,25 @@
 <div class="relative">
   <%account_deck.party_card_parents.includes(:archetype, :keywords).order(:cost_default).uniq.each do |card|%>
     <%= button_to remove_party_card_account_deck_path(id: account_deck&.id, card_id: card.id), class:'w-full border-2 border-slate-900 flex h-max items-center has-tooltip' do %>
-      <section class="tooltip absolute -left-48">
+      <section class="absolute tooltip -left-48">
         <%= render card, cached: true %>
-        <div class="w-40 border-2 border-slate-900 bg-slate-700 rounded mt-4 text-white">
+        <div class="w-40 mt-4 text-white border-2 rounded border-slate-900 bg-slate-700">
           Click a card in your deck to remove it.
         </div>
       </section>
-      <div class="border-2 border-amber-600 bg-amber-500 h-10 w-10 text-3xl text-center text-white">
+      <div class="w-10 h-10 text-3xl text-center text-white border-2 border-amber-600 bg-amber-500">
         <%=card.cost_default%>
       </div>
-      <div class="border-2 border-red-600 bg-red-500 h-10 w-10 text-3xl text-center text-white">
+      <div class="w-10 h-10 text-3xl text-center text-white bg-red-500 border-2 border-red-600">
         <%=card.attack_default%>
       </div>
-      <div class="border-2 border-lime-600 bg-lime-500 h-10 w-10 text-3xl text-center text-white ">
+      <div class="w-10 h-10 text-3xl text-center text-white border-2 border-lime-600 bg-lime-500 ">
         <%=card.health_default%>
       </div>
-      <div class="text-2xl pl-3">
+      <div class="pl-3 text-2xl">
         <%=truncate(card.name, length:10)%>
       </div>
-      <div class="border-2 border-cyan-600 bg-cyan-500 h-10 w-10 text-3xl text-center text-white ml-auto">
+      <div class="w-10 h-10 ml-auto text-3xl text-center text-white border-2 border-cyan-600 bg-cyan-500">
         <%=account_deck.account_deck_party_card_parents.where(party_card_parent: card).size%>
       </div>
     <% end %>
