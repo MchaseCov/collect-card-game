@@ -12,8 +12,11 @@
     <% end %>
   </div>
   <section id="mulligan-cards" class="flex flex-row w-full justify-center gap-x-2">
-    <%first_person_player.cards.includes(party_card_parent: [:keywords, :archetype]).in_mulligan.each do |card|%>
-      <%= render card.parent, cached: true %>
-    <% end %>
+    <%=render partial: 'party_card_gamestates/full_card',
+         collection: first_person_player.cards.includes(:archetype, party_card_parent: [:keywords]).in_mulligan,
+         as: :card,
+         locals: {draggable: false,
+                  class: 'relative z-50' },
+         cached: true %>
   </section>
 </div>

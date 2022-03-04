@@ -16,6 +16,8 @@
 # gamestate_deck_id       :bigint       null: false, foreign key
 # timestamps              :datetime
 
+require './app/decorators/party_card_gamestate_decorator'
+
 class PartyCardGamestate < ApplicationRecord
   alias_attribute :parent, :party_card_parent
   %i[Beast Humanoid].each do |tribe|
@@ -79,6 +81,10 @@ class PartyCardGamestate < ApplicationRecord
 
   def increase_health_cap(amount)
     increment_health_cap(amount) and increment_health_current(amount)
+  end
+
+  def decorate
+    PartyCardGamestateDecorator.new(self)
   end
 
   private

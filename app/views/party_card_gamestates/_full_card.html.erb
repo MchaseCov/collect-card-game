@@ -1,14 +1,8 @@
-<div class="w-40 h-60 relative text-white border-2 border-black rounded ring ring-lime-500 playing-card inline-block -ml-10 hover:z-10 hover:bottom-8 hover:scale-125"
-  draggable="true" 
-  data-drag-party-play-target="playableCard"
-  data-id="<%=card.id%>"
-  data-cost="<%=card.cost_current%>"
-  <% if card.parent.battlecry.present? && card.parent.battlecry.player_choice %>
-  data-battlecry-select-target="choosableBattlecry"
-  data-battlecry='<%=card.battlecry.id%>'
-  <% end %>
-  data-action="dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd"
-  >
+<%= content_tag :div,
+                id: local_assigns[:id],
+                data: (card.decorate.method(local_assigns[:decorator_data_method]).call if local_assigns[:decorator_data_method]),
+                class: 'w-40 h-60 text-white border-2 border-black rounded ' + local_assigns[:class],
+                draggable: local_assigns[:draggable] do %>
   <div class="border-2 border-amber-600 bg-amber-500 rounded-full h-10 w-10 text-3xl text-center text-white absolute -top-2 -left-2 z-10 select-none pointer-events-none">
     <%=card.cost_current%>
   </div>
@@ -30,4 +24,4 @@
     <%=card.parent.tribe%>
   </div>
   <%=image_tag('cardplaceholder.webp', class:"w-max h-max select-none pointer-events-none")%>
-</div>
+<% end %>
