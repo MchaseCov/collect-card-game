@@ -15,7 +15,7 @@ shared_context 'Shared Game Scenario' do
   # Create test card parents
   let(:party_card_parent) do
     PartyCardParent.create!(name: 'TestCard', cost_default: 1, attack_default: 5, health_default: 10,
-                            archetype_id: archetype.id)
+                            archetype_id: archetype.id, tribe: 'Beast')
   end
 
   let(:party_card_parent_two) do
@@ -45,8 +45,13 @@ shared_context 'Shared Game Scenario' do
 
   let(:game) do
     game = Game.create!
-    game.populate_players(queued_deck_user_one, queued_deck_user_two)
-    game.populate_decks(queued_deck_user_one, queued_deck_user_two)
+    game.send(:populate_players, queued_deck_user_one, queued_deck_user_two)
+    game.send(:populate_decks, queued_deck_user_one, queued_deck_user_two)
     game
+  end
+
+  let(:buff) do
+    Buff.create!(name: 'Bestial Strength', target_method: 'increase_health_cap',
+                 removal_method: 'decrease_health_cap', modifier: 2)
   end
 end

@@ -47,6 +47,9 @@ class PartyCardGamestate < ApplicationRecord
 
   delegate :battlecry, :deathrattle, :keywords, to: :party_card_parent
 
+  has_many :active_buffs, as: :buffable
+  has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card, after_remove: :run_buff_removal_on_card
+
   %i[hand deck mulligan battle graveyard discard].each do |location|
     define_method "move_to_#{location}".to_sym do
       update(location: location)
@@ -83,6 +86,12 @@ class PartyCardGamestate < ApplicationRecord
     increment_health_cap(amount) and increment_health_current(amount)
   end
 
+  def decrease_health_cap(amount)
+    self.health_cap -= amount
+    self.health_current = self.health_cap if health_current > self.health_cap
+    save
+  end
+
   def decorate
     PartyCardGamestateDecorator.new(self)
   end
@@ -92,5 +101,13 @@ class PartyCardGamestate < ApplicationRecord
   def put_card_in_graveyard
     player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
     move_to_graveyard and status_dead
+  end
+
+  def run_buff_method_on_card(buff)
+    send(buff.target_method, buff.modifier)
+  end
+
+  def run_buff_removal_on_card(buff)
+    send(buff.removal_method, buff.modifier)
   end
 end

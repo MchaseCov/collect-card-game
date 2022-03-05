@@ -13,18 +13,21 @@
 #
 class Keyword < ApplicationRecord
   belongs_to :party_card_parent
+  has_one :buff
 
-  validates_presence_of :type, :target, :modifier, :party_card_parent_id
-  validates_numericality_of :modifier
+  validates_presence_of :type, :target, :party_card_parent_id
   validates :type, inclusion: { in: %w[Deathrattle Battlecry] },
                    uniqueness: { scope: :party_card_parent_id }
 
   def trigger(invoking_card, target_input)
     @invoking_card = invoking_card
     @target_input = target_input if target_input
+    set_final_target.buffs << buff and return if buff
+
     set_final_target.method(action).call(modifier)
   end
 
+  # For use in stimulus controller
   def find_target_options(game)
     @invoking_card = game.current_player.cards.in_hand.first # Arbitrary
     target_data = find_valid_targets
@@ -43,7 +46,6 @@ class Keyword < ApplicationRecord
 
   def set_final_target
     valid_targets = find_valid_targets
-
     return valid_targets.find(@target_input) if player_choice
 
     valid_targets.respond_to?('sample') ? valid_targets.sample : valid_targets
