@@ -8,6 +8,7 @@
 # target                  :string       array of chain to target from card
 # action                  :string
 # modifier                :integer
+# body text               :string
 # party_card_parent_id    :integer      null: true, foreign key of PCP
 #
 class Keyword < ApplicationRecord

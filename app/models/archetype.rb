@@ -6,6 +6,7 @@
 # name                    :string
 # description             :text
 # resource_type           :string
+# color                   :string
 #
 class Archetype < ApplicationRecord
   validates_presence_of :name, :description, :resource_type

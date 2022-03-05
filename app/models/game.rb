@@ -7,6 +7,7 @@
 # ongoing                 :boolean      default: true
 # winner_id               :integer      null: true, foreign key of user
 # status                  :string       default: "mulligan"
+# turn_time               :datetime
 #
 
 class Game < ApplicationRecord
