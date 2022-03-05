@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_02_200319) do
+ActiveRecord::Schema.define(version: 2022_03_05_192858) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,17 @@ ActiveRecord::Schema.define(version: 2022_03_02_200319) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "color"
+  end
+
+  create_table "buffs", force: :cascade do |t|
+    t.string "name"
+    t.string "target_method"
+    t.string "removal_method"
+    t.integer "modifier"
+    t.bigint "keyword_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["keyword_id"], name: "index_buffs_on_keyword_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -157,6 +168,7 @@ ActiveRecord::Schema.define(version: 2022_03_02_200319) do
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
+  add_foreign_key "buffs", "keywords"
   add_foreign_key "games", "users", column: "winner_id"
   add_foreign_key "gamestate_decks", "games"
   add_foreign_key "gamestate_decks", "players"
