@@ -16,8 +16,8 @@ Keyword.create(
       type: 'Battlecry',
       player_choice: true,
       target: %w[player_of_card cards in_battle beast_tribe],
-      action: 'increase_health_cap',
-      modifier: 2,
+      action: nil,
+      modifier: nil,
       party_card_parent_id: PartyCardParent.find_by(name: 'Beast Tamer').id,
       body_text: 'Give +2 health to a friendly Beast in battle.'
     }

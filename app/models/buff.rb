@@ -11,7 +11,7 @@
 #
 class Buff < ApplicationRecord
   validates_presence_of :name, :target_method, :removal_method, :modifier
-
+  validates_uniqueness_of :name
   belongs_to :keyword, optional: true
   has_many :active_buffs
 end
