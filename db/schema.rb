@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_05_192858) do
+ActiveRecord::Schema.define(version: 2022_03_05_194559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,16 @@ ActiveRecord::Schema.define(version: 2022_03_05_192858) do
     t.index ["archetype_id"], name: "index_account_decks_on_archetype_id"
     t.index ["race_id"], name: "index_account_decks_on_race_id"
     t.index ["user_id"], name: "index_account_decks_on_user_id"
+  end
+
+  create_table "active_buffs", force: :cascade do |t|
+    t.bigint "buffs_id", null: false
+    t.string "buffable_type"
+    t.bigint "buffable_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["buffable_type", "buffable_id"], name: "index_active_buffs_on_buffable"
+    t.index ["buffs_id"], name: "index_active_buffs_on_buffs_id"
   end
 
   create_table "archetypes", force: :cascade do |t|
@@ -168,6 +178,7 @@ ActiveRecord::Schema.define(version: 2022_03_05_192858) do
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
+  add_foreign_key "active_buffs", "buffs", column: "buffs_id"
   add_foreign_key "buffs", "keywords"
   add_foreign_key "games", "users", column: "winner_id"
   add_foreign_key "gamestate_decks", "games"
