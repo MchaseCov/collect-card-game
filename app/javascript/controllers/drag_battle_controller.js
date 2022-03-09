@@ -12,7 +12,7 @@ export default class extends Controller {
   activeFriendlyActorTargetConnected(element) {
     switch (element.dataset.status){
       case 'attacking':
-        element.classList.add('z-40', 'board-animatable', 'ring', 'ring-lime-500');
+        element.classList.add('board-animatable', 'ring', 'ring-lime-500');
         element.setAttribute('draggable', true);
         break
       case 'currently_defending':

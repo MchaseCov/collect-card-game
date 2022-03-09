@@ -83,7 +83,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
       <%=render partial: 'party_card_gamestates/in_battle',
          collection: first_person_player.cards.in_battle.includes(:archetype, party_card_parent: [:keywords]).order(:position),
          as: :card,
-         locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable',
+         locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40',
                    decorator_data_method: :data_friendly_card_board_battle,
                    first_person_pov: true },
          cached: true %>
