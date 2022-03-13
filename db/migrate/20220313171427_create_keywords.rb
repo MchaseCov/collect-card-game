@@ -6,7 +6,8 @@ class CreateKeywords < ActiveRecord::Migration[7.0]
       t.string :target, array: true, default: []
       t.string :action
       t.integer :modifier
-      t.references :party_card_parent, null: false, foreign_key: true
+      t.text :body_text
+      t.references :card_constant, null: false, foreign_key: true
 
       t.timestamps
     end

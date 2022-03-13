@@ -3,8 +3,8 @@ class CreateGames < ActiveRecord::Migration[7.0]
     create_table :games do |t|
       t.boolean :turn, default: true
       t.boolean :ongoing, default: true
-      t.references :winner, null: true, foreign_key: { to_table: :users }
-
+      t.string :status, default: 'mulligan'
+      t.datetime :turn_time
       t.timestamps
     end
   end

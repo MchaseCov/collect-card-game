@@ -4,6 +4,7 @@ class CreateArchetypes < ActiveRecord::Migration[7.0]
       t.string :name
       t.text :description
       t.string :resource_type
+      t.string :color
 
       t.timestamps
     end
