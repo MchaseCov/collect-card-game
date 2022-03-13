@@ -3,7 +3,6 @@ require_relative 'game_scenario'
 
 RSpec.describe Game, type: :model do
   describe 'Associations' do
-    it { should belong_to(:winner).without_validating_presence }
     it { should have_many(:players) }
   end
 
@@ -31,17 +30,17 @@ RSpec.describe Game, type: :model do
     include_context 'Shared Game Scenario'
 
     subject { game }
-    let(:attacking_card) { subject.player_one.party_card_gamestates.first }
-    let(:defending_card) { subject.player_two.party_card_gamestates.first }
+    let(:attacking_card) { subject.player_one.party_cards.first }
+    let(:defending_card) { subject.player_two.party_cards.first }
 
     it 'Damages Both Cards' do
       attacking_card.update(location: 'battle', status: 'attacking')
       expect do
         subject.conduct_attack(attacking_card, defending_card)
-      end.to change { defending_card.health_current }
-        .by(-attacking_card.attack_current)
-        .and change { attacking_card.health_current }
-        .by(-defending_card.attack_current)
+      end.to change { defending_card.health }
+        .by(-attacking_card.attack)
+        .and change { attacking_card.health }
+        .by(-defending_card.attack)
     end
 
     it 'It Kills A Card With 0 Or Less Health' do
@@ -62,23 +61,23 @@ RSpec.describe Game, type: :model do
     include_context 'Shared Game Scenario'
 
     subject { game }
-    let(:played_card) { subject.player_one.party_card_gamestates.first }
+    let(:played_card) { subject.player_one.party_cards.first }
     it 'Puts chosen card into battle' do
-      subject.put_card_in_play(played_card, 1)
+      subject.put_card_in_play(played_card, 1, false)
       expect(played_card.location).to eql('battle')
     end
     it 'Moves cards to right when desired position is already taken' do
       subject.player_one.update(cost_cap: 20, cost_current: 20)
-      already_in_play = subject.player_one.party_card_gamestates.second
-      subject.put_card_in_play(already_in_play, 1)
+      already_in_play = subject.player_one.party_cards.second
+      subject.put_card_in_play(already_in_play, 1, false)
       expect do
-        subject.put_card_in_play(played_card, 1)
+        subject.put_card_in_play(played_card, 1, false)
       end.to change { already_in_play.reload.position }.by(1)
     end
     it 'Cannot play a card that costs more than user gold' do
       subject.player_one.update(cost_cap: 0, cost_current: 0)
-      subject.put_card_in_play(played_card, 1)
-      expect { subject.put_card_in_play(played_card, 1) }.to_not change { played_card.location }
+      subject.put_card_in_play(played_card, 1, false)
+      expect { subject.put_card_in_play(played_card, 1, false) }.to_not change { played_card.location }
     end
   end
 end

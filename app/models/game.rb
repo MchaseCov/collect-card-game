@@ -5,23 +5,21 @@
 # id                      :bigint       null: false, primary key
 # turn                    :boolean      default: true
 # ongoing                 :boolean      default: true
-# winner_id               :integer      null: true, foreign key of user
 # status                  :string       default: "mulligan"
 # turn_time               :datetime
 #
 
 class Game < ApplicationRecord
-  #=======================================|CALLBACKS|==========================================
+  # CALLBACKS ===========================================================
   # Builds a empty player object and assigns turn order for both players
   after_create_commit do
     @player_one = players.build(turn_order: true)
     @player_two = players.build(turn_order: false)
   end
 
-  #=======================================|GAME ASSOCIATIONS|=======================================
+  # ASSOCIATIONS ===========================================================
 
-  #========|Game.players|======
-  # Game has many players. Current player is when turn_order matches the game's turn
+  # PLAYERS
   has_many :players, class_name: :Player,
                      foreign_key: :game_id,
                      inverse_of: :game,
@@ -43,8 +41,7 @@ class Game < ApplicationRecord
                        end
                      end
 
-  # "Alias" methods for the above associations.
-  # ie: @game.player_one as opposed to @game.players.player_one
+  # ALIAS AND SCOPES ===========================================================
   def player_one
     players.player_one
   end
@@ -62,13 +59,7 @@ class Game < ApplicationRecord
     players.find_by('id != ?', player.id)
   end
 
-  #========|Game Winner|======
-  # Assigns a winner directly to user account index.
-  belongs_to :winner, optional: true,
-                      class_name: :User,
-                      foreign_key: :winner_id
-
-  #=======================================|GAME METHODS|=====================================
+  # METHODS (PUBLIC) ==================================================================
 
   #========|Game Creation|======
   # Start of game creation. Input 2 decks. Output created
@@ -102,6 +93,8 @@ class Game < ApplicationRecord
   # Player must have enough gold to spend
   # Shifts position of cards to the right (increase position index) to make room for new card
   # Played card move from hand to battle in position
+
+  # NOTE: TO SELF: THIS WOULD MAKE MORE SENSE TO MOVE TO THE CARD STI SUBCLASSES
   def put_card_in_play(card, position, target)
     return unless current_player.spend_coins_on_card(card)
 
@@ -109,6 +102,7 @@ class Game < ApplicationRecord
     card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
     card.put_card_in_battle(position)
     card.battlecry.trigger(card, target) if card.battlecry.present?
+    # CAN THIS BE AN OBSERVER CALLBACK? ^^^^^^
     broadcast_basic_update(card)
   end
 
@@ -139,6 +133,7 @@ class Game < ApplicationRecord
     broadcast_perspective_for(player_two, card)
   end
 
+  # METHODS (PRIVATE) ==================================================================
   private
 
   def broadcast_battle_animations(attacker, defender)
@@ -177,8 +172,8 @@ class Game < ApplicationRecord
   # Update health of cards in battle
   def deal_attack_damage(attacker, defender)
     dead = []
-    dead << defender.take_damage(attacker.attack_current)
-    dead << attacker.take_damage(defender.attack_current)
+    dead << defender.take_damage(attacker.attack)
+    dead << attacker.take_damage(defender.attack)
     attacker.status_in_play
     dead.compact
   end
@@ -211,7 +206,7 @@ class Game < ApplicationRecord
   end
 
   # Broadcast animations by streaming an update to a specific div that passes data to a Stimulus controller.
-  # Current animation types:
+  # Current animation_type options:
   #
   # battle -- Animation for attackers meeting defenders and fighting
   # locals: { attacker: { attacker.class.name => attacker.id }, defender: { defender.class.name => defender.id } }
