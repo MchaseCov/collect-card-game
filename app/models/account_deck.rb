@@ -16,28 +16,24 @@ class AccountDeck < ApplicationRecord
   validates_presence_of :name
   validates :card_count, numericality: { in: 0..30 }
 
-  has_many :account_deck_party_card_parents
-  has_many :party_card_parents, through: :account_deck_party_card_parents
+  has_many :account_deck_card_references
+  has_many :card_references, through: :account_deck_card_references
   belongs_to :user
   belongs_to :archetype
   belongs_to :race
 
-  def add_party_card(card)
+  def add_card(card)
     return if card_count >= 30
-    return unless card.archetype.name == 'Neutral' || card.archetype.name == archetype.name
 
-    party_card_parents << card
-    increment!(:card_count)
+    arch = card.card_constant.archetype.name
+    return unless arch == 'Neutral' || arch == archetype.name
+
+    card_references << card
     touch if persisted?
   end
 
-  def destroy_party_card(card)
-    account_deck_party_card_parents.find_by(party_card_parent: card).delete
-    decrement!(:card_count)
+  def destroy_card(card)
+    account_deck_card_references.find_by(card_reference: card).destroy
     touch
-  end
-
-  def cards
-    party_card_parents # .or(action_card_parents);
   end
 end
