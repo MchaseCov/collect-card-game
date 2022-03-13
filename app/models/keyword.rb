@@ -9,15 +9,15 @@
 # action                  :string
 # modifier                :integer
 # body text               :string
-# party_card_parent_id    :integer      null: true, foreign key of PCP
+# card_constant_id    :integer      null: true, foreign key of PCP
 #
 class Keyword < ApplicationRecord
-  belongs_to :party_card_parent
+  belongs_to :card_constant
   has_one :buff
 
-  validates_presence_of :type, :target, :party_card_parent_id
+  validates_presence_of :type, :target, :card_constant_id
   validates :type, inclusion: { in: %w[Deathrattle Battlecry] },
-                   uniqueness: { scope: :party_card_parent_id }
+                   uniqueness: { scope: :card_constant_id }
 
   def trigger(invoking_card, target_input)
     @invoking_card = invoking_card
