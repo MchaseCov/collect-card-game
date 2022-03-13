@@ -12,25 +12,20 @@ class GamestateDeck < ApplicationRecord
 
   belongs_to :player
   belongs_to :game
-  has_many :party_card_gamestates, dependent: :destroy
+  has_many :cards, dependent: :destroy
 
   def prepare_deck(queued_deck)
-    queued_deck.party_card_parents.includes(:archetype).each do |card|
-      party_card_gamestates.create!(
-        health_cap: card.health_default,
-        health_current: card.health_default,
-        cost_current: card.cost_default,
-        attack_cap: card.attack_default,
-        attack_current: card.attack_default,
+    queued_deck.card_references.includes(:card_constant).each do |card|
+      cards.create!(
+        cost: card.cost,
+        health: card.health,
+        attack: card.attack,
+        health_cap: card.health,
         location: 'deck',
         status: 'unplayed',
-        archetype: card.archetype,
-        party_card_parent: card
+        type: card.card_type,
+        card_constant: card.card_constant
       )
     end
-  end
-
-  def cards
-    party_card_gamestates # .or(action_card_gamestates);
   end
 end

@@ -6,9 +6,10 @@ RSpec.describe GamestateDeck, type: :model do
   let(:race) do
     Race.create!(name: 'Human', description: 'Humandesc', health_modifier: 0, cost_modifier: 0, resource_modifier: 0)
   end
-  let(:party_card_parent) do
-    PartyCardParent.create!(name: 'TestCard', cost_default: 1, attack_default: 1, health_default: 1,
-                            archetype_id: archetype.id)
+  # Create test card constant
+  let(:card_constant) { CardConstant.create!(name: 'TestCard', tribe: 'Beast', archetype_id: archetype.id) }
+  let(:card_reference) do
+    CardReference.create!(cost: 1, attack: 5, health: 10, card_type: 'PartyCard', card_constant_id: card_constant.id)
   end
   let(:queued_deck) do
     AccountDeck.create!(name: 'rspec deck',
@@ -47,17 +48,17 @@ RSpec.describe GamestateDeck, type: :model do
 
   describe 'Prepare deck for game' do
     it 'Creates cards' do
-      queued_deck.party_card_parents << party_card_parent
+      queued_deck.card_references << card_reference
       queued_deck.reload
       subject.prepare_deck(queued_deck)
-      expect(subject.party_card_gamestates.count).to eq(queued_deck.party_card_parents.count)
-      expect(subject.party_card_gamestates.count).to_not eq(0)
+      expect(subject.cards.count).to eq(queued_deck.card_references.count)
+      expect(subject.cards.count).to_not eq(0)
     end
-    it 'Creates cards that reference the same parent as the account deck' do
-      queued_deck.party_card_parents << party_card_parent
+    it 'Creates cards that reference the same constant' do
+      queued_deck.card_references << card_reference
       queued_deck.reload
       subject.prepare_deck(queued_deck)
-      expect(subject.party_card_gamestates.first.party_card_parent).to eq(queued_deck.party_card_parents.first)
+      expect(subject.cards.first.card_constant).to eq(queued_deck.card_references.first.card_constant)
     end
   end
 end

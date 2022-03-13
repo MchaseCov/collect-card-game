@@ -14,7 +14,7 @@ class CardReference < ApplicationRecord
   validates_presence_of :cost, :card_type, :card_constant_id
   validates_numericality_of :attack, :health
   validates :cost, numericality: { in: 0..10 }
-  validates :card_type, inclusion: { in: %w[party_card spell_card] }
+  validates :card_type, inclusion: { in: %w[PartyCard SpellCard] }
   validates_uniqueness_of :card_constant_id
 
   belongs_to :card_constant

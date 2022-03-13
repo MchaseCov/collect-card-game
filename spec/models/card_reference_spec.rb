@@ -11,12 +11,12 @@ RSpec.describe CardReference, type: :model do
 
     let(:card_constant) { CardConstant.create!(name: 'TestCard', tribe: 'Beast', archetype_id: archetype.id) }
     subject do
-      CardReference.create!(cost: 1, attack: 5, health: 10, card_type: 'party_card', card_constant_id: card_constant.id)
+      CardReference.create!(cost: 1, attack: 5, health: 10, card_type: 'PartyCard', card_constant_id: card_constant.id)
     end
 
     %i[cost card_type card_constant_id].each { |att| it { is_expected.to validate_presence_of(att) } }
     %i[health attack].each { |att| it { is_expected.to  validate_numericality_of(att) } }
     it { is_expected.to validate_uniqueness_of(:card_constant_id) }
-    it { is_expected.to validate_inclusion_of(:card_type).in_array(%w[party_card spell_card]) }
+    it { is_expected.to validate_inclusion_of(:card_type).in_array(%w[PartyCard SpellCard]) }
   end
 end

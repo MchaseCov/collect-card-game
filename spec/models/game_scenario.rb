@@ -12,15 +12,17 @@ shared_context 'Shared Game Scenario' do
     Race.create!(name: 'Human', description: 'Humandesc', health_modifier: 0, cost_modifier: 0, resource_modifier: 0)
   end
 
-  # Create test card parents
-  let(:party_card_parent) do
-    PartyCardParent.create!(name: 'TestCard', cost_default: 1, attack_default: 5, health_default: 10,
-                            archetype_id: archetype.id, tribe: 'Beast')
+  # Create test card constant
+  let(:card_constant) { CardConstant.create!(name: 'TestCard', tribe: 'Beast', archetype_id: archetype.id) }
+  let(:card_constant_two) { CardConstant.create!(name: 'TestCard Two', archetype_id: archetype_two.id) }
+
+  let(:card_reference) do
+    CardReference.create!(cost: 1, attack: 5, health: 10, card_type: 'PartyCard', card_constant_id: card_constant.id)
   end
 
-  let(:party_card_parent_two) do
-    PartyCardParent.create!(name: 'TestCard_Two', cost_default: 5, attack_default: 2, health_default: 4,
-                            archetype_id: archetype_two.id)
+  let(:card_reference_two) do
+    CardReference.create!(cost: 5, attack: 2, health: 4, card_type: 'PartyCard',
+                          card_constant_id: card_constant_two.id)
   end
 
   let(:queued_deck_user_one) do
@@ -29,7 +31,7 @@ shared_context 'Shared Game Scenario' do
                                card_count: 30,
                                archetype_id: archetype.id,
                                race_id: race.id)
-    30.times { deck.party_card_parents << party_card_parent }
+    30.times { deck.card_references << card_reference }
     deck
   end
 
@@ -39,7 +41,7 @@ shared_context 'Shared Game Scenario' do
                                card_count: 30,
                                archetype_id: archetype_two.id,
                                race_id: race.id)
-    30.times { deck.party_card_parents << party_card_parent_two }
+    30.times { deck.card_references << card_reference_two }
     deck
   end
 
