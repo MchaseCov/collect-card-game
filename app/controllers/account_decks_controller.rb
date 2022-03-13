@@ -1,6 +1,6 @@
 class AccountDecksController < ApplicationController
-  before_action :set_current_user_account_deck, only: %i[show insert_party_card remove_party_card]
-  before_action :set_card, only: %i[insert_party_card remove_party_card]
+  before_action :set_current_user_account_deck, only: %i[show insert_card remove_card]
+  before_action :set_card, only: %i[insert_card remove_card]
 
   def index
     @account_decks = current_user.account_decks.all
@@ -30,12 +30,12 @@ class AccountDecksController < ApplicationController
 
   def update; end
 
-  def insert_party_card
-    @account_deck.add_party_card(@card)
+  def insert_card
+    @account_deck.add_card(@card)
   end
 
-  def remove_party_card
-    @account_deck.destroy_party_card(@card)
+  def remove_card
+    @account_deck.destroy_card(@card)
   end
 
   def destroy; end
@@ -51,6 +51,6 @@ class AccountDecksController < ApplicationController
   end
 
   def set_card
-    @card = PartyCardParent.find(params[:card_id])
+    @card = CardReference.find(params[:card_id])
   end
 end

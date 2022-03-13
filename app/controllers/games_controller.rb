@@ -25,8 +25,8 @@ class GamesController < ApplicationController
   def play_card
     return unless current_users_turn && @player.cards.in_battle.size < 7
 
-    card = @player.party_card_gamestates
-                  .includes(:party_card_parent, :gamestate_deck, :archetype)
+    card = @player.cards
+                  .includes(:card_constant, :gamestate_deck)
                   .find(params[:card_id])
     @game.put_card_in_play(card, params[:position].to_i, params[:battlecry_target])
   end
@@ -40,8 +40,8 @@ class GamesController < ApplicationController
   def minion_combat
     return unless current_users_turn
 
-    attacking_card = @player.party_card_gamestates.in_attack_mode.find(params[:dragged_id])
-    defending_card = @game.opposing_player_of(@player).party_card_gamestates.in_battle.find(params[:target_id])
+    attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
+    defending_card = @game.opposing_player_of(@player).party_cards.in_battle.find(params[:target_id])
 
     @game.conduct_attack(attacking_card, defending_card) if attacking_card && defending_card
   end
@@ -49,7 +49,7 @@ class GamesController < ApplicationController
   def player_combat
     return unless current_users_turn && (@opposing_player.id == params[:target_id].to_i)
 
-    attacking_card = @player.party_card_gamestates.in_attack_mode.find(params[:dragged_id])
+    attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
     @game.conduct_attack(attacking_card, @opposing_player) if attacking_card
   end
 
