@@ -18,33 +18,41 @@
 # user_id                 :bigint       null: false, foreign key of user
 #
 class Player < ApplicationRecord
-  #=======================================|CALLBACKS|==========================================
+  # CALLBACKS ===========================================================
   after_create_commit do
     build_gamestate_deck(game: game, card_count: 30)
   end
-  #=======================================|SCOPES|==========================================
-  # scope :with_deck, -> { includes(:gamestate_deck) }
 
+  # ALIAS AND SCOPES ===========================================================
   validates_presence_of :health_cap, :health_current, :cost_cap, :cost_current, :resource_cap, :resource_current
   validates_numericality_of :health_cap, :cost_cap, :resource_cap
   validates :health_current, numericality: { less_than_or_equal_to: :health_cap }
   validates :cost_current, numericality: { less_than_or_equal_to: :cost_cap }
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
-
+  # ASSOCIATIONS ===========================================================
   belongs_to :race
   belongs_to :archetype
   belongs_to :game
   belongs_to :user
   has_one :gamestate_deck, dependent: :destroy
-  has_many :party_card_gamestates, through: :gamestate_deck
-
-  # Method to use as futureproofing/reminder
-  def cards
-    party_card_gamestates # .or(action_card_gamestates);
+  has_many :cards, through: :gamestate_deck do
+    %w[PartyCard SpellCard].each do |type|
+      define_method type.pluralize.to_sym do
+        where('type = ?', type.to_sym)
+      end
+    end
+  end
+  %i[party_cards spell_cards].each do |type|
+    define_method type.to_sym do
+      cards.send(type.to_s.camelize)
+    end
   end
 
+  # METHODS (PUBLIC) ==================================================================
+  # Method to use as futureproofing/reminder
+
   def mulligan_cards
-    party_card_gamestates.in_mulligan
+    cards.in_mulligan
   end
 
   def prepare_player(deck)
@@ -75,7 +83,7 @@ class Player < ApplicationRecord
   end
 
   def set_starting_hand
-    party_card_gamestates.includes(:archetype, :party_card_parent, :gamestate_deck).in_mulligan.each(&:move_to_hand)
+    cards.includes(:gamestate_deck).in_mulligan.each(&:move_to_hand)
     recount_deck_size
   end
 
@@ -87,13 +95,13 @@ class Player < ApplicationRecord
   end
 
   def spend_coins_on_card(card)
-    return false if cost_current < card.cost_current
+    return false if cost_current < card.cost
 
-    decrement!(:cost_current, card.cost_current)
+    decrement!(:cost_current, card.cost)
   end
 
   def put_cards_to_sleep
-    party_card_gamestates.in_attack_mode.each(&:status_in_play)
+    party_cards.in_attack_mode.each(&:status_in_play)
   end
 
   def take_damage(attack)
@@ -102,6 +110,7 @@ class Player < ApplicationRecord
     nil
   end
 
+  # METHODS (PRIVATE) ==================================================================
   private
 
   def increment_player_resources
@@ -114,9 +123,9 @@ class Player < ApplicationRecord
   # Using an amount loop rather than .sample(amount) to burn individual cards
   def draw_cards(amount)
     amount.times do
-      next take_empty_deck_fatigue if party_card_gamestates.in_deck.size <= 0
+      next take_empty_deck_fatigue if cards.in_deck.size <= 0
 
-      topdeck = cards.includes(:gamestate_deck, :party_card_parent, :archetype, :player).in_deck.sample
+      topdeck = cards.includes(:gamestate_deck, :player).in_deck.sample
       if cards.in_hand.size >= 10
         topdeck.move_to_discard
       else
@@ -132,10 +141,10 @@ class Player < ApplicationRecord
   end
 
   def recount_deck_size
-    gamestate_deck.update(card_count: party_card_gamestates.in_deck.size)
+    gamestate_deck.update(card_count: cards.in_deck.size)
   end
 
   def wake_up_party_cards
-    party_card_gamestates.in_battle.each(&:status_attacking)
+    party_cards.in_battle.each(&:status_attacking)
   end
 end

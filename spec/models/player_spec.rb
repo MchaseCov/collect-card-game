@@ -75,10 +75,8 @@ RSpec.describe Player, type: :model do
       expect(subject.cards.in_deck.size).to eql(subject.turn_order ? 27 : 26)
     end
     it 'Ends Mulligan Phase after player_two mulligan' do
-      subject.set_starting_hand
       expect(game.status).to eql('mulligan')
-      game.turn = false
-      subject.set_starting_hand
+      game.begin_first_turn
       expect(game.status).to eql('ongoing')
     end
   end
@@ -111,7 +109,7 @@ RSpec.describe Player, type: :model do
     end
     it 'Wakes attack cards' do
       subject.prepare_new_turn
-      expect(subject.cards.in_battle.count).to eql(subject.cards.in_attack_mode.count)
+      expect(subject.cards.in_battle.count).to eql(subject.party_cards.in_attack_mode.count)
     end
   end
 end
