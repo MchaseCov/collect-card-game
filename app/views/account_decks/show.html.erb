@@ -6,15 +6,15 @@
 </article>
 <section>
   <nav id="card-book-naviation">
-    <%= link_to party_card_parents_path(name:"Neutral", account_deck_id: @account_deck.id), 'data-turbo-frame': "party_cards_collection" do %>
+    <%= link_to card_references_path(name:"Neutral", account_deck_id: @account_deck.id), 'data-turbo-frame': "cards_collection" do %>
       Neutral | 
     <% end %>
-    <%= link_to party_card_parents_path(name:@account_deck.archetype.name, account_deck_id: @account_deck.id), 'data-turbo-frame': "party_cards_collection" do %>
+    <%= link_to card_references_path(name:@account_deck.archetype.name, account_deck_id: @account_deck.id), 'data-turbo-frame': "cards_collection" do %>
       <%=@account_deck.archetype.name%>
     <% end %>
   </nav>
   <div>
-    <%=turbo_frame_tag id="party_cards_collection", src:party_card_parents_path(name:"Neutral", account_deck_id: @account_deck.id) do %>
+    <%=turbo_frame_tag id="cards_collection", src:card_references_path(name:"Neutral", account_deck_id: @account_deck.id) do %>
     <% end %>
   </div>
 </section>

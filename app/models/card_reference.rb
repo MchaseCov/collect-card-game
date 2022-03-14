@@ -20,4 +20,6 @@ class CardReference < ApplicationRecord
   belongs_to :card_constant
   has_many :account_deck_card_references
   has_many :account_decks, through: :account_deck_card_references
+
+  delegate :archetype, :name, :keywords, :tribe, to: :card_constant
 end

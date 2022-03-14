@@ -1,8 +1,8 @@
-<%=turbo_frame_tag id="party_cards_collection" do %>
+<%=turbo_frame_tag id="cards_collection" do %>
   <h1 class="text-4xl font-bold">List of all <%="#{params[:name]} "%>Party Cards</h1>
   <section class="flex flex-row flex-wrap gap-x-5">
-    <%@party_card_parents.each do |card|%>
-      <%= button_to insert_party_card_account_deck_path(id: @account_deck&.id, card_id: card.id) do %>
+    <%@card_references.each do |card|%>
+      <%= button_to insert_card_account_deck_path(id: @account_deck&.id, card_id: card.id) do %>
         <%= render card, cached: true %>
       <% end %>
     <% end %>

@@ -10,6 +10,9 @@
 # race_id                 :bigint       null: false, foreign key of Race table
 #
 class AccountDeck < ApplicationRecord
+  # ALIAS AND SCOPES ===========================================================
+  alias_attribute :cards, :card_references
+  # CALLBACKS  ===========================================================
   after_touch do
     broadcast_update_later_to self, target: "account_deck_#{id}"
   end
