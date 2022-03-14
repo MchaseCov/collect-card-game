@@ -15,6 +15,9 @@
 # card_constant_id        :bigint       null: false, foreign key
 # timestamps              :datetime
 class PartyCard < Card
+  # PLAYER
+  has_one :player, through: :gamestate_deck
+
   # ALIAS AND SCOPES ===========================================================
   # TRIBE
   %i[Beast Humanoid].each do |tribe|

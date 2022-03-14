@@ -15,7 +15,7 @@ Keyword.create(
       # BATTLECRY: BEAST TAMER : GIVE BEAST 1 HEALTH
       type: 'Battlecry',
       player_choice: true,
-      target: %w[player_of_card cards in_battle beast_tribe],
+      target: %w[player_of_card party_cards in_battle beast_tribe],
       card_constant: CardConstant.find_by(name: 'Beast Tamer'),
       body_text: 'Give +2 health to a friendly Beast in battle.'
     }

@@ -20,6 +20,7 @@ require './app/decorators/party_card_gamestate_decorator'
 class Card < ApplicationRecord
   # ALIAS AND SCOPES ===========================================================
   alias_attribute :parent, :card_constant
+  delegate :archetype, :name, :keywords, :tribe, to: :card_constant
 
   # LOCATION
   %i[hand deck mulligan battle graveyard discard].each do |location|

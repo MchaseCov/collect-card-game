@@ -29,24 +29,16 @@ class Player < ApplicationRecord
   validates :health_current, numericality: { less_than_or_equal_to: :health_cap }
   validates :cost_current, numericality: { less_than_or_equal_to: :cost_cap }
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
+  alias_attribute :health, :health_current
   # ASSOCIATIONS ===========================================================
   belongs_to :race
   belongs_to :archetype
   belongs_to :game
   belongs_to :user
   has_one :gamestate_deck, dependent: :destroy
-  has_many :cards, through: :gamestate_deck do
-    %w[PartyCard SpellCard].each do |type|
-      define_method type.pluralize.to_sym do
-        where('type = ?', type.to_sym)
-      end
-    end
-  end
-  %i[party_cards spell_cards].each do |type|
-    define_method type.to_sym do
-      cards.send(type.to_s.camelize)
-    end
-  end
+  has_many :cards, through: :gamestate_deck
+  has_many :party_cards, through: :gamestate_deck, source: :cards, class_name: :PartyCard
+  has_many :spell_cards, through: :gamestate_deck, source: :cards, class_name: :SpellCard
 
   # METHODS (PUBLIC) ==================================================================
   # Method to use as futureproofing/reminder
