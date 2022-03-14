@@ -7,7 +7,7 @@ class PartyCardGamestateDecorator
   def data_for_hand
     data = { 'drag-party-play-target' => 'playableCard',
              'id' => @card.id,
-             'cost' => @card.cost_current,
+             'cost' => @card.cost,
              'action' => 'dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd' }
     return data unless @card.parent.battlecry.present? && @card.parent.battlecry.player_choice
 
@@ -29,7 +29,7 @@ class PartyCardGamestateDecorator
       'style-cards-target' => 'boardMinion',
       'id' => @card.id,
       'status' => @card.status,
-      'health-current' => @card.health_current,
+      'health-current' => @card.health,
       'health-cap' => @card.health_cap,
       'action' => 'dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd'
     }
@@ -42,7 +42,7 @@ class PartyCardGamestateDecorator
       'style-cards-target' => 'boardMinion',
       'id' => @card.id,
       'status' => @card.status,
-      'health-current' => @card.health_current,
+      'health-current' => @card.health,
       'health-cap' => @card.health_cap,
       'action' => 'drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd'
     }

@@ -48,11 +48,11 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
          data-animations-target="player"
          data-action="drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd"
       >
-      <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none <%= (opposing_player.attack_current > 0) ? '' : "hidden" %>">
-        <%=opposing_player.attack_current%>
+      <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none <%= (opposing_player.attack > 0) ? '' : "hidden" %>">
+        <%=opposing_player.attack%>
       </div>
       <div class="absolute z-10 w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
-        <%=opposing_player.health_current%>
+        <%=opposing_player.health%>
       </div>
     </div>
   </section>
@@ -67,7 +67,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
     <div id="op-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="hidden" data-id="0"></div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: opposing_player.cards.in_battle.includes(:archetype, party_card_parent: [:keywords]).order(:position),
+         collection: opposing_player.cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
          locals: { class: 'enemy-card z-30 hover:ring-4 hover:ring-red-300',
                    decorator_data_method: :data_opposing_card_board_battle},
@@ -81,7 +81,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
         >
       </div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: first_person_player.cards.in_battle.includes(:archetype, party_card_parent: [:keywords]).order(:position),
+         collection: first_person_player.cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
          locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40',
                    decorator_data_method: :data_friendly_card_board_battle,
@@ -98,18 +98,18 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
          data-animations-target="player"
          data-status="<%=first_person_player.status%>"
     >
-      <% if first_person_player.attack_current > 0 %>
+      <% if first_person_player.attack > 0 %>
         <div class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -bottom-2 -left-2">
-          <%=first_person_player.attack_current%>
+          <%=first_person_player.attack%>
         </div>
       <% end %>
       <div class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
-        <%=first_person_player.health_current%>
+        <%=first_person_player.health%>
       </div>
     </div>
     <div id="fp-cards-hand" class="absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0" data-animations-target="hand">
       <%=render partial: 'party_card_gamestates/full_card',
-         collection: first_person_player.cards.includes(:archetype, party_card_parent: %i[keywords battlecry]).in_hand.order(updated_at: :asc),
+         collection: first_person_player.cards.includes(card_constant: %i[keywords archetype battlecry]).in_hand.order(updated_at: :asc),
          as: :card,
          locals: { game: game,
                    first_person_player: first_person_player,
