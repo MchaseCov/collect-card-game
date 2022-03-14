@@ -65,7 +65,7 @@ export default class extends Controller {
   indicateDamageTaken(pair){
     if(pair[1] <= 0) return;
     const indicator = document.createElement("div");
-    indicator.className = "absolute top-1/2 left-1/2 text-5xl text-white flex justify-center items-center burst-8 shake-indicator"
+    indicator.className = "absolute flex items-center justify-center text-5xl text-white top-1/2 left-1/2 burst-8 shake-indicator"
     indicator.innerText = -pair[1]
     pair[0].appendChild(indicator)
     pair[0].classList.add('shake')
@@ -78,7 +78,7 @@ export default class extends Controller {
 
   getActorByTypeAndID(type, id) {
     switch (type) {
-      case 'PartyCardGamestate':
+      case 'PartyCard':
         return this.battlefieldTarget.querySelector(`[data-id="${id}"]`);
       case 'Player':
         return this.playerTargets.find((el) => el.dataset.playerId == id);

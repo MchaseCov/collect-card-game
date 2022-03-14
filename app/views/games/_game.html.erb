@@ -67,7 +67,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
     <div id="op-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="hidden" data-id="0"></div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: opposing_player.cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
+         collection: opposing_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
          locals: { class: 'enemy-card z-30 hover:ring-4 hover:ring-red-300',
                    decorator_data_method: :data_opposing_card_board_battle},
@@ -81,7 +81,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
         >
       </div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: first_person_player.cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
+         collection: first_person_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
          locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40',
                    decorator_data_method: :data_friendly_card_board_battle,
@@ -98,11 +98,9 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
          data-animations-target="player"
          data-status="<%=first_person_player.status%>"
     >
-      <% if first_person_player.attack > 0 %>
-        <div class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -bottom-2 -left-2">
-          <%=first_person_player.attack%>
-        </div>
-      <% end %>
+      <div id="attack" class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -bottom-2 -left-2 <%= (first_person_player.attack > 0) ? '' : "hidden" %>">
+        <%=first_person_player.attack%>
+      </div>
       <div class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
         <%=first_person_player.health%>
       </div>
