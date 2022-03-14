@@ -8,7 +8,7 @@ Keyword.create(
       target: ['player_of_card'],
       action: 'draw_cards',
       modifier: 1,
-      party_card_parent_id: PartyCardParent.find_by(name: 'Gnome Serf').id,
+      card_constant: CardConstant.find_by(name: 'Gnome Serf'),
       body_text: 'Draw a card.'
     },
     {
@@ -16,9 +16,7 @@ Keyword.create(
       type: 'Battlecry',
       player_choice: true,
       target: %w[player_of_card cards in_battle beast_tribe],
-      action: nil,
-      modifier: nil,
-      party_card_parent_id: PartyCardParent.find_by(name: 'Beast Tamer').id,
+      card_constant: CardConstant.find_by(name: 'Beast Tamer'),
       body_text: 'Give +2 health to a friendly Beast in battle.'
     }
   ]

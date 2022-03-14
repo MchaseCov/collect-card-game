@@ -9,7 +9,7 @@
 # action                  :string
 # modifier                :integer
 # body text               :string
-# card_constant_id    :integer      null: true, foreign key of PCP
+# card_constant_id        :integer      null: true, foreign key of PCP
 #
 class Keyword < ApplicationRecord
   belongs_to :card_constant
