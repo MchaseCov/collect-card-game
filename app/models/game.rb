@@ -95,14 +95,12 @@ class Game < ApplicationRecord
   # Played card move from hand to battle in position
 
   # NOTE: TO SELF: THIS WOULD MAKE MORE SENSE TO MOVE TO THE CARD STI SUBCLASSES
-  def put_card_in_play(card, position, target)
+  def put_card_in_play(card, position)
     return unless current_player.spend_coins_on_card(card)
 
     broadcast_card_play_animations(card, position)
     card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
     card.put_card_in_battle(position)
-    card.battlecry.trigger(card, target) if card.battlecry.present?
-    # CAN THIS BE AN OBSERVER CALLBACK? ^^^^^^
     broadcast_basic_update(card)
   end
 

@@ -15,6 +15,14 @@
 # card_constant_id        :bigint       null: false, foreign key
 # timestamps              :datetime
 class PartyCard < Card
+  attr_accessor :current_target
+
+  # CALLBACKS ===========================================================
+  after_update :do_battlecry, if: proc { |card|
+                                    card.saved_change_to_location == %w[hand battle] && card.battlecry.present?
+                                  }
+
+  # ASSOCIATIONS ===========================================================
   # PLAYER
   has_one :player, through: :gamestate_deck
 
@@ -91,5 +99,10 @@ class PartyCard < Card
 
   def run_buff_removal_on_card(buff)
     send(buff.removal_method, buff.modifier)
+  end
+
+  def do_battlecry
+    battlecry.trigger(self, current_target)
+    self.current_target = nil
   end
 end
