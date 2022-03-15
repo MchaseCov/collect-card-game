@@ -10,7 +10,10 @@ module.exports = {
     'bg-red-700',
     'bg-slate-700',
     'bg-sky-700',
-    'bg-emerald-700'],
+    'bg-emerald-700',
+    'bg-sky-500',
+    'bg-rose-500',
+    'bg-violet-500',],
   theme: {
     extend: {
       fontFamily: {

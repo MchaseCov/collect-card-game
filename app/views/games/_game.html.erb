@@ -106,9 +106,7 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
       </div>
     </div>
     <div id="fp-cards-hand" class="absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0" data-animations-target="hand">
-      <%=render partial: 'party_card_gamestates/full_card',
-         collection: first_person_player.cards.includes(card_constant: %i[keywords archetype battlecry]).in_hand.order(updated_at: :asc),
-         as: :card,
+      <%=render first_person_player.cards.includes(card_constant: %i[keywords archetype battlecry]).in_hand.order(updated_at: :asc),
          locals: { game: game,
                    first_person_player: first_person_player,
                    class: 'relative ring ring-lime-500 playing-card inline-block -ml-10 hover:z-10 hover:bottom-8 hover:scale-125',

@@ -23,6 +23,10 @@ class CardConstant < ApplicationRecord
                                                        foreign_key: :card_constant_id,
                                                        inverse_of: :card_constant
 
+  has_one :cast_effect, -> { where(type: 'Cast') }, class_name: :Keyword,
+                                                    foreign_key: :card_constant_id,
+                                                    inverse_of: :card_constant
+
   %i[Beast Humanoid].each do |tribe|
     scope "#{tribe.downcase}_tribe".to_sym, -> { where(tribe: tribe) }
   end

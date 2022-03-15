@@ -18,4 +18,10 @@ class SpellCard < Card
   # ASSOCIATIONS ===========================================================
   # PLAYER
   has_one :player, through: :gamestate_deck
+  # KEYWORDS
+  has_one :cast_effect, through: :card_constant
+
+  def decorate
+    SpellCardDecorator.new(self)
+  end
 end
