@@ -25,6 +25,8 @@ class PartyCard < Card
   # ASSOCIATIONS ===========================================================
   # PLAYER
   has_one :player, through: :gamestate_deck
+  # KEYWORDS
+  has_one :battlecry, through: :card_constant
 
   # ALIAS AND SCOPES ===========================================================
   # TRIBE
@@ -36,6 +38,8 @@ class PartyCard < Card
   %i[in_play attacking dead discarded].each do |status|
     scope "is_#{status}".to_sym, -> { where(status: status) }
   end
+
+  scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
 
   # VALIDATIONS ===========================================================
   validates_presence_of :health_cap, :health, :attack, :status, :cost

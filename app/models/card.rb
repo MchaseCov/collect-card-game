@@ -26,7 +26,6 @@ class Card < ApplicationRecord
   %i[hand deck mulligan battle graveyard discard].each do |location|
     scope "in_#{location}".to_sym, -> { where(location: location) }
   end
-  scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
 
   # VALIDATIONS ===========================================================
   validates_presence_of :location, :type
@@ -43,7 +42,7 @@ class Card < ApplicationRecord
   # GAME
   has_one :game, through: :gamestate_deck
   # KEYWORDS
-  delegate :battlecry, :deathrattle, :keywords, to: :card_constant
+  has_many :keywords, through: :card_constant
   # BUFFS
   has_many :active_buffs, as: :buffable
   has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,

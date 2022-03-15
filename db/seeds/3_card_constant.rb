@@ -22,6 +22,11 @@ CardConstant.create(
       name: 'Beast Tamer',
       tribe: 'Humanoid',
       archetype: @ranger
+    },
+    {
+      name: 'Flame Nova',
+      tribe: 'Fire',
+      archetype: @wizard
     }
   ]
 )

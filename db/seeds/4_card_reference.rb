@@ -27,6 +27,11 @@ CardReference.create(
       health: 2,
       card_type: 'PartyCard',
       card_constant: CardConstant.find_by(name: 'Beast Tamer')
+    },
+    {
+      cost: 2,
+      card_type: 'SpellCard',
+      card_constant: CardConstant.find_by(name: 'Flame Nova')
     }
   ]
 )

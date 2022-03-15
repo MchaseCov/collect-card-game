@@ -12,7 +12,7 @@
 #
 class CardReference < ApplicationRecord
   validates_presence_of :cost, :card_type, :card_constant_id
-  validates_numericality_of :attack, :health
+  validates_numericality_of :attack, :health, allow_nil: true
   validates :cost, numericality: { in: 0..10 }
   validates :card_type, inclusion: { in: %w[PartyCard SpellCard] }
   validates_uniqueness_of :card_constant_id

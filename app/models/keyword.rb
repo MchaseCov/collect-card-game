@@ -16,7 +16,7 @@ class Keyword < ApplicationRecord
   has_one :buff
 
   validates_presence_of :type, :target, :card_constant_id
-  validates :type, inclusion: { in: %w[Deathrattle Battlecry] },
+  validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast] },
                    uniqueness: { scope: :card_constant_id }
 
   def trigger(invoking_card, target_input)
