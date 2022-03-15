@@ -22,9 +22,9 @@ class Keyword < ApplicationRecord
   def trigger(invoking_card, target_input)
     @invoking_card = invoking_card
     @target_input = target_input if target_input
-    set_final_target.buffs << buff and return if buff
+    set_final_target.each { |c| c.buffs << buff } and return if buff
 
-    set_final_target.method(action).call(modifier)
+    set_final_target.each { |t| t.method(action).call(modifier) }
   end
 
   # For use in stimulus controller
@@ -46,16 +46,16 @@ class Keyword < ApplicationRecord
 
   def set_final_target
     valid_targets = find_valid_targets
-    return valid_targets.find(@target_input) if player_choice
+    return [valid_targets.find(@target_input)] if player_choice
 
-    valid_targets.respond_to?('sample') ? valid_targets.sample : valid_targets
+    [valid_targets].flatten
   end
 
   def player_of_card
     @invoking_card.player
   end
 
-  def opponent_player_of_card
+  def opposing_player_of_card
     @invoking_card.game.opposing_player_of(player_of_card)
   end
 end
