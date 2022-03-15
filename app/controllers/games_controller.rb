@@ -23,13 +23,13 @@ class GamesController < ApplicationController
   end
 
   def play_card
-    return unless current_users_turn && @player.cards.in_battle.size < 7
+    return unless current_users_turn
 
     card = @player.cards
                   .includes(:card_constant, :gamestate_deck)
                   .find(params[:card_id])
-    card.current_target = params[:battlecry_target] || false
-    @game.put_card_in_play(card, params[:position].to_i)
+    card.current_target = params[:battlecry_target]
+    @game.public_send("put_#{card.class.name.underscore}_in_play", card, params[:position].to_i)
   end
 
   def end_turn

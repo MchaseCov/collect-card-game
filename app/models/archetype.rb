@@ -16,4 +16,8 @@ class Archetype < ApplicationRecord
   def resource_name
     resource_type == 'hybrid' ? 'Mana and Energy' : resource_type.titleize
   end
+
+  def resource_color
+    { 'mana' => 'sky', 'energy' => 'rose', 'hybrid' => 'violet' }[resource_type]
+  end
 end
