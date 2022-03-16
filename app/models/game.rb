@@ -104,7 +104,7 @@ class Game < ApplicationRecord
     broadcast_basic_update(card)
   end
 
-  def play_spell(card, _position)
+  def play_spell(card)
     # Return unless player sepdn resource points and then think of a broadcast here too.
     card.spend_spell
   end

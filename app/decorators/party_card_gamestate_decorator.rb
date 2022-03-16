@@ -9,7 +9,7 @@ class PartyCardGamestateDecorator
              'id' => @card.id,
              'cost' => @card.cost,
              'action' => 'dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd' }
-    return data unless @card.parent.battlecry.present? && @card.parent.battlecry.player_choice
+    return data unless @card.battlecry.present? && @card.battlecry.player_choice
 
     data.tap do |hash|
       hash['battlecry-select-target'] = 'choosableBattlecry'
