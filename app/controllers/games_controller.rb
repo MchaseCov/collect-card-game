@@ -2,18 +2,18 @@ class GamesController < ApplicationController
   before_action :validate_decks_for_game_creation, only: [:create]
   before_action :set_game_and_perspective, except: [:create]
   before_action :conduct_mulligan, only: [:show], if: -> { @game.status == 'mulligan' }
+  before_action :current_users_turn, only: %i[play_party play_spell end_turn party_combat player_combat]
 
   def show; end
 
   # Not 100% sure how queue and form will be designed yet
   def create
     @game = Game.form_game(@queued_deck_one, @queued_deck_two)
-    redirect_to @game and return if @game
-
-    redirect_to root_path
+    redirect_to @game || root_path
   end
 
   def submit_mulligan
+    # "Turns" do not take effect yet, so we don't use the current_users_turn gate
     @player = @game.players.find_by(user: current_user)
     return unless @player && @player.status == 'mulligan'
 
@@ -23,24 +23,26 @@ class GamesController < ApplicationController
   end
 
   def play_party
-    return unless current_users_turn
+    party = @player.party_cards
+                   .includes(:card_constant, :gamestate_deck)
+                   .find(params[:card_id])
+    party.current_target = params[:battlecry_target].to_i
+    @game.play_party(party, params[:position].to_i)
+  end
 
-    card = @player.cards
-                  .includes(:card_constant, :gamestate_deck)
-                  .find(params[:card_id])
-    card.current_target = params[:battlecry_target]
-    @game.public_send("put_#{card.class.name.underscore}_in_play", card, params[:position].to_i)
+  def play_spell
+    spell = @player.spell_cards
+                   .includes(:card_constant, :gamestate_deck)
+                   .find(params[:card_id])
+    spell.current_target = params[:cast_target].to_i
+    @game.play_spell(spell)
   end
 
   def end_turn
-    return unless current_users_turn && @game.status == 'ongoing'
-
-    @game.end_turn
+    @game.end_turn unless @game.status != 'ongoing'
   end
 
   def party_combat
-    return unless current_users_turn
-
     attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
     defending_card = @game.opposing_player_of(@player).party_cards.in_battle.find(params[:target_id])
 
@@ -48,7 +50,7 @@ class GamesController < ApplicationController
   end
 
   def player_combat
-    return unless current_users_turn && (@opposing_player.id == params[:target_id].to_i)
+    return unless @opposing_player.id == params[:target_id].to_i
 
     attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
     @game.conduct_attack(attacking_card, @opposing_player) if attacking_card
@@ -59,7 +61,7 @@ class GamesController < ApplicationController
   def validate_decks_for_game_creation
     @queued_deck_one = AccountDeck.includes(:archetype, :race).find(params[:deck_one_id])
     @queued_deck_two = AccountDeck.includes(:archetype, :race).find(params[:deck_two_id])
-    redirect_to root_path and return unless @queued_deck_one.card_count == 30 && @queued_deck_two.card_count == 30
+    redirect_to root_path and return if @queued_deck_one.card_count != 30 || @queued_deck_two.card_count != 30
   end
 
   def set_game_and_perspective
@@ -77,7 +79,7 @@ class GamesController < ApplicationController
   end
 
   def current_users_turn
-    return false unless current_user == @game.current_player.user
+    head(401) unless current_user == @game.current_player.user
 
     @player = @game.current_player
   end
