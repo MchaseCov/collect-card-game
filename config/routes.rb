@@ -4,10 +4,9 @@ Rails.application.routes.draw do
   resources :games do
     member do
       post 'submit_mulligan'
-      post 'play_card'
+      %i[party spell].each { |type| post "play_card/#{type}", to: "games#play_#{type}" }
+      %i[party player].each { |target| post "combat/#{target}", to: "games##{target}_combat" }
       post 'end_turn'
-      post 'minion_combat'
-      post 'player_combat'
     end
   end
   resources :battlecries, only: [] do

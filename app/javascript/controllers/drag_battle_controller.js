@@ -84,7 +84,7 @@ export default class extends Controller {
   }
 
   postMinionCombat(target) {
-    fetch(`/games/${this.element.dataset.game}/minion_combat`, {
+    fetch(`/games/${this.element.dataset.game}/combat/party`, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {
@@ -99,7 +99,7 @@ export default class extends Controller {
     });
 }
   postPlayerCombat(target) {
-      fetch(`/games/${this.element.dataset.game}/player_combat`, {
+      fetch(`/games/${this.element.dataset.game}/combat/player`, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {

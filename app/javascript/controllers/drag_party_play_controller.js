@@ -80,7 +80,7 @@ export default class extends Controller {
 
   // Target argument is passed from battlecry select controller when applicable
   postToPlayCardPath(target = false) {
-    fetch(`/games/${this.element.dataset.game}/play_card`, {
+    fetch(`/games/${this.element.dataset.game}/play_card/party`, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {

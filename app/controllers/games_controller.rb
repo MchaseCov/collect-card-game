@@ -22,7 +22,7 @@ class GamesController < ApplicationController
     @game.players.in_mulligan? ? @game.broadcast_basic_update : @game.begin_first_turn
   end
 
-  def play_card
+  def play_party
     return unless current_users_turn
 
     card = @player.cards
@@ -38,7 +38,7 @@ class GamesController < ApplicationController
     @game.end_turn
   end
 
-  def minion_combat
+  def party_combat
     return unless current_users_turn
 
     attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
