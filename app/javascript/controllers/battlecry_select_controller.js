@@ -1,7 +1,7 @@
-import { Controller } from '@hotwired/stimulus';
-
+//import { Controller } from '@hotwired/stimulus';
+import { PlayParentController } from './play_parent_controller';
 // Connects to data-controller="battlecry-select"
-export default class extends Controller {
+export default class extends PlayParentController {
   static targets = ['choosableBattlecry', 'inPlayBattlecry', 'enemyMinionActor', 'opposingPlayer', 'friendlyPlayer'];
 
   inPlayBattlecryTargetConnected(element) {
@@ -36,16 +36,14 @@ export default class extends Controller {
   }
 
   async connect() {
-    if (!Object.keys(this.battlecriesWithTarget).length === 0) return; // Stop if pulled local storage data
-    await new Promise((r) => setTimeout(r, 200)); // Gives time for the partyPlayController to always be loaded first, no race condition
-    if (!this.partyPlayController.playerCanAct) return; // Stop if not the player's turn
+    if (!Object.keys(this.battlecriesWithTarget).length === 0 || !this.playerCanAct) return; // Stop if pulled local storage data
     const battlecries = [];
     this.choosableBattlecryTargets.forEach((e) => !battlecries.includes(e.dataset.battlecry) && battlecries.push(e.dataset.battlecry));
     await Promise.all(battlecries.map((id) => this.requestTargets(id)))
     localStorage.setItem('battlecryData', JSON.stringify(this.battlecriesWithTarget)) // Stores battlecry target data in localstorage to reduce request spam
     localStorage.setItem('battlecryDataTimestamp', + new Date(this.element.dataset.updated)) // Timestamp for comparison
   }
-
+  
   async requestTargets(id) {
     const response = await fetch(`/battlecries/${id}/targets?game=${this.element.dataset.game}`, {
       method: 'GET',
