@@ -42,12 +42,16 @@ export default class extends Controller {
   }
 
   dragEnter(event) {
+    if (!this.dragSrcEl) return
+
     if (event.preventDefault) {
       event.preventDefault();
     }
   }
 
   dragOver(event) {
+    if (!this.dragSrcEl) return
+
     if (event.target.classList.contains('enemy-card')) {
       // Prevents from accidentally targetting a child element of the card
       event.target.classList.add('shadow-2xl', 'shadow-red-900');
@@ -58,10 +62,14 @@ export default class extends Controller {
   }
 
   dragLeave(event) {
+    if (!this.dragSrcEl) return
+
     event.target.classList.remove('shadow-2xl', 'shadow-red-900');
   }
 
   drop(event) {
+    if (!this.dragSrcEl) return
+
     event.stopPropagation();
     if (event.target.dataset.playerId) {
       this.postPlayerCombat(event.target)

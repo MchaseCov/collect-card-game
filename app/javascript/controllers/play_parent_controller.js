@@ -7,7 +7,7 @@ export class PlayParentController extends Controller {
   playerCostValue = this.element.dataset.cost;
 
   initialize(elements) {
-    if (!this.playerCanAct || this.boardSpaceTargets.length >= 8) {
+    if (!this.playerCanAct || this.boardSpaceTargets?.length >= 8) {
       elements.forEach((el) => this.removeDragFromElement(el));
     } else {
       elements.forEach((el) => this.evaluatePlaybility(el));
@@ -38,24 +38,27 @@ export class PlayParentController extends Controller {
   }
 
   dragEnter(event) {
+    if (!this.dragSrcEl) return
     if (event.preventDefault) event.preventDefault();
   }
 
   dragOver(event) {
+    if (!this.dragSrcEl) return
     event.target.classList.add('bg-lime-500');
     if (!this.keepBoardSpaceWide) event.target.style.width = '9rem';
     if (event.preventDefault) event.preventDefault();
   }
 
   dragLeave(event) {
+    if (!this.dragSrcEl) return
     event.target.classList.remove('bg-lime-500');
+    console.log (!this.keepBoardSpaceWide)
     if (!this.keepBoardSpaceWide) event.target.style.width = '0rem';
   }
 
   dragEnd() {
-    if (this.dragSrcEl) {
-      this.dragSrcEl.classList.remove('shadow-2xl', 'shadow-lime-500');
-    }
+    if (!this.dragSrcEl) return
+    this.dragSrcEl.classList.remove('shadow-2xl', 'shadow-lime-500');
   }
 
   // POST FUNCTIONS

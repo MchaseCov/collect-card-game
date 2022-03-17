@@ -5,10 +5,18 @@ class SpellCardDecorator
   end
 
   def data_for_hand
-    { 'drag-party-play-target' => 'playableCard',
-      'id' => @card.id,
-      'cost' => @card.cost,
-      'action' => 'dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd' }
+    data = { 'drag-spell-play-target' => 'playableCard',
+             'id' => @card.id,
+             'cost' => @card.cost,
+             'resource' => 'Resource',
+             'action' => 'dragstart->drag-spell-play#dragStart dragend->drag-spell-play#dragEnd' }
+    if @card.cast_effect.player_choice
+      data.tap do |hash|
+        hash['cast-effect-select-target'] = 'choosableCast'
+        hash['cast-effect'] = @card.cast_effect.id
+      end
+    end
+    data
   end
 
   def data_fp_drawn_card

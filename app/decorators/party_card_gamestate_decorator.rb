@@ -7,8 +7,10 @@ class PartyCardGamestateDecorator
   def data_for_hand
     data = { 'drag-party-play-target' => 'playableCard',
              'id' => @card.id,
+             'resource' => 'Cost',
              'cost' => @card.cost,
              'action' => 'dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd' }
+
     return data unless @card.battlecry.present? && @card.battlecry.player_choice
 
     data.tap do |hash|
