@@ -26,7 +26,7 @@ class GamesController < ApplicationController
     party = @player.party_cards
                    .includes(:card_constant, :gamestate_deck)
                    .find(params[:card_id])
-    party.current_target = params[:battlecry_target].to_i
+    party.current_target = params[:target].to_i if params[:target]
     @game.play_party(party, params[:position].to_i)
   end
 
@@ -34,7 +34,7 @@ class GamesController < ApplicationController
     spell = @player.spell_cards
                    .includes(:card_constant, :gamestate_deck)
                    .find(params[:card_id])
-    spell.current_target = params[:cast_target].to_i
+    spell.current_target = params[:target].to_i if params[:target]
     @game.play_spell(spell)
   end
 
