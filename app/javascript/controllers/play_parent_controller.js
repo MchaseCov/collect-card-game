@@ -21,7 +21,7 @@ export class PlayParentController extends Controller {
   }
 
   evaluatePlaybility(element){
-    if(element.dataset.cost > this[`player${element.dataset.resource}Value`]) this.removeDragFromElement(element)
+    if(+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) this.removeDragFromElement(element)
   }
 
   errorFeedback(event) {
@@ -29,6 +29,7 @@ export class PlayParentController extends Controller {
     event.target.onanimationend = () => event.target.classList.remove('shake');
   }
 
+  // SHARED SIMPLE PLAY FUNCTIONS ====================
   dragStart(event) {
     this.dragSrcEl = event.target;
     event.target.classList.add('shadow-2xl', 'shadow-lime-500');
