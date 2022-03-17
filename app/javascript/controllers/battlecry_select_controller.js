@@ -1,29 +1,14 @@
-//import { Controller } from '@hotwired/stimulus';
+// import { Controller } from '@hotwired/stimulus';
 import { PlayParentController } from './play_parent_controller';
+import { TargetableActions } from '../targetable_actions';
 // Connects to data-controller="battlecry-select"
 export default class extends PlayParentController {
   static targets = ['choosableBattlecry', 'inPlayBattlecry', 'enemyMinionActor', 'opposingPlayer', 'friendlyPlayer'];
 
   inPlayBattlecryTargetConnected(element) {
-    element.dataset.action += ' click->battlecry-select#cancelPlay';
-    this.battlecriesWithTarget[element.dataset.battlecry].forEach((id) => this.markAsValidTarget(document.querySelector(`[data-id="${id}"]`)));
-    this.addGreyscaleToIneligableTargets();
-    element.classList.remove('hover:z-10', 'hover:bottom-8', 'hover:scale-125', 'ring-lime-500');
-    element.classList.add('ring', 'ring-red-600');
-  }
-
-  markAsValidTarget(element) {
-    element.classList.add('filter-none');
-    element.setAttribute('data-action', 'click->battlecry-select#selectTarget'); // Intentionally erases old data to prevent strange action ordering by dragging card in this stage
-  }
-
-  addGreyscaleToIneligableTargets() {
-    const targetGroups = [this.enemyMinionActorTargets, this.partyPlayController.friendlyCardInBattleTargets, this.partyPlayController.playableCardTargets, this.opposingPlayerTargets, this.friendlyPlayerTargets];
-    targetGroups.forEach((targetGroup) => {
-      if (targetGroup.length > 0) {
-        targetGroup.forEach((el) => el.classList.add('grayscale'));
-      }
-    });
+    this.dragSrcEl = element;
+    const targetActions = new TargetableActions('battlecry-select', this.dragSrcEl, this.battlecriesWithTarget[element.dataset.battlecry]);
+    targetActions.addGreyscaleToIneligableTargets([this.enemyMinionActorTargets, this.partyPlayController.friendlyCardInBattleTargets, this.partyPlayController.playableCardTargets, this.opposingPlayerTargets, this.friendlyPlayerTargets]);
   }
 
   cancelPlay() {
@@ -31,19 +16,19 @@ export default class extends PlayParentController {
   }
 
   initialize() {
-    const localStorageValid = (+localStorage.getItem('battlecryDataTimestamp') === + new Date(this.element.dataset.updated))
-    this.battlecriesWithTarget = (localStorageValid ? JSON.parse(localStorage.getItem('battlecryData')) : {})
+    const localStorageValid = (+localStorage.getItem('battlecryDataTimestamp') === +new Date(this.element.dataset.updated));
+    this.battlecriesWithTarget = (localStorageValid ? JSON.parse(localStorage.getItem('battlecryData')) : {});
   }
 
   async connect() {
     if (!Object.keys(this.battlecriesWithTarget).length === 0 || !this.playerCanAct) return; // Stop if pulled local storage data
     const battlecries = [];
     this.choosableBattlecryTargets.forEach((e) => !battlecries.includes(e.dataset.battlecry) && battlecries.push(e.dataset.battlecry));
-    await Promise.all(battlecries.map((id) => this.requestTargets(id)))
-    localStorage.setItem('battlecryData', JSON.stringify(this.battlecriesWithTarget)) // Stores battlecry target data in localstorage to reduce request spam
-    localStorage.setItem('battlecryDataTimestamp', + new Date(this.element.dataset.updated)) // Timestamp for comparison
+    await Promise.all(battlecries.map((id) => this.requestTargets(id)));
+    localStorage.setItem('battlecryData', JSON.stringify(this.battlecriesWithTarget)); // Stores battlecry target data in localstorage to reduce request spam
+    localStorage.setItem('battlecryDataTimestamp', +new Date(this.element.dataset.updated)); // Timestamp for comparison
   }
-  
+
   async requestTargets(id) {
     const response = await fetch(`/battlecries/${id}/targets?game=${this.element.dataset.game}`, {
       method: 'GET',
@@ -64,9 +49,10 @@ export default class extends PlayParentController {
   }
 
   selectTarget(event) {
-    this.partyPlayController.postToPlayCardPath(event.target.dataset.id);
+    this.postToPlayCardPath('party', event.target.dataset.id);
   }
 
+  // For accessing values already set in initial paly controller
   get partyPlayController() {
     return this.application.getControllerForElementAndIdentifier(this.element, 'drag-party-play');
   }
