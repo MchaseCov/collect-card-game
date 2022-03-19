@@ -9,11 +9,7 @@ Rails.application.routes.draw do
       post 'end_turn'
     end
   end
-  resources :battlecries, only: [] do
-    member do
-      get 'targets'
-    end
-  end
+  get 'battlecry/:id/targets', to: 'battlecries#targets', as: 'battlecry_targets'
   resources :account_decks do
     member do
       post 'insert_card'
