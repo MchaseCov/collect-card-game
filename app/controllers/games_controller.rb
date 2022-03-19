@@ -13,8 +13,9 @@ class GamesController < ApplicationController
   end
 
   def submit_mulligan
-    # "Turns" do not take effect yet, so we don't use the current_users_turn gate
-    @player = @game.players.find_by(user: current_user)
+    @player ||= @game.players.find_by(user: current_user)
+    # "Turns" do not take effect yet, so we don't use the current_users_turn gat
+
     return unless @player && @player.status == 'mulligan'
 
     @player.draw_mulligan_cards if params[:mulligan] # When player requests a new hand
@@ -72,8 +73,9 @@ class GamesController < ApplicationController
   end
 
   def conduct_mulligan
+    @player = @game.players.find_by(user: current_user)
     # Safety check for if game is in mulligan but player does not have any mulligan cards.
-    return if !current_users_turn || @player.mulligan_cards.any?
+    return if @player.mulligan_cards.any?
 
     @player.draw_mulligan_cards
   end
