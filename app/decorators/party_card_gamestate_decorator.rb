@@ -6,16 +6,20 @@ class PartyCardGamestateDecorator
 
   def data_for_hand
     data = { 'drag-party-play-target' => 'playableCard',
+             'gameplay-drag-target' => 'playsToBoard',
              'id' => @card.id,
              'resource' => 'Cost',
              'cost' => @card.cost,
-             'action' => 'dragstart->drag-party-play#dragStart dragend->drag-party-play#dragEnd' }
+             'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd',
+             'gameplay-drag-type-param' => 'party',
+             'gameplay-drag-action-param' => 'play_card' }
 
     return data unless @card.battlecry.present? && @card.battlecry.player_choice
 
     data.tap do |hash|
-      hash['battlecry-select-target'] = 'choosableBattlecry'
+      hash['gameplay-drag-target-type-param'] = 'battlecry'
       hash['battlecry'] = @card.battlecry.id
+      hash['gameplay-drag-target'] += ' takesPlayerInput'
     end
     data
   end
@@ -26,27 +30,28 @@ class PartyCardGamestateDecorator
 
   def data_friendly_card_board_battle
     {
-      'drag-battle-target' => 'activeFriendlyActor',
+      # 'gameplay-drag-target' => 'activeFriendlyActor',
       'drag-party-play-target' => 'friendlyCardInBattle',
       'style-cards-target' => 'boardMinion',
+      'gameplay-drag-target' => 'recievesPlayerInput',
       'id' => @card.id,
       'status' => @card.status,
       'health-current' => @card.health,
       'health-cap' => @card.health_cap,
-      'action' => 'dragstart->drag-battle#dragStart dragend->drag-battle#dragEnd'
+      'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#dragLeave dragend->gameplay-drag#dragEnd'
     }
   end
 
   def data_opposing_card_board_battle
     {
-      'drag-battle-target' => 'enemyActor',
+      'gameplay-drag-target' => 'enemyActor',
       'battlecry-select-target' => 'enemyMinionActor',
       'style-cards-target' => 'boardMinion',
       'id' => @card.id,
       'status' => @card.status,
       'health-current' => @card.health,
       'health-cap' => @card.health_cap,
-      'action' => 'drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd'
+      'action' => 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#dragLeave dragend->gameplay-drag#dragEnd'
     }
   end
 
@@ -60,9 +65,10 @@ class PartyCardGamestateDecorator
     return data unless first_person
 
     data.tap do |hash|
-      hash['drag-party-play-target'] = 'boardSpace'
+      hash['gameplay-drag-target'] = 'recievesPlayToBoard'
+      hash['gameplay-drag-board-target-param'] = @card.position
       hash['action'] =
-        'drop->drag-party-play#drop dragenter->drag-party-play#dragEnter dragover->drag-party-play#dragOver dragleave->drag-party-play#dragLeave dragend->drag-party-play#dragEnd'
+        'drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#boardspaceDragLeave'
     end
     data
   end

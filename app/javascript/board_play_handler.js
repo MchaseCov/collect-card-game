@@ -9,8 +9,8 @@ export default class BoardPlayHandler {
     this.gameId = controller.element.dataset.game;
     this.willPlayToBoard = (typeof targetData === 'undefined');
     this.validDropTargets = (this.willPlayToBoard ? this.recievesPlayToBoardTargets : this.searchForValidTargets(targetData));
-    this.initialDecorationAttributes = ['w-8', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5', 'bg-lime-500'];
-    this.targetDecorationAttributes = ['shadow-2xl', 'shadow-lime-500'];
+    this.initialDecorationAttributes = ['w-8', 'h-52', 'bg-clip-padding', 'px-5', '-mx-2.5'];
+    this.targetDecorationAttributes = ['ring-sky-600', 'hide-dragging-card', 'hover:invisible'];
     this.targetHoverDecorationAttributes = ['ring'];
     this.startGameDecoration();
   }
@@ -20,21 +20,33 @@ export default class BoardPlayHandler {
   }
 
   startGameDecoration() {
+    this.target.parentElement.classList.remove('hover:bottom-0')
     this.recievesPlayToBoardTargets.forEach((el) => el.classList.add(...this.initialDecorationAttributes));
+    this.target.classList.remove('playing-card')
     this.target.classList.add(...this.targetDecorationAttributes);
-  }
+    if(!this.willPlayToBoard) {
+      this.targetableOptionAttributes = ['ring','ring-4', 'ring-amber-400']
+      this.validDropTargets.forEach((el) => el.classList.add(...this.targetableOptionAttributes));
+    }
+    }
 
   endGameDecoration() {
     this.removeBoardspaceHoverDecoration();
-    this.recievesPlayToBoardTargets.forEach((el) => el.classList.remove(...this.initialDecorationAttributes));
     this.target.classList.remove(...this.targetDecorationAttributes);
+    this.target.parentElement.classList.add('hover:bottom-0')
+    this.target.classList.add('playing-card')
+    this.recievesPlayToBoardTargets.forEach((el) => el.classList.remove(...this.initialDecorationAttributes));
+    //this.target.classList.add('hover:z-10','hover:bottom-8', 'hover:scale-125')
+    if(!this.willPlayToBoard) {
+      this.validDropTargets.forEach((el) => el.classList.remove(...this.targetableOptionAttributes));
+    }
   }
 
   createPreviewCard(element) {
     this.previewCard = element.cloneNode(true);
     this.previewCard.innerHTML = this.target.innerHTML;
     this.previewCard.classList = `${this.target.classList} opacity-50`;
-    this.previewCard.classList.remove('-ml-10');
+    this.previewCard.classList.remove('-ml-10', 'hide-dragging-card', 'hover:invisible', 'hover:z-10', 'hover:bottom-8', 'hover:scale-125', 'ring-lime-500');
     this.previewCard.dataset.action = this.previewCard.dataset.action.replace('dragenter->gameplay-drag#boardspaceDragEnter', '');
   }
 
@@ -51,12 +63,30 @@ export default class BoardPlayHandler {
     this.previewCard.remove();
   }
 
+  setForPlayerInput(){
+    this.previewCard.dataset.action += ' click->gameplay-drag#cancelPlayerInputPhase'
+    this.validDropTargets.forEach((el)=> el.dataset.action += ' click->gameplay-drag#selectTarget')
+    this.decorateForPlayerInput()
+  }
+
+  cancelPlayerInputPhase(){
+    //this.lineToCard?.stopDrawing()
+    this.endGameDecoration()
+    document.body.style.cursor = 'auto'
+  }
+
+  decorateForPlayerInput(){
+    this.recievesPlayToBoardTargets.forEach((el) => el.classList.remove(...this.initialDecorationAttributes));
+    this.previewCard.classList.remove('opacity-50')
+    this.previewCard.setAttribute('data-line-drawer-target', 'origin')
+  }
+
   addTargetHoverDecoration(element) {
-    element.classList.add(...this.targetDecorationAttributes);
+    
   }
 
   removeTargetHoverDecoration(element) {
-    element.classList.remove(...this.targetDecorationAttributes);
+    
   }
 
   postPlayerAction(position, target) {

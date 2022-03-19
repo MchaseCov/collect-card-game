@@ -25,6 +25,7 @@ export default class extends Controller {
   }
 
   dragStart(event) {
+    this.handler?.cancelPlayerInputPhase()
     const playsToBoard = this.playsToBoardTargets.includes(event.target)
     const hasTargets = event.target.dataset.targets
     if (playsToBoard) {
@@ -34,6 +35,7 @@ export default class extends Controller {
       // This could be either a spell from hand OR combat, etc
     }
     event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
     event.dataTransfer.setData('text/html', event.target.innerHTML);
   }
 
@@ -50,9 +52,6 @@ export default class extends Controller {
   dragOver(event) {
     if (event.preventDefault) event.preventDefault();
   }
-  boardspaceDragOver(event) {
-    if (event.preventDefault) event.preventDefault();
-  }
 
   dragLeave(event) {
     if (this.handler.willPlayToBoard) return;
@@ -63,6 +62,7 @@ export default class extends Controller {
   }
 
   dragEnd() {
+    if (this.isInTargetPhase) return this.isInTargetPhase = false 
     this.handler?.endGameDecoration();
   }
 
@@ -70,17 +70,30 @@ export default class extends Controller {
     event.stopPropagation();
     if (this.handler.willPlayToBoard) return   
     if (this.playsToBoardTargets.includes(this.handler.target) && this.handler.validDropTargets.includes(event.target)) {
-      this.handler.postPlayerAction(this.handler.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id)
+      //this.handler.postPlayerAction(this.handler.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id)
   } else {
       console.log('This is NOT something that goes into play, but rather it directly targets X. Either a spell with a target or combat!');
       // Probably want to add a check to see if the initial element was in combat or in hand and then account according to that
     }
   }
 
-  boardspaceDrop(event) {
+  selectTarget(event) {
     event.stopPropagation();
-    if (!this.handler.willPlayToBoard) return   
-    this.handler.postPlayerAction(event.params.boardTarget)
+    this.handler.postPlayerAction(this.handler.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id)
+    this.handler.cancelPlayerInputPhase()
+    this.handler = undefined
+  }
+
+  boardspaceDrop(event) {
+    if (this.handler.willPlayToBoard) return this.handler.postPlayerAction(event.params.boardTarget)
+    if (this.playsToBoardTargets.includes(this.handler.target)){
+    this.isInTargetPhase = true
+    this.handler.setForPlayerInput()
+    }
+  }
+
+  cancelPlayerInputPhase(){
+    this.handler.cancelPlayerInputPhase()
   }
 
   async prepareBattlecryData() {
@@ -95,7 +108,7 @@ export default class extends Controller {
   }
 
   validatePartyCardsArePlayable() {
-    const boardIsFull = (this.recievesPlayToBoard?.length >= 8)
+    const boardIsFull = (this.recievesPlayToBoardTargets?.length >= 8)
     this.playsToBoardTargets.forEach((element)=> {
       if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) this.removeDragFromElement(element);
     })
