@@ -12,9 +12,8 @@
   <div class="w-full h-full overflow-hidden rounded-full pointer-events-none select-none">
     <%=image_tag('cardplaceholder.webp', class:"object-contain w-40 h-auto select-none pointer-events-none", draggable:"false")%>
   </div>
-  <%=render(partial: 'party_card_gamestates/full_card',
-         locals: { class: 'tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200',
-                   card: card },
+  <%=render(card,
+         locals: { class: 'tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200'},
          cached: true ) %>
 <% end %>
 <%= content_tag :div,
