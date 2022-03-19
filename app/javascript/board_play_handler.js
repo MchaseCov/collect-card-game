@@ -22,7 +22,6 @@ export default class BoardPlayHandler {
   startGameDecoration() {
     this.target.parentElement.classList.remove('hover:bottom-0')
     this.recievesPlayToBoardTargets.forEach((el) => el.classList.add(...this.initialDecorationAttributes));
-    this.target.classList.remove('playing-card')
     this.target.classList.add(...this.targetDecorationAttributes);
     if(!this.willPlayToBoard) {
       this.targetableOptionAttributes = ['ring','ring-4', 'ring-amber-400']
@@ -34,7 +33,6 @@ export default class BoardPlayHandler {
     this.removeBoardspaceHoverDecoration();
     this.target.classList.remove(...this.targetDecorationAttributes);
     this.target.parentElement.classList.add('hover:bottom-0')
-    this.target.classList.add('playing-card')
     this.recievesPlayToBoardTargets.forEach((el) => el.classList.remove(...this.initialDecorationAttributes));
     //this.target.classList.add('hover:z-10','hover:bottom-8', 'hover:scale-125')
     if(!this.willPlayToBoard) {
@@ -79,14 +77,6 @@ export default class BoardPlayHandler {
     this.recievesPlayToBoardTargets.forEach((el) => el.classList.remove(...this.initialDecorationAttributes));
     this.previewCard.classList.remove('opacity-50')
     this.previewCard.setAttribute('data-line-drawer-target', 'origin')
-  }
-
-  addTargetHoverDecoration(element) {
-    
-  }
-
-  removeTargetHoverDecoration(element) {
-    
   }
 
   postPlayerAction(position, target) {

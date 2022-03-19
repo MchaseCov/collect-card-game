@@ -16,9 +16,10 @@ export default class extends Controller {
     this.element.style.cursor = "url('/reticle.webp') 10 15, crosshair";
   }
 
-  originTargetDisconnected() {
+  originTargetDisconnected(element) {
     this.stopDrawing();
     this.element.style.cursor = 'auto';
+    element.style.cursor = "auto";
   }
 
   disconnectOriginTarget() {
@@ -87,6 +88,6 @@ export default class extends Controller {
     const centerY = top + height / 2;
     this.startPosition = { x: centerX, y: centerY };
     this.lineCoordinates = { x: 0, y: 0 };
-    this.element.setAttribute('data-action', 'mousemove->line-drawer#updateLine');
+    this.element.dataset.action += " mousemove->line-drawer#updateLine"
   }
 }

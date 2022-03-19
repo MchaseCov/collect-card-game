@@ -20,19 +20,19 @@
     <div class="min-w-max">Gold: <%=first_person_player.cost_current%> / <%=first_person_player.cost_cap%></div>
   </section>
 </aside>
+<!-- Currently disabled controllers from article HTML  play-parent drag-party-play drag-spell-play  drag-battle battlecry-select -->
 <article id="main-game-board"
 class="flex flex-col h-full flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
-
-data-controller="play-parent drag-party-play drag-spell-play style-cards drag-battle battlecry-select gameboard-animations"
+data-controller="gameplay-drag line-drawer style-cards gameboard-animations"
 data-game='<%=game.id%>'
 data-updated='<%=game.updated_at%>'
-data-cost='<%=first_person_player.cost_current%>'
-data-resource='<%=first_person_player.cost_current%>'
-data-current-turn='<%=game.turn%>'
-data-player-turn='<%=first_person_player.turn_order%>'
+data-gameplay-drag-player-cost-value='<%=first_person_player.cost_current%>'
+data-gameplay-drag-player-resource-value='<%=first_person_player.cost_current%>'
+data-gameplay-drag-current-turn-value='<%=game.turn%>'
+data-gameplay-drag-player-turn-value='<%=first_person_player.turn_order%>'
 data-gameboard-animations-status-value='<%=game.status%>'
-data-gameboard-animations-turn-value='<%=game.turn_time%>'
-data-action="drag-party-play:loadBattlecryController->battlecry-select#loadController">
+data-gameboard-animations-turn-value='<%=game.turn_time%>'>
+  <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" class='fixed z-50 pointer-events-none select-none'></canvas>
   <section id="op-info" class="relative w-full h-1/3">
     <section id="op-cards-hand" class="absolute flex-1 w-full ml-auto text-center has-tooltip shrink flex-nowrap whitespace-nowrap -top-16" data-animations-target="hand">
       <div class="left-0 right-0 text-center tooltip -bottom-10" >Your opponent has <%=opposing_player.cards.in_hand.size%> cards in hand.</div>
@@ -44,10 +44,13 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
          class="absolute bottom-0 left-0 right-0 w-40 h-48 mx-auto bg-red-200 rounded-t-full enemy-card"
          data-drag-battle-target="enemyActor"
          data-battlecry-select-target="opposingPlayer"
+         data-id=<%=opposing_player.id%>
          data-player-id=<%=opposing_player.id%>
          data-status="<%=opposing_player.status%>"
          data-animations-target="player"
-         data-action="drop->drag-battle#drop dragenter->drag-battle#dragEnter dragover->drag-battle#dragOver dragleave->drag-battle#dragLeave dragend->drag-battle#dragEnd"
+         data-gameplay-drag-target= "recievesPlayerInput enemyActor"
+         data-type = "player"
+         data-action="drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#dragLeave dragend->gameplay-drag#dragEnd"
       >
       <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none <%= (opposing_player.attack > 0) ? '' : "hidden" %>">
         <%=opposing_player.attack%>
@@ -75,15 +78,15 @@ data-action="drag-party-play:loadBattlecryController->battlecry-select#loadContr
     </div>
     <div id="fp-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="rounded-full opacity-50 board-space"
-       data-drag-party-play-target="boardSpace"
-       data-id="0"
-       data-action="drop->drag-party-play#drop dragenter->drag-party-play#dragEnter dragover->drag-party-play#dragOver dragleave->drag-party-play#dragLeave dragend->drag-party-play#dragEnd"
+        data-gameplay-drag-target="recievesPlayToBoard"
+        data-gameplay-drag-board-target-param="0"
+        data-action="drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#boardspaceDragLeave"
         >
       </div>
       <%=render partial: 'party_card_gamestates/in_battle',
          collection: first_person_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
-         locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40',
+         locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 ',
                    decorator_data_method: :data_friendly_card_board_battle,
                    first_person_pov: true },
          cached: true %>

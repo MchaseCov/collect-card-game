@@ -36,11 +36,6 @@
   transform: translate(0px, 0);
   will-change: transform;
 }
-.playing-card {
-  transition: transform 0.25s linear;
-  transform: translate(0px, 0);
-  will-change: transform;
-}
 
 .shake{
   animation: shake 0.5s;

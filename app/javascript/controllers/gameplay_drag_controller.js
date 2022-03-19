@@ -1,16 +1,21 @@
 import { Controller } from '@hotwired/stimulus';
 import BoardPlayHandler from '../board_play_handler';
-import TargetByClickHandler from '../target_by_click_handler';
+import DragBattleHandler from '../drag_battle_handler';
+//import TargetByClickHandler from '../target_by_click_handler';
 import TargetDataFetcher from '../target_data_fetcher';
 
 // Connects to data-controller="gameplay-drag"
 export default class extends Controller {
-  static targets = ['playsToBoard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput'];
+  static targets = ['playsToBoard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor'];
   static values = {
     playerCost: Number,
     playerResource: Number,
     currentTurn: Boolean,
     playerTurn: Boolean,
+  }
+
+  friendlyActorTargetConnected(element){
+    if(element.dataset.status !== "attacking") this.removeDragFromElement(element)
   }
 
   async initialize() {
@@ -26,22 +31,24 @@ export default class extends Controller {
 
   dragStart(event) {
     this.handler?.cancelPlayerInputPhase()
-    const playsToBoard = this.playsToBoardTargets.includes(event.target)
-    const hasTargets = event.target.dataset.targets
-    if (playsToBoard) {
+    if(this.friendlyActorTargets.includes(event.target)){
+      this.handler = new DragBattleHandler(this, event)
+      event.preventDefault()
+    } else if (this.playsToBoardTargets.includes(event.target)) {
       // All cards from hand that play to board, even those with battlecry target effects
       this.handler =  new BoardPlayHandler(this, event)
-    } else if (hasTargets) {
+    } else if (event.target.dataset.targets) {
       // This could be either a spell from hand OR combat, etc
     }
-    event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.dropEffect = 'move';
-    event.dataTransfer.setData('text/html', event.target.innerHTML);
+    console.log(this.handler)
+    //event.dataTransfer.effectAllowed = 'move';
+    //event.dataTransfer.dropEffect = 'move';
+    //event.dataTransfer.setData('text/html', event.target.innerHTML);
   }
 
   dragEnter(event) {
     if (event.preventDefault) event.preventDefault();
-    if (this.handler.willPlayToBoard) return;
+    if ((event.target == this.handler.target)|| this.handler.willPlayToBoard) return;
     this.handler.addTargetHoverDecoration(event.target)
   }
   boardspaceDragEnter(event) {
@@ -67,14 +74,16 @@ export default class extends Controller {
   }
 
   drop(event) {
-    event.stopPropagation();
+    this.handler.endGameDecoration();
     if (this.handler.willPlayToBoard) return   
+    let postParams
+    event.stopPropagation();
     if (this.playsToBoardTargets.includes(this.handler.target) && this.handler.validDropTargets.includes(event.target)) {
-      //this.handler.postPlayerAction(this.handler.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id)
-  } else {
-      console.log('This is NOT something that goes into play, but rather it directly targets X. Either a spell with a target or combat!');
-      // Probably want to add a check to see if the initial element was in combat or in hand and then account according to that
+      postParams = [this.handler.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id]
+    } else if (this.handler.validDropTargets.includes(event.target)) {
+      postParams = [event.target.dataset.id, event.target.dataset.type]
     }
+    if (postParams) this.handler.postPlayerAction(...postParams)
   }
 
   selectTarget(event) {

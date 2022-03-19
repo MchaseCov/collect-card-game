@@ -30,10 +30,8 @@ class PartyCardGamestateDecorator
 
   def data_friendly_card_board_battle
     {
-      # 'gameplay-drag-target' => 'activeFriendlyActor',
-      'drag-party-play-target' => 'friendlyCardInBattle',
       'style-cards-target' => 'boardMinion',
-      'gameplay-drag-target' => 'recievesPlayerInput',
+      'gameplay-drag-target' => 'recievesPlayerInput friendlyActor',
       'id' => @card.id,
       'status' => @card.status,
       'health-current' => @card.health,
@@ -44,13 +42,13 @@ class PartyCardGamestateDecorator
 
   def data_opposing_card_board_battle
     {
-      'gameplay-drag-target' => 'enemyActor',
-      'battlecry-select-target' => 'enemyMinionActor',
       'style-cards-target' => 'boardMinion',
+      'gameplay-drag-target' => 'recievesPlayerInput enemyActor',
       'id' => @card.id,
       'status' => @card.status,
       'health-current' => @card.health,
       'health-cap' => @card.health_cap,
+      'type' => 'party',
       'action' => 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#dragLeave dragend->gameplay-drag#dragEnd'
     }
   end

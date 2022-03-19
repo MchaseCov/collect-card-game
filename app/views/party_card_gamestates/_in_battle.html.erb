@@ -2,7 +2,7 @@
                 id: local_assigns[:id],
                 data: (card.decorate.method(local_assigns[:decorator_data_method]).call if local_assigns[:decorator_data_method]),
                 class: 'relative text-white border-2 border-black rounded-full w-36 h-52 mx-2.5 card-on-board min-w-36 has-tooltip ' + local_assigns[:class],
-                draggable: false do %>
+                draggable: true do %>
   <div id="attack" class="absolute bottom-0 z-10 w-12 h-12 pb-1 mt-1 text-4xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -left-2">
     <%=card.attack%>
   </div>
@@ -13,7 +13,7 @@
     <%=image_tag('cardplaceholder.webp', class:"object-contain w-40 h-auto select-none pointer-events-none", draggable:"false")%>
   </div>
   <%=render(card,
-         locals: { class: 'tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200'},
+         locals: { class: 'tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200', id: "card_#{card.id}_tooltip"},
          cached: true ) %>
 <% end %>
 <%= content_tag :div,
