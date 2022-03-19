@@ -134,7 +134,7 @@ export default class extends Controller {
     const battlefieldOfPlayer = this.battlefieldTarget.querySelector(`#${animationData.playerIdentifier}-cards-battle`);
     return {
       cardElement: hand.querySelector(`[data-id="${animationData.playedCardId}"]`),
-      targetPosition: battlefieldOfPlayer.querySelector(`[data-id="${animationData.targetId}"]`),
+      targetPosition: battlefieldOfPlayer.querySelector(`[data-gameplay-drag-board-target-param="${animationData.targetId}"]`),
       positionNumber: animationData.targetId,
     };
   }

@@ -73,11 +73,13 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
          collection: opposing_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
          locals: { class: 'enemy-card z-30 hover:ring-4 hover:ring-red-300',
-                   decorator_data_method: :data_opposing_card_board_battle},
+                   decorator_data_method: :data_opposing_card_board_battle,
+                   draggable: false},
          cached: true %>
     </div>
     <div id="fp-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="rounded-full opacity-50 board-space"
+        data-id="0"
         data-gameplay-drag-target="recievesPlayToBoard"
         data-gameplay-drag-board-target-param="0"
         data-action="drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#boardspaceDragLeave"
@@ -88,7 +90,8 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
          as: :card,
          locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 ',
                    decorator_data_method: :data_friendly_card_board_battle,
-                   first_person_pov: true },
+                   first_person_pov: true,
+                   draggable: true },
          cached: true %>
     </div>
   </section>
