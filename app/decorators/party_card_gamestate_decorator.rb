@@ -5,14 +5,15 @@ class PartyCardGamestateDecorator
   end
 
   def data_for_hand
-    data = { 'drag-party-play-target' => 'playableCard',
-             'gameplay-drag-target' => 'playsToBoard',
-             'id' => @card.id,
-             'resource' => 'Cost',
-             'cost' => @card.cost,
-             'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd',
-             'gameplay-drag-type-param' => 'party',
-             'gameplay-drag-action-param' => 'play_card' }
+    data = {
+      'id' => @card.id,
+      'resource' => 'Cost',
+      'cost' => @card.cost,
+      'gameplay-drag-target' => 'playsToBoard',
+      'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd',
+      'gameplay-drag-type-param' => 'party',
+      'gameplay-drag-action-param' => 'play_card'
+    }
 
     return data unless @card.battlecry.present? && @card.battlecry.player_choice
 

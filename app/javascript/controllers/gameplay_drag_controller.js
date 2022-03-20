@@ -32,8 +32,8 @@ export default class extends Controller {
   dragStart(event) {
     this.handler?.cancelPlayerInputPhase();
     if (this.friendlyActorTargets.includes(event.target)) {
-      this.handler = new DragBattleHandler(this, event);
       event.preventDefault();
+      this.handler = new DragBattleHandler(this, event);
     } else if (this.playsToBoardTargets.includes(event.target)) {
       // All cards from hand that play to board, even those with battlecry target effects
       this.handler = new BoardPlayHandler(this, event);

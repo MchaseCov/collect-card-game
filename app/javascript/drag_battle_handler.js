@@ -29,7 +29,7 @@ export default class DragBattleHandler {
   }
 
   cancelPlayerInputPhase() {
-
+    return
   }
 
   postPlayerAction(targetId, targetType) {
