@@ -56,10 +56,6 @@ export default class extends Controller {
     if (event.preventDefault) event.preventDefault();
   }
 
-  dragLeave(event) {
-    if (this.handler.willPlayToBoard) return;
-  }
-
   dragEnd() {
     if (this.isInTargetPhase) return this.isInTargetPhase = false;
     this.handler?.endGameDecoration();

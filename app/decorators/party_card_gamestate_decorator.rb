@@ -37,7 +37,7 @@ class PartyCardGamestateDecorator
       'status' => @card.status,
       'health-current' => @card.health,
       'health-cap' => @card.health_cap,
-      'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#dragLeave dragend->gameplay-drag#dragEnd'
+      'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
   end
 
@@ -50,7 +50,7 @@ class PartyCardGamestateDecorator
       'health-current' => @card.health,
       'health-cap' => @card.health_cap,
       'type' => 'party',
-      'action' => 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#dragLeave dragend->gameplay-drag#dragEnd'
+      'action' => 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
   end
 
@@ -67,7 +67,7 @@ class PartyCardGamestateDecorator
       hash['gameplay-drag-target'] = 'recievesPlayToBoard'
       hash['gameplay-drag-board-target-param'] = @card.position
       hash['action'] =
-        'drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver dragleave->gameplay-drag#boardspaceDragLeave'
+        'drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver'
     end
     data
   end
