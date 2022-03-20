@@ -107,6 +107,7 @@ class Game < ApplicationRecord
   def play_spell(card)
     # Return unless player sepdn resource points and then think of a broadcast here too.
     card.spend_spell
+    broadcast_basic_update(card)
   end
 
   #========|Party Card Battle|======

@@ -2,6 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 import BoardPlayHandler from '../board_play_handler';
 import DragBattleHandler from '../drag_battle_handler';
 import TargetDataFetcher from '../target_data_fetcher';
+import SpellPlayHandler from '../spell_play_handler';
 
 // Connects to data-controller="gameplay-drag"
 export default class extends Controller {
@@ -24,7 +25,12 @@ export default class extends Controller {
   }
 
   spellCardTargetConnected(element) {
-    //console.log(element)
+    if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) return this.removeDragFromElement(element);
+    if (this.takesPlayerInputTargets.includes(element)) {
+      // Stuff about collecting spell targets and doing battlecry-esque things
+    } else {
+      this.bindToNode(element, 'createHandler', this.createSpellPlayHandler) 
+    }
   }
 
   async initialize() {
@@ -44,7 +50,7 @@ export default class extends Controller {
 
   dragEnter(event) {
     if (event.preventDefault) event.preventDefault();
-    if ((event.target == this.handler.target) || this.handler.willPlayToBoard) return;
+    if (this.handler.toggleHoverState ) this.handler.toggleHoverState()
   }
 
   boardspaceDragEnter(event) {
@@ -63,7 +69,7 @@ export default class extends Controller {
 
   drop(event) {
     this.handler.endGameDecoration();
-    if (this.handler.willPlayToBoard || !this.handler.validDropTargets.includes(event.target)) return;
+    if (this.handler.willPlayToBoard || !(this.handler.validDropTargets.includes(event.target))) return;
     event.stopPropagation();
     this.handler.postPlayerAction(...this.handler.postParams(event));
   }
@@ -126,5 +132,8 @@ export default class extends Controller {
 
   createDragBattleHandler = function(controller, event) {
     return (new DragBattleHandler(controller, event))
+  }
+  createSpellPlayHandler = function(controller, event) {
+    return (new SpellPlayHandler(controller, event))
   }
 }
