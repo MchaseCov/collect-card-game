@@ -79,6 +79,10 @@ export default class BoardPlayHandler {
     this.previewCard.setAttribute('data-line-drawer-target', 'origin')
   }
 
+  postParams(event){
+    return [this.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id]
+  }
+
   postPlayerAction(position, target) {
     fetch(`/games/${this.gameId}/play_card/${this.params.type}`, {
       method: 'POST',

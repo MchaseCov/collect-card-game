@@ -5,7 +5,7 @@ import TargetDataFetcher from '../target_data_fetcher';
 
 // Connects to data-controller="gameplay-drag"
 export default class extends Controller {
-  static targets = ['playsToBoard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor'];
+  static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor'];
 
   static values = {
     playerCost: Number,
@@ -14,8 +14,17 @@ export default class extends Controller {
     playerTurn: Boolean,
   };
 
+  playsToBoardTargetConnected(element){
+    this.bindToNode(element, 'createHandler', this.createBoardPlayHandler) 
+  }
+
   friendlyActorTargetConnected(element) {
-    if (element.dataset.status !== 'attacking') this.removeDragFromElement(element);
+    if (element.dataset.status !== 'attacking') return this.removeDragFromElement(element);
+    this.bindToNode(element, 'createHandler', this.createDragBattleHandler) 
+  }
+
+  spellCardTargetConnected(element) {
+    //console.log(element)
   }
 
   async initialize() {
@@ -30,16 +39,7 @@ export default class extends Controller {
   }
 
   dragStart(event) {
-    this.handler?.cancelPlayerInputPhase();
-    if (this.friendlyActorTargets.includes(event.target)) {
-      event.preventDefault();
-      this.handler = new DragBattleHandler(this, event);
-    } else if (this.playsToBoardTargets.includes(event.target)) {
-      // All cards from hand that play to board, even those with battlecry target effects
-      this.handler = new BoardPlayHandler(this, event);
-    } else if (event.target.dataset.targets) {
-      // This could be either a spell from hand OR combat, etc
-    }
+    this.handler = event.target.createHandler ? event.target.createHandler(this, event) : undefined
   }
 
   dragEnter(event) {
@@ -63,15 +63,9 @@ export default class extends Controller {
 
   drop(event) {
     this.handler.endGameDecoration();
-    if (this.handler.willPlayToBoard) return;
-    let postParams;
+    if (this.handler.willPlayToBoard || !this.handler.validDropTargets.includes(event.target)) return;
     event.stopPropagation();
-    if (this.playsToBoardTargets.includes(this.handler.target) && this.handler.validDropTargets.includes(event.target)) {
-      postParams = [this.handler.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id];
-    } else if (this.handler.validDropTargets.includes(event.target)) {
-      postParams = [event.target.dataset.id, event.target.dataset.type];
-    }
-    if (postParams) this.handler.postPlayerAction(...postParams);
+    this.handler.postPlayerAction(...this.handler.postParams(event));
   }
 
   selectTarget(event) {
@@ -120,5 +114,17 @@ export default class extends Controller {
   errorFeedback(event) {
     event.target.classList.add('shake');
     event.target.onanimationend = () => event.target.classList.remove('shake');
+  }
+
+  bindToNode(node, name, fn) {
+    node[name] = fn.bind(node);
+  }
+
+  createBoardPlayHandler = function(controller, event) {
+    return (new BoardPlayHandler(controller, event))
+  }
+
+  createDragBattleHandler = function(controller, event) {
+    return (new DragBattleHandler(controller, event))
   }
 }

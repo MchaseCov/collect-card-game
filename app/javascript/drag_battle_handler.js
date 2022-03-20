@@ -1,6 +1,7 @@
 // Handler for cards that play from hand to board, optionally may have a scoped target such as a battlecry.
 export default class DragBattleHandler {
   constructor(controller, event) {
+    event.preventDefault();
     this.target = event.target;
     this.params = event.params;
     this.gameElement = controller.element;
@@ -30,6 +31,10 @@ export default class DragBattleHandler {
 
   cancelPlayerInputPhase() {
     return
+  }
+
+  postParams(event){
+    return [event.target.dataset.id, event.target.dataset.type]
   }
 
   postPlayerAction(targetId, targetType) {
