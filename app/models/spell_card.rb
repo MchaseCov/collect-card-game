@@ -26,7 +26,9 @@ class SpellCard < Card
   # PLAYER
   has_one :player, through: :gamestate_deck
   # KEYWORDS
-  has_one :cast_effect, through: :card_constant
+  def cast_effect
+    keywords.cast
+  end
 
   def decorate
     SpellCardDecorator.new(self)

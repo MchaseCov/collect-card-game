@@ -26,7 +26,9 @@ class PartyCard < Card
   # PLAYER
   has_one :player, through: :gamestate_deck
   # KEYWORDS
-  has_one :battlecry, through: :card_constant
+  def battlecry
+    keywords.battlecry
+  end
 
   # ALIAS AND SCOPES ===========================================================
   # TRIBE

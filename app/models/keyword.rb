@@ -19,6 +19,10 @@ class Keyword < ApplicationRecord
   validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast] },
                    uniqueness: { scope: :card_constant_id }
 
+  %i[Battlecry Cast].each do |type|
+    scope type.to_s.downcase, -> { find_by('type': type) }
+  end
+
   def trigger(invoking_card, target_input)
     @invoking_card = invoking_card
     @target_input = target_input if target_input
