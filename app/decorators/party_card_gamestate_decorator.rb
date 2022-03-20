@@ -59,7 +59,7 @@ class PartyCardGamestateDecorator
   end
 
   def board_space_data(first_person)
-    data = { 'id' => @card.position }
+    data = { 'board-id' => @card.position }
 
     return data unless first_person
 

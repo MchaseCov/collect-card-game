@@ -3,8 +3,7 @@ data-animations-target="drawCardAnimationValues"
 data-player-identifier='<%=tag%>'
   >
 </div>
-<%=render(partial: 'party_card_gamestates/full_card',
+<%=render(card,
          locals: { class: 'relative  z-50 -ml-10 inline-block',
                    id: "fp-drawn-card",
-                   decorator_data_method: :data_fp_drawn_card,
-                   card: card }) if card%>
+                   decorator_data_method: :data_fp_drawn_card}) if card%>

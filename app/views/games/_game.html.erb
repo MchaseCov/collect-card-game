@@ -65,7 +65,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
          cached: true ) if last_played_card  %>
     <%= render 'games/mulligan', first_person_player: first_person_player, game: game if game.status == "mulligan"%>
     <div id="op-cards-battle" class="flex flex-row items-center justify-center w-full">
-      <div class="hidden" data-id="0"></div>
+      <div class="hidden" data-board-id="0"></div>
       <%=render partial: 'party_card_gamestates/in_battle',
          collection: opposing_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
          as: :card,
@@ -76,7 +76,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
     </div>
     <div id="fp-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="rounded-full opacity-50 board-space"
-        data-id="0"
+        data-board-id="0"
         data-gameplay-drag-target="recievesPlayToBoard"
         data-gameplay-drag-board-target-param="0"
         data-action="drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver"

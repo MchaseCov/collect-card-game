@@ -227,6 +227,7 @@ class Game < ApplicationRecord
   # locals: { count: count }
   #
   def broadcast_animations(player, animation_type, locals)
+    puts(player, animation_type, locals)
     broadcast_update_later_to [self, player.user], partial: "games/animations/#{animation_type}",
                                                    target: 'animation-data',
                                                    locals: locals
