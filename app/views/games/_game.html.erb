@@ -52,7 +52,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
       <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none <%= (opposing_player.attack > 0) ? '' : "hidden" %>">
         <%=opposing_player.attack%>
       </div>
-      <div class="absolute z-10 w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
+      <div id="health" class="absolute z-10 w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
         <%=opposing_player.health%>
       </div>
     </div>
@@ -102,7 +102,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
       <div id="attack" class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -bottom-2 -left-2 <%= (first_person_player.attack > 0) ? '' : "hidden" %>">
         <%=first_person_player.attack%>
       </div>
-      <div class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
+      <div id="health" class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white border-2 rounded-full pointer-events-none select-none health-current border-lime-600 bg-lime-500 -bottom-2 -right-2">
         <%=first_person_player.health%>
       </div>
     </div>

@@ -60,6 +60,11 @@ export default class extends Controller {
     const pairs = [[defender, (+attacker.querySelector('#attack').innerText)],[attacker,(+defender.querySelector('#attack').innerText)]]
     await new Promise((r) => setTimeout(r, 200)); // Not quite enough time to use an .onAnimatonEnd listener
     pairs.forEach((pair)=> this.indicateDamageTaken(pair));
+    pairs.forEach((pair)=> this.updateHealthValues(pair));
+  }
+
+  updateHealthValues(pair){
+    pair[0].querySelector('#health').innerText = (+pair[0].querySelector('#health').innerText - pair[1])
   }
 
   indicateDamageTaken(pair){
