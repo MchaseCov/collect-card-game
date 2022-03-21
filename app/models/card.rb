@@ -41,8 +41,6 @@ class Card < ApplicationRecord
   has_one :player, through: :gamestate_deck
   # GAME
   has_one :game, through: :gamestate_deck
-  # KEYWORDS
-  has_many :keywords, through: :card_constant
   # BUFFS
   has_many :active_buffs, as: :buffable
   has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,

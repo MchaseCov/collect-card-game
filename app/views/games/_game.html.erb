@@ -67,7 +67,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
     <div id="op-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="hidden" data-board-id="0"></div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: opposing_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
+         collection: opposing_player.party_cards.in_battle.includes(card_constant: [:archetype,:keywords]).order(:position),
          as: :card,
          locals: { class: 'enemy-card z-30 hover:ring-4 hover:ring-red-300',
                    decorator_data_method: :data_opposing_card_board_battle,
@@ -83,7 +83,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
         >
       </div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: first_person_player.party_cards.in_battle.includes(card_constant: %i[keywords archetype]).order(:position),
+         collection: first_person_player.party_cards.in_battle.includes(card_constant: [:archetype,:keywords]).order(:position),
          as: :card,
          locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 ',
                    decorator_data_method: :data_friendly_card_board_battle,
@@ -107,7 +107,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
       </div>
     </div>
     <div id="fp-cards-hand" class="absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0" data-animations-target="hand">
-      <%=render first_person_player.cards.includes(card_constant: [:archetype, :keywords]).in_hand.order(updated_at: :asc),
+      <%=render first_person_player.cards.includes(card_constant: [:archetype,:keywords]).in_hand.order(updated_at: :asc),
          locals: { game: game,
                    first_person_player: first_person_player,
                    class: 'relative ring ring-lime-500 playing-card inline-block -ml-10 hover:z-10 hover:bottom-8 hover:scale-125',
