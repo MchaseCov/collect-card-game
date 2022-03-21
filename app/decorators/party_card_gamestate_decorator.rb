@@ -37,6 +37,7 @@ class PartyCardGamestateDecorator
       'status' => @card.status,
       'health-current' => @card.health,
       'health-cap' => @card.health_cap,
+      'gameplay-drag-action-param' => 'combat',
       'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
   end

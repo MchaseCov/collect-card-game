@@ -26,7 +26,7 @@ class GamesController < ApplicationController
   def play_party
     party = @player.party_cards
                    .includes(:card_constant, :gamestate_deck)
-                   .find(params[:card_id])
+                   .find(params[:card])
     party.current_target = params[:target].to_i if params[:target]
     @game.play_party(party, params[:position].to_i)
   end
@@ -34,7 +34,7 @@ class GamesController < ApplicationController
   def play_spell
     spell = @player.spell_cards
                    .includes(:card_constant, :gamestate_deck)
-                   .find(params[:card_id])
+                   .find(params[:card])
     spell.current_target = params[:target].to_i if params[:target]
     @game.play_spell(spell)
   end
@@ -44,16 +44,16 @@ class GamesController < ApplicationController
   end
 
   def party_combat
-    attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
-    defending_card = @game.opposing_player_of(@player).party_cards.in_battle.find(params[:target_id])
+    attacking_card = @player.party_cards.in_attack_mode.find(params[:card])
+    defending_card = @game.opposing_player_of(@player).party_cards.in_battle.find(params[:target])
 
     @game.conduct_attack(attacking_card, defending_card) if attacking_card && defending_card
   end
 
   def player_combat
-    return unless @opposing_player.id == params[:target_id].to_i
+    return unless @opposing_player.id == params[:target].to_i
 
-    attacking_card = @player.party_cards.in_attack_mode.find(params[:dragged_id])
+    attacking_card = @player.party_cards.in_attack_mode.find(params[:card])
     @game.conduct_attack(attacking_card, @opposing_player) if attacking_card
   end
 

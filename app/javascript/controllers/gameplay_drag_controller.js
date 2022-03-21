@@ -15,13 +15,13 @@ export default class extends Controller {
     playerTurn: Boolean,
   };
 
-  playsToBoardTargetConnected(element){
-    this.bindToNode(element, 'createHandler', this.createBoardPlayHandler) 
+  playsToBoardTargetConnected(element) {
+    this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
   }
 
   friendlyActorTargetConnected(element) {
     if (element.dataset.status !== 'attacking') return this.removeDragFromElement(element);
-    this.bindToNode(element, 'createHandler', this.createDragBattleHandler) 
+    this.bindToNode(element, 'createHandler', this.createDragBattleHandler);
   }
 
   spellCardTargetConnected(element) {
@@ -29,7 +29,7 @@ export default class extends Controller {
     if (this.takesPlayerInputTargets.includes(element)) {
       // Stuff about collecting spell targets and doing battlecry-esque things
     } else {
-      this.bindToNode(element, 'createHandler', this.createSpellPlayHandler) 
+      this.bindToNode(element, 'createHandler', this.createSpellPlayHandler);
     }
   }
 
@@ -45,12 +45,12 @@ export default class extends Controller {
   }
 
   dragStart(event) {
-    this.handler = event.target.createHandler ? event.target.createHandler(this, event) : undefined
+    this.handler = event.target.createHandler ? event.target.createHandler(event) : undefined;
   }
 
   dragEnter(event) {
     if (event.preventDefault) event.preventDefault();
-    if (this.handler.toggleHoverState ) this.handler.toggleHoverState()
+    if (this.handler.toggleHoverState) this.handler.toggleHoverState();
   }
 
   boardspaceDragEnter(event) {
@@ -126,14 +126,9 @@ export default class extends Controller {
     node[name] = fn.bind(node);
   }
 
-  createBoardPlayHandler = function(controller, event) {
-    return (new BoardPlayHandler(controller, event))
-  }
+  createBoardPlayHandler = (event) => new BoardPlayHandler(this, event);
 
-  createDragBattleHandler = function(controller, event) {
-    return (new DragBattleHandler(controller, event))
-  }
-  createSpellPlayHandler = function(controller, event) {
-    return (new SpellPlayHandler(controller, event))
-  }
+  createDragBattleHandler = (event) => new DragBattleHandler(this, event);
+
+  createSpellPlayHandler = (event) => new SpellPlayHandler(this, event);
 }
