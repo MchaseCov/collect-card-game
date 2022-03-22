@@ -1,0 +1,2 @@
+class SingleplayerGame < Game
+end

@@ -1,8 +1,10 @@
 <%= turbo_stream_from @game, current_user%>
 <div id="game-animations-container" class="relative w-full h-full max-h-screen my-auto overflow-clip">
-  <div id="<%="#{dom_id(@game)}_for_#{current_user.id}"%>" class="absolute w-full h-full my-auto bg-white" data-controller="animations">
-    <%= render @game, first_person_player: @first_person_player,
-                      opposing_player: @opposing_player,
-                      last_played_card: nil %>
+  <div id="<%="game_#{@game.id}_for_#{current_user.id}"%>" class="absolute w-full h-full my-auto bg-white" data-controller="animations">
+    <%= render partial: 'games/game',
+               locals: {game: @game, 
+                        first_person_player: @first_person_player,
+                        opposing_player: @opposing_player,
+                        last_played_card: nil} %>
   </div>
 </div>

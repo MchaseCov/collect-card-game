@@ -1,0 +1,3 @@
+class MultiplayerGame < Game
+
+end

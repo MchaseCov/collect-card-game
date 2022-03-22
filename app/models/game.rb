@@ -7,6 +7,7 @@
 # ongoing                 :boolean      default: true
 # status                  :string       default: "mulligan"
 # turn_time               :datetime
+# type                    :string       STI
 #
 
 class Game < ApplicationRecord
@@ -202,7 +203,8 @@ class Game < ApplicationRecord
 
   # Broadcast game over websocket
   def broadcast_perspective_for(player, last_played_card = nil)
-    broadcast_update_later_to [self, player.user], target: "game_#{id}_for_#{player.user.id}",
+    broadcast_update_later_to [self, player.user], partial: 'games/game',
+                                                   target: "game_#{id}_for_#{player.user.id}",
                                                    locals: { game: self,
                                                              first_person_player: player,
                                                              opposing_player: opposing_player_of(player),
@@ -228,7 +230,6 @@ class Game < ApplicationRecord
   # locals: { count: count }
   #
   def broadcast_animations(player, animation_type, locals)
-    puts(player, animation_type, locals)
     broadcast_update_later_to [self, player.user], partial: "games/animations/#{animation_type}",
                                                    target: 'animation-data',
                                                    locals: locals
