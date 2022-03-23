@@ -119,10 +119,9 @@ class Game < ApplicationRecord
   def conduct_attack(attacker, defender)
     return unless attacker.status == 'attacking'
 
-    broadcast_basic_update and return unless broadcast_battle_animations(attacker, defender)
-
     dead_cards = deal_attack_damage(attacker, defender)
-    broadcast_death_animations(dead_cards) unless dead_cards.empty?
+    broadcast_battle_animations(attacker, defender, dead_cards)
+
     broadcast_basic_update
   end
 
@@ -141,12 +140,13 @@ class Game < ApplicationRecord
   # METHODS (PRIVATE) ==================================================================
   private
 
-  def broadcast_battle_animations(attacker, defender)
+  def broadcast_battle_animations(attacker, defender, dead_cards)
     touch
     players.each do |p|
       broadcast_animations(p, 'battle',
                            { attacker: { attacker.class.name => attacker.id },
-                             defender: { defender.class.name => defender.id } })
+                             defender: { defender.class.name => defender.id },
+                             dead_cards: dead_cards })
     end
   end
   ## GAME CREATION RELATED PRIVATE FUNCTIONS
@@ -172,6 +172,7 @@ class Game < ApplicationRecord
   def start_of_turn_actions
     current_player.prepare_new_turn if status == 'ongoing'
     update(turn_time: Time.now)
+    broadcast_basic_update
   end
 
   # Update health of cards in battle
@@ -190,10 +191,6 @@ class Game < ApplicationRecord
                          { hand: 'fp', played_card_id: card.id, target_id: position })
     broadcast_animations(opposing_player_of(card.player), 'from_hand',
                          { hand: 'op', played_card_id: card.id, target_id: position })
-  end
-
-  def broadcast_death_animations(dead_cards)
-    players.each { |p| broadcast_animations(p, 'card_death', { cards: dead_cards }) }
   end
 
   def animate_end_of_mulligan
@@ -219,9 +216,6 @@ class Game < ApplicationRecord
   #
   # from_hand -- Animation for cards being played from hand to the game board
   # locals: { hand: hand, played_card_id: played_card_id, target_id: target_id }
-  #
-  # card_death -- Animation for shaking and fading away a dying card from board
-  # locals: { cards: dead }
   #
   # [fp/op]_draw_card -- Animation for drawing a card from deck to hand
   # locals: { tag: tag, card: card }

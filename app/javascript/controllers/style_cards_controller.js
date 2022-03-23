@@ -2,11 +2,20 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="style-cards"
 export default class extends Controller {
-  static targets = ['boardMinion'];
+  static targets = ['boardMinion', 'player'];
 
   boardMinionTargetConnected(element) {
-    if (element.dataset.healthCurrent < element.dataset.healthCap){
-      element.querySelector(".health-current").classList.add('text-red-500');
+    this.styleHealthPoints(element)
+  }
+
+  playerTargetConnected(element){
+    this.styleHealthPoints(element)
+  }
+
+  styleHealthPoints(element){
+    const healthIndicator = element.querySelector("#health")
+    if (+healthIndicator.innerText < element.dataset.healthCap){
+      healthIndicator.classList.add('text-red-500');
     }
   }
 }

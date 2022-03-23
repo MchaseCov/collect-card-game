@@ -45,8 +45,10 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
          data-player-id=<%=opposing_player.id%>
          data-status="<%=opposing_player.status%>"
          data-animations-target="player"
+         data-style-cards-target="player"
          data-gameplay-drag-target= "recievesPlayerInput enemyActor"
          data-type = "player"
+         data-health-cap="<%=opposing_player.health_cap%>"
          data-action="drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd"
       >
       <div id="attack" class="border-2 border-red-600 bg-red-500 rounded-full h-12 w-12 text-4xl text-center mt-1 pb-1 text-white absolute -bottom-2 -left-2 z-10 select-none pointer-events-none <%= (opposing_player.attack > 0) ? '' : "hidden" %>">
@@ -97,7 +99,10 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
          class="absolute top-0 left-0 right-0 w-40 h-48 mx-auto bg-blue-200 rounded-t-full"
          data-player-id=<%=first_person_player.id%>
          data-animations-target="player"
+         data-style-cards-target="player"
          data-status="<%=first_person_player.status%>"
+        data-health-cap="<%=first_person_player.health_cap%>"
+
     >
       <div id="attack" class="absolute w-12 h-12 pb-1 mt-1 text-4xl text-center text-white bg-red-500 border-2 border-red-600 rounded-full pointer-events-none select-none -bottom-2 -left-2 <%= (first_person_player.attack > 0) ? '' : "hidden" %>">
         <%=first_person_player.attack%>

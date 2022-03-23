@@ -9,7 +9,7 @@ export default class extends Controller {
   // ANIMATION FOR CARDS MEETING IN BATTLE
   battleAnimationValuesTargetConnected(element) {
     const animationData = element.dataset;
-    this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue));
+    this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue), JSON.parse(animationData.deadCards));
     element.remove()
   }
 
@@ -24,8 +24,8 @@ export default class extends Controller {
   // ANIMATION FOR CARDS DYING AND FADING FROM BATTLE
   cardDeathAnimationValuesTargetConnected(element) {
     const dyingCardIds = JSON.parse(element.dataset.deadCards);
-    const dyingCards = dyingCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`));
-    dyingCards.forEach((card) => this.killCard(card));
+    const dyingCards = dyingCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`)).filter(Boolean);
+    dyingCards.filter(Boolean).forEach((card) => this.killCard(card));
     element.remove()
   }
 
@@ -48,32 +48,38 @@ export default class extends Controller {
 
   // BATTLE ANIMATION FUNCTIONS
 
-  animateBattle(attackerObj, defenderObj) {
+  animateBattle(attackerObj, defenderObj, deadCardIds) {
     const attacker = this.getActorFromObject(attackerObj);
     const defender = this.getActorFromObject(defenderObj);
     const translation = this.findDifferenceInPositions(attacker, defender);
+    const dyingCards = deadCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`)).filter(Boolean);
     this.translateToAndFrom(attacker, translation);
-    this.createDamageIndicators(attacker, defender)
+    this.createDamageIndicators(attacker, defender);
+    attacker.onanimationend = () => dyingCards.filter(Boolean).forEach((card) => this.killCard(card));
   }
   
   async createDamageIndicators(attacker, defender){
-    const pairs = [[defender, (+attacker.querySelector('#attack').innerText)],[attacker,(+defender.querySelector('#attack').innerText)]]
+    const pairs = [{card: defender, damage: +attacker.querySelector('#attack').innerText}, {card: attacker, damage: +defender.querySelector('#attack').innerText}]
     await new Promise((r) => setTimeout(r, 200)); // Not quite enough time to use an .onAnimatonEnd listener
     pairs.forEach((pair)=> this.indicateDamageTaken(pair));
     pairs.forEach((pair)=> this.updateHealthValues(pair));
   }
 
   updateHealthValues(pair){
-    pair[0].querySelector('#health').innerText = (+pair[0].querySelector('#health').innerText - pair[1])
+    if(pair.damage <= 0) return;
+    const original_hp = +pair.card.querySelector('#health').innerText
+    const newHp = (original_hp - pair.damage)
+    pair.card.querySelector('#health').innerText = newHp
+    if(newHp < original_hp) pair.card.querySelector('#health').classList.add('text-red-500')
   }
 
   indicateDamageTaken(pair){
-    if(pair[1] <= 0) return;
+    if(pair.damage <= 0) return;
     const indicator = document.createElement("div");
     indicator.className = "absolute flex items-center justify-center text-5xl text-white top-1/2 left-1/2 burst-8 shake-indicator"
-    indicator.innerText = -pair[1]
-    pair[0].appendChild(indicator)
-    pair[0].classList.add('shake')
+    indicator.innerText = -pair.damage
+    pair.card.appendChild(indicator)
+    pair.card.classList.add('shake')
     indicator.onanimationend = () => indicator.remove()
   }
 
@@ -115,6 +121,7 @@ export default class extends Controller {
   // CARD PLAY ANIMATION FUNCTIONS
 
   animateCardPlay(playedCardValues) {
+    console.log(playedCardValues)
     const leftCards = this.collectRelatives(playedCardValues.targetPosition, 'previousElementSibling');
     const rightCards = this.collectRelatives(playedCardValues.targetPosition, 'nextElementSibling');
     this.animateCardsOnBoard(leftCards, 'left');
@@ -168,7 +175,8 @@ export default class extends Controller {
     card.classList.add('grayscale', 'dying-card', 'overflow-hidden');
     card.nextElementSibling.style.width = '0px';
     card.style.width = '0px';
-    card.style.margin = '0px';
+    card.style.margin = '0px'
+    card.onanimationend = () => console.log(Date(Date.now()))
   }
 
   // CARD DRAW ANIMATION FUNCTION

@@ -4,7 +4,7 @@ import "controllers"
 import turboStreamQueue from './turbo_stream_queuer'
 
 
-if(window.location.pathname.split('/')[1] === 'multiplayer_games') {
+if(window.location.pathname.split('/')[1] === 'multiplayer_games' || window.location.pathname.split('/')[1] === 'singleplayer_games') {
   document.addEventListener('turbo:before-stream-render', async (event) => {turboStreamQueue(event)});
-}
+  };
 
