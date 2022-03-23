@@ -13,10 +13,10 @@ class GamesController < ApplicationController
   end
 
   def submit_mulligan
-    @player ||= @game.players.find_by(user: current_user)
+    @player = @game.players.find_by(user: current_user)
     # "Turns" do not take effect yet, so we don't use the current_users_turn gat
 
-    return unless @player && @player.status == 'mulligan'
+    return unless @player&.status == 'mulligan'
 
     @player.draw_mulligan_cards if params[:mulligan] # When player requests a new hand
     @player.update(status: 'default')
