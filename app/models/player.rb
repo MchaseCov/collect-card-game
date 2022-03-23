@@ -121,8 +121,8 @@ class Player < ApplicationRecord
       if cards.in_hand.size >= 10
         topdeck.move_to_discard
       else
-        topdeck.move_to_hand
         game.broadcast_card_draw_animations(topdeck)
+        topdeck.move_to_hand
       end
     end
   end

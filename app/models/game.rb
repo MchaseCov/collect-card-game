@@ -76,7 +76,6 @@ class Game < ApplicationRecord
     update(status: 'ongoing')
     animate_end_of_mulligan
     start_of_turn_actions
-    broadcast_basic_update
   end
 
   #========|Turn Changing|======
@@ -86,7 +85,7 @@ class Game < ApplicationRecord
   def end_turn
     current_player.put_cards_to_sleep
     update(turn: !turn) and reload.current_player
-    start_of_turn_actions and broadcast_basic_update
+    start_of_turn_actions
   end
 
   #========|Party Card Play|======
@@ -212,7 +211,7 @@ class Game < ApplicationRecord
   # Current animation_type options:
   #
   # battle -- Animation for attackers meeting defenders and fighting
-  # locals: { attacker: { attacker.class.name => attacker.id }, defender: { defender.class.name => defender.id } }
+  # locals: { attacker: { attacker.class.name => attacker.id }, defender: { defender.class.name => defender.id }, dead_cards: [dead_cards] }
   #
   # from_hand -- Animation for cards being played from hand to the game board
   # locals: { hand: hand, played_card_id: played_card_id, target_id: target_id }
