@@ -1,3 +1,2 @@
 class MultiplayerGame < Game
-
 end

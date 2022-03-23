@@ -9,7 +9,8 @@ Rails.application.routes.draw do
       post 'end_turn'
     end
   end
-  resources :multiplayer_games, controller: 'games'
+  resources :multiplayer_games
+  resources :singleplayer_games
 
   get 'battlecry/:id/targets', to: 'battlecries#targets', as: 'battlecry_targets'
   resources :account_decks do

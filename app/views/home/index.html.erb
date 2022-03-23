@@ -4,7 +4,10 @@
   <%= link_to  "View My Decks", account_decks_path %>
   <br>
   this is a temporary button i promise
-  <%= button_to "new game", games_path(deck_one_id: 1, deck_two_id: 2)%>
+  <%= button_to "new game", multiplayer_games_path(deck_one_id: 1, deck_two_id: 2)%>
   <br>
   <%= link_to @game%>
+  <br>
+  single player thing
+  <%= button_to "new game SINGLEPLAYER", singleplayer_games_path(deck_one_id: 1)%>
 </div>
