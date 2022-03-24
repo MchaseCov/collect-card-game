@@ -6,3 +6,11 @@ AiBoardClear.create(
     }
   ]
 )
+AiCardAdvantage.create(
+  [
+    {
+      card_weight: { count: 1 },
+      card_constant: CardConstant.find_by(name: 'Gnome Serf')
+    }
+  ]
+)
