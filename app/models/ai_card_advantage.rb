@@ -1,0 +1,2 @@
+class AiCardAdvantage < AiDecisionDatum
+end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_22_150722) do
+ActiveRecord::Schema.define(version: 2022_03_24_152940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,15 @@ ActiveRecord::Schema.define(version: 2022_03_22_150722) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["buff_id"], name: "index_active_buffs_on_buff_id"
     t.index ["buffable_type", "buffable_id"], name: "index_active_buffs_on_buffable"
+  end
+
+  create_table "ai_decision_data", force: :cascade do |t|
+    t.string "type"
+    t.json "card_weight"
+    t.bigint "card_constant_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["card_constant_id"], name: "index_ai_decision_data_on_card_constant_id"
   end
 
   create_table "archetypes", force: :cascade do |t|
@@ -183,6 +192,7 @@ ActiveRecord::Schema.define(version: 2022_03_22_150722) do
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
   add_foreign_key "active_buffs", "buffs"
+  add_foreign_key "ai_decision_data", "card_constants"
   add_foreign_key "buffs", "keywords"
   add_foreign_key "card_constants", "archetypes"
   add_foreign_key "card_references", "card_constants"
