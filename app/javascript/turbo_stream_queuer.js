@@ -12,8 +12,10 @@ export default async function turboStreamQueue(event) {
     event.preventDefault();
     await new Promise((r) => setTimeout(r, (1000 * seconds)));
     const target = document.getElementById(event.target.target);
+    if (target){
     target.innerHTML = '';
     target.appendChild(event.target.firstChild.content);
+  }
   }
   await new Promise((r) => setTimeout(r, (1000)));
   delayMulti = .8
