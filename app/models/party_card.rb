@@ -72,7 +72,7 @@ class PartyCard < Card
   validates :health, numericality: { less_than_or_equal_to: :health_cap }
   # UPDATE METHODS ===========================================================
   # STATUS
-  %i[in_play attacking dead discarded].each do |status|
+  %i[in_play unplayed attacking dead discarded].each do |status|
     define_method "status_#{status}".to_sym do
       update(status: status)
     end
@@ -93,6 +93,12 @@ class PartyCard < Card
     status_in_play
     update(position: position)
     move_to_battle
+  end
+
+  def return_to_hand
+    status_unplayed
+    move_to_hand
+    player.cards.in_battle.where('position > ?', position).each(&:decrement_position)
   end
 
   def take_damage(attack)
@@ -128,6 +134,10 @@ class PartyCard < Card
                                    location: 'battle', status: 'in_battle', type: token.card_reference.card_type,
                                    card_constant: token, position: token_position)
     end
+  end
+
+  def silence
+    buffs.destroy_all
   end
 
   # METHODS (PRIVATE) ==================================================================

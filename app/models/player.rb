@@ -25,9 +25,8 @@ class Player < ApplicationRecord
 
   # ALIAS AND SCOPES ===========================================================
   validates_presence_of :health_cap, :health_current, :cost_cap, :cost_current, :resource_cap, :resource_current
-  validates_numericality_of :health_cap, :cost_cap, :resource_cap
+  validates_numericality_of :health_cap, :cost_cap, :resource_cap, :cost_current
   validates :health_current, numericality: { less_than_or_equal_to: :health_cap }
-  validates :cost_current, numericality: { less_than_or_equal_to: :cost_cap }
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
   alias_attribute :health, :health_current
   # ASSOCIATIONS ===========================================================
@@ -106,6 +105,10 @@ class Player < ApplicationRecord
     taunts = []
     party_cards.in_battle.where.associated(:keywords).each { |card| card.taunt.present? ? taunts << card : next }
     taunts
+  end
+
+  def increment_cost_current(amount = 1)
+    increment!(:cost_current, amount)
   end
 
   # METHODS (PRIVATE) ==================================================================

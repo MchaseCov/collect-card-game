@@ -44,7 +44,7 @@ class Card < ApplicationRecord
   # BUFFS
   has_many :active_buffs, as: :buffable
   has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,
-                   after_remove: :run_buff_removal_on_card
+                   after_remove: :run_buff_removal_on_card, dependent: :destroy
 
   # UPDATE METHODS ===========================================================
   # LOCATION
