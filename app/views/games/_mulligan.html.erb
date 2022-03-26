@@ -12,7 +12,7 @@
     <% end %>
   </div>
   <section id="mulligan-cards" class="flex flex-row justify-center w-full gap-x-2">
-    <%=render first_person_player.cards.includes(card_constant: [:keywords, :archetype]).in_mulligan,
+    <%=render first_person_player.cards.includes(:keywords, card_constant: [:archetype]).in_mulligan,
          locals: {draggable: false,
                   class: 'relative z-50' },
          cached: true %>

@@ -7,7 +7,7 @@ export default class DragBattleHandler extends GameplayHandler {
     event.preventDefault();
     super(controller, event);
     this.gameElement = controller.element;
-    this.validDropTargets = controller.enemyActorTargets;
+    this.validDropTargets = controller.hasTauntingCardTarget ? controller.tauntingCardTargets : controller.enemyActorTargets;
     this.cardTooltip = this.target.querySelector(`#card_${this.target.dataset.id}_tooltip`);
     this.startGameDecoration();
   }

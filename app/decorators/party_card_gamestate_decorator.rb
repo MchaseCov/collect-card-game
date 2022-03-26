@@ -30,7 +30,7 @@ class PartyCardGamestateDecorator
   end
 
   def data_friendly_card_board_battle
-    {
+    data = {
       'style-cards-target' => 'boardMinion',
       'gameplay-drag-target' => 'recievesPlayerInput friendlyActor',
       'id' => @card.id,
@@ -40,10 +40,12 @@ class PartyCardGamestateDecorator
       'gameplay-drag-action-param' => 'combat',
       'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
+    data['style-cards-target'] += ' tauntingCard' if @card.taunt.present?
+    data
   end
 
   def data_opposing_card_board_battle
-    {
+    data = {
       'style-cards-target' => 'boardMinion',
       'gameplay-drag-target' => 'recievesPlayerInput enemyActor',
       'id' => @card.id,
@@ -53,6 +55,13 @@ class PartyCardGamestateDecorator
       'type' => 'party',
       'action' => 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
+    return data unless @card.taunt.present?
+
+    data.tap do |hash|
+      hash['gameplay-drag-target'] += ' tauntingCard'
+      hash['style-cards-target'] += ' tauntingCard'
+    end
+    data
   end
 
   def data_fp_drawn_card

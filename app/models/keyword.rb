@@ -16,10 +16,10 @@ class Keyword < ApplicationRecord
   has_one :buff
 
   validates_presence_of :type, :target, :card_constant_id
-  validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast] },
+  validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast Taunt] },
                    uniqueness: { scope: :card_constant_id }
 
-  %i[Battlecry Cast].each do |type|
+  %i[Battlecry Cast Deathrattle Taunt].each do |type|
     scope type.to_s.downcase, -> { find_by('type': type) }
   end
 
@@ -28,7 +28,7 @@ class Keyword < ApplicationRecord
     @target_input = target_input if target_input
     set_final_target.each { |c| c.buffs << buff } and return if buff
 
-    set_final_target.each { |t| t.method(action).call(modifier) }
+    set_final_target.each { |t| modifier ? t.method(action).call(modifier) : t.method(action).call }
   end
 
   # For use in stimulus controller
@@ -54,6 +54,8 @@ class Keyword < ApplicationRecord
 
     [valid_targets].flatten
   end
+
+  attr_reader :invoking_card
 
   def player_of_card
     @invoking_card.player

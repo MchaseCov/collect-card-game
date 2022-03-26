@@ -6,7 +6,7 @@ import SpellPlayHandler from '../spell_play_handler';
 
 // Connects to data-controller="gameplay-drag"
 export default class extends Controller {
-  static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor'];
+  static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor', 'tauntingCard'];
 
   static values = {
     playerCost: Number,

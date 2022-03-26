@@ -118,6 +118,9 @@ class Game < ApplicationRecord
   def conduct_attack(attacker, defender)
     return unless attacker.status == 'attacking'
 
+    defender_taunts = defender.is_a?(Player) ? defender.taunting_cards : defender.player.taunting_cards
+    return if defender_taunts.present? && defender_taunts.exclude?(defender)
+
     dead_cards = deal_attack_damage(attacker, defender)
     broadcast_battle_animations(attacker, defender, dead_cards)
 

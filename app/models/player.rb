@@ -102,6 +102,12 @@ class Player < ApplicationRecord
     nil
   end
 
+  def taunting_cards
+    taunts = []
+    party_cards.in_battle.where.associated(:keywords).each { |card| card.taunt.present? ? taunts << card : next }
+    taunts
+  end
+
   # METHODS (PRIVATE) ==================================================================
   private
 

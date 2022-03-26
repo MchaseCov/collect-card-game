@@ -26,6 +26,12 @@ class SpellCard < Card
   # PLAYER
   has_one :player, through: :gamestate_deck
   # KEYWORDS
+  has_many :keywords, through: :card_constant do
+    def battlecry
+      find_by(type: 'Cast')
+    end
+  end
+
   def cast_effect
     keywords.cast
   end

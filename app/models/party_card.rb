@@ -26,8 +26,31 @@ class PartyCard < Card
   # PLAYER
   has_one :player, through: :gamestate_deck
   # KEYWORDS
+  # KEYWORD
+  has_many :keywords, through: :card_constant do
+    def battlecry
+      find_by(type: 'Battlecry')
+    end
+
+    def taunt
+      find_by(type: 'Taunt')
+    end
+
+    def deathrattle
+      find_by(type: 'Deathrattle')
+    end
+  end
+
   def battlecry
     keywords.battlecry
+  end
+
+  def taunt
+    keywords.taunt
+  end
+
+  def deathrattle
+    keywords.deathrattle
   end
 
   # ALIAS AND SCOPES ===========================================================

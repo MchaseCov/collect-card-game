@@ -37,6 +37,9 @@ class CardConstant < ApplicationRecord
   has_one :cast_effect, -> { where(type: 'Cast') }, class_name: :Keyword,
                                                     foreign_key: :card_constant_id,
                                                     inverse_of: :card_constant
+  has_one :taunt, -> { where(type: 'Taunt') }, class_name: :Keyword,
+                                               foreign_key: :card_constant_id,
+                                               inverse_of: :card_constant
   has_one :ai_decision_datum
 
   %i[Beast Humanoid].each do |tribe|
