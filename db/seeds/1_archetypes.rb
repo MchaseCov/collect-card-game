@@ -23,6 +23,12 @@ Archetype.create(
       description: 'Neutral cards are usable by all Archetypes!',
       resource_type: 'hybrid',
       color: 'slate'
+    },
+    {
+      name: 'Token',
+      description: 'Tokens are cards that are not added to decks, but are summoned in game!',
+      resource_type: 'hybrid',
+      color: 'slate'
     }
   ]
 )

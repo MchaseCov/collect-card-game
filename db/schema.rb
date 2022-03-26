@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_24_152940) do
+ActiveRecord::Schema.define(version: 2022_03_26_152209) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,7 +79,9 @@ ActiveRecord::Schema.define(version: 2022_03_24_152940) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "summoner_id"
     t.index ["archetype_id"], name: "index_card_constants_on_archetype_id"
+    t.index ["summoner_id"], name: "index_card_constants_on_summoner_id"
   end
 
   create_table "card_references", force: :cascade do |t|
@@ -195,6 +197,7 @@ ActiveRecord::Schema.define(version: 2022_03_24_152940) do
   add_foreign_key "ai_decision_data", "card_constants"
   add_foreign_key "buffs", "keywords"
   add_foreign_key "card_constants", "archetypes"
+  add_foreign_key "card_constants", "card_constants", column: "summoner_id"
   add_foreign_key "card_references", "card_constants"
   add_foreign_key "cards", "card_constants"
   add_foreign_key "cards", "gamestate_decks"

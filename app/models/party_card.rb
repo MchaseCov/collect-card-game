@@ -67,9 +67,9 @@ class PartyCard < Card
 
   # METHODS (PUBLIC) ==================================================================
   def put_card_in_battle(position)
-    move_to_battle
     status_in_play
     update(position: position)
+    move_to_battle
   end
 
   def take_damage(attack)
@@ -91,6 +91,22 @@ class PartyCard < Card
     PartyCardGamestateDecorator.new(self)
   end
 
+  def summon_token(amount = 1)
+    token = card_constant.token
+    amount_to_summon = [player.party_cards.in_battle.size, amount].min
+    return unless token && amount_to_summon.positive?
+
+    create_space_for_tokens(amount_to_summon)
+    left_direction = right_direction = position
+    amount_to_summon.times do |i|
+      token_position = ((i.even? ? right_direction += 1 : left_direction -= 1))
+      gamestate_deck.cards.create!(cost: token.card_reference.cost, health: token.card_reference.health,
+                                   attack: token.card_reference.attack, health_cap: token.card_reference.health,
+                                   location: 'battle', status: 'in_battle', type: token.card_reference.card_type,
+                                   card_constant: token, position: token_position)
+    end
+  end
+
   # METHODS (PRIVATE) ==================================================================
   private
 
@@ -110,5 +126,11 @@ class PartyCard < Card
   def do_battlecry
     battlecry.trigger(self, current_target)
     self.current_target = nil
+  end
+
+  def create_space_for_tokens(amount_to_summon)
+    left_token_count = amount_to_summon / 2
+    player.cards.in_battle.where('position > ?', position).each { |c| c.increment_position(amount_to_summon) }
+    increment_position(left_token_count)
   end
 end
