@@ -2,6 +2,7 @@
 @ranger = Archetype.find_by(name: 'Ranger')
 @wizard = Archetype.find_by(name: 'Wizard')
 @barbarian = Archetype.find_by(name: 'Barbarian')
+@token = Archetype.find_by(name: 'Token')
 @neutral_party_cards = [
   { name: 'Gnome Serf', cost: 1, attack: 2, health: 1 }, # Battlecry: draw 1 card
   { name: 'Archer in Training', cost: 1, attack: 1, health: 1 }, # Battlecry: do 1 damage
@@ -51,12 +52,22 @@
   { card_set: @ranger_party_cards, archetype: @ranger },
   { card_set: @wizard_party_cards, archetype: @wizard },
   { card_set: @barbarian_party_cards, archetype: @barbarian }
-
 ]
 @party_card_archetype_pairs.each do |pair|
   pair[:card_set].each do |card|
     card_constant = CardConstant.create(name: card[:name], tribe: card[:tribe], archetype: pair[:archetype])
     card_constant = CardConstant.find_by(name: card[:name]) if card_constant.errors[:name] == ['has already been taken']
+    CardReference.create(cost: card[:cost], attack: card[:attack], health: card[:health],
+                         card_type: 'PartyCard', card_constant: card_constant)
+  end
+
+  @token_party_cards = [
+    { name: 'Summoned Reinforcement', cost: 1, attack: 1, health: 1, summoner: CardConstant.find_by(name: 'Novice Summoner') } # Neutral Novice Summoner
+  ]
+
+  @token_party_cards.each do |card|
+    card_constant = CardConstant.create(name: card[:name], tribe: card[:tribe], archetype: @token,
+                                        summoner: card[:summoner])
     CardReference.create(cost: card[:cost], attack: card[:attack], health: card[:health],
                          card_type: 'PartyCard', card_constant: card_constant)
   end
