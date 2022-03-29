@@ -60,6 +60,8 @@ class Game < ApplicationRecord
     players.find_by('id != ?', player.id)
   end
 
+  has_many :cards, through: :players
+
   # METHODS (PUBLIC) ==================================================================
 
   #========|Game Creation|======

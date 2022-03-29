@@ -67,4 +67,8 @@ class Keyword < ApplicationRecord
   def opposing_player_of_card
     @invoking_card.game.opposing_player_of(player_of_card)
   end
+
+  def game_of_card
+    @invoking_card.game
+  end
 end

@@ -16,10 +16,10 @@
   { name: 'Faithful Priestess', cost: 4, attack: 3, health: 3 }, # Battlecry: Remove an enemy's status effects
   { name: 'Illusion Master', cost: 5, attack: 1, health: 1 }, # Battlecry: Choose a party member, summon a copy of it.
   { name: 'Cavalry Leader', cost: 5, attack: 2, health: 3 },  # Battlecry: Summon a 4/4 Knight
-  { name: 'Highlands Hyena', cost: 5, attack: 4, health: 4 }, # Battlecry: Kill a random enemy party member with 3 or less health
+  { name: 'Highlands Hyena', cost: 5, attack: 2, health: 2 }, # Battlecry: Kill a random enemy party member with 3 or less health
   { name: 'Defensive Shieldmaster', cost: 5, attack: 5, health: 5 }, # Taunt
   { name: 'Halfling Ritualist', cost: 6, attack: 3, health: 3 }, # Deathrattle: Take control of a random enemy party member
-  { name: 'Backstabber', cost: 6, attack: 7, health: 7 }, # Battlecry: You take 2 damage
+  { name: 'Backstabber', cost: 6, attack: 7, health: 7 }, # Battlecry: You take 3 damage
   { name: 'Guild Leader', cost: 7, attack: 5, health: 5 } # While on board: Your other party minions have +1/+1
 ]
 
@@ -62,7 +62,8 @@
   end
 
   @token_party_cards = [
-    { name: 'Summoned Reinforcement', cost: 1, attack: 1, health: 1, summoner: CardConstant.find_by(name: 'Novice Summoner') } # Neutral Novice Summoner
+    { name: 'Summoned Reinforcement', cost: 1, attack: 1, health: 1, summoner: CardConstant.find_by(name: 'Novice Summoner') }, # Neutral
+    { name: 'Cavalry Knight', cost: 4, attack: 4, health: 4, summoner: CardConstant.find_by(name: 'Cavalry Leader') } # Neutral
   ]
 
   @token_party_cards.each do |card|

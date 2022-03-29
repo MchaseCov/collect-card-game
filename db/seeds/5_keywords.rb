@@ -71,14 +71,44 @@ battlecries = [
     player_choice: true,
     action: 'silence',
     body_text: 'Silence an enemy Party Card, removing ALL of its status effects.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Illusion Master'),
+    target: %w[player_of_card party_cards in_battle],
+    action: 'summon_copy',
+    player_choice: true,
+    modifier: nil,
+    body_text: 'Choose a friendly Party Card in battle. Summon a copy of it.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Highlands Hyena'),
+    target: %w[game_of_card all_cards in_battle three_or_less_health],
+    action: 'put_card_in_graveyard',
+    modifier: nil,
+    body_text: 'Destroy ALL Party Cards in battle with three or less health'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Cavalry Leader'),
+    target: %w[invoking_card],
+    action: 'summon_token',
+    modifier: nil,
+    body_text: 'Summon a 4/4 Knight.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Backstabber'),
+    target: %w[player_of_card],
+    action: 'take_damage',
+    modifier: 3,
+    body_text: 'You take 3 damage when playing this card.'
   }
 ]
 battlecries.each do |battlecry|
   bc = Battlecry.create(
     card_constant: battlecry[:card_constant],
     target: battlecry[:target],
-    player_choice: battlecry[:player_choice],
+    player_choice: battlecry[:player_choice] || false,
     action: battlecry[:action],
+    modifier: battlecry[:modifier],
     body_text: battlecry[:body_text]
   )
   bc.buffs << battlecry[:associated_buff] if battlecry[:associated_buff].present?
@@ -86,12 +116,9 @@ end
 
 taunt_text = 'Must be attacked first'
 taunt_buff = Buff.find_by(name: 'Taunt')
-taunts = [
-  {
-    card_constant: CardConstant.find_by(name: 'Distracting Bard')
-  }
-]
-taunts.each do |taunt|
-  t = Taunt.create(card_constant: taunt[:card_constant], target: %w[invoking_card], body_text: taunt_text)
+cards_with_taunt = [CardConstant.find_by(name: 'Distracting Bard'),
+                    CardConstant.find_by(name: 'Defensive Shieldmaster')]
+cards_with_taunt.each do |card|
+  t = Taunt.create(card_constant: card, target: %w[invoking_card], body_text: taunt_text)
   t.buffs << taunt_buff
 end

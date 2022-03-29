@@ -72,6 +72,7 @@ class PartyCard < Card
   end
 
   scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
+  scope :three_or_less_health, -> { where('health <= 3') } # For use in battlecries
 
   # VALIDATIONS ===========================================================
   validates_presence_of :health_cap, :health, :attack, :status, :cost

@@ -28,7 +28,8 @@ class CardConstant < ApplicationRecord
                   foreign_key: :summoner_id,
                   inverse_of: :summoner
 
-  has_one :card_reference
+  has_one :card_reference, dependent: :destroy
+  has_many :cards, dependent: :destroy
 
   has_one :battlecry, -> { where(type: 'Battlecry') }, class_name: :Keyword,
                                                        foreign_key: :card_constant_id,
