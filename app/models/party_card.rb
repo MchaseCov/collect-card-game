@@ -127,20 +127,25 @@ class PartyCard < Card
     PartyCardGamestateDecorator.new(self)
   end
 
+  def summon_copy(amount = 1)
+    amount_to_summon = [player.party_cards.in_battle.size, amount].min
+    return unless amount_to_summon.positive?
+
+    card_stats = { cost: cost, health: health, attack: attack, health_cap: health_cap, location: 'battle',
+                   status: 'in_battle', type: 'PartyCard', card_constant: card_constant, position: position }
+    prepare_to_summon_cards(amount_to_summon, card_stats, buffs)
+  end
+
   def summon_token(amount = 1)
     token = card_constant.token
+    token_reference = token.card_reference
     amount_to_summon = [player.party_cards.in_battle.size, amount].min
     return unless token && amount_to_summon.positive?
 
-    create_space_for_tokens(amount_to_summon)
-    left_direction = right_direction = position
-    amount_to_summon.times do |i|
-      token_position = ((i.even? ? right_direction += 1 : left_direction -= 1))
-      gamestate_deck.cards.create!(cost: token.card_reference.cost, health: token.card_reference.health,
-                                   attack: token.card_reference.attack, health_cap: token.card_reference.health,
-                                   location: 'battle', status: 'in_battle', type: token.card_reference.card_type,
-                                   card_constant: token, position: token_position)
-    end
+    card_stats = { cost: token_reference.cost, health: token_reference.health, attack: token_reference.attack,
+                   health_cap: token_reference.health, location: 'battle', status: 'in_battle', type: 'PartyCard',
+                   card_constant: token, position: position }
+    prepare_to_summon_cards(amount_to_summon, card_stats)
   end
 
   def silence
@@ -148,11 +153,16 @@ class PartyCard < Card
   end
 
   def taunting?
-    buffs.exists? { |b| b.name == 'Taunt' }
+    buffs.where(name: 'Taunt').exists?
   end
 
   # METHODS (PRIVATE) ==================================================================
   private
+
+  def prepare_to_summon_cards(amount, card_stats, card_buffs = nil)
+    create_space_for_tokens(amount)
+    gamestate_deck.generate_cards(amount, card_stats, card_buffs)
+  end
 
   def put_card_in_graveyard
     player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
