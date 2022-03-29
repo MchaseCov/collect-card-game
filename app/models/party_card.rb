@@ -24,9 +24,11 @@ class PartyCard < Card
   after_update :do_taunt, if: proc { |card|
     card.saved_change_to_location == %w[hand battle] && card.taunt
   }
-
+  after_update :do_aura, if: proc { |card|
+    card.saved_change_to_location == %w[hand battle] && card.aura
+  }
   after_update :silence, if: proc { |card|
-    card.saved_change_to_location == %w[battle hand] && card.buffs.any?
+    card.buffs.any? && card.saved_change_to_location&.[](0) == 'battle'
   }
 
   # ASSOCIATIONS ===========================================================
@@ -46,6 +48,10 @@ class PartyCard < Card
     def deathrattle
       find_by(type: 'Deathrattle')
     end
+
+    def aura
+      find_by(type: 'Aura')
+    end
   end
 
   def battlecry
@@ -58,6 +64,10 @@ class PartyCard < Card
 
   def deathrattle
     keywords.deathrattle
+  end
+
+  def aura
+    keywords.aura
   end
 
   # ALIAS AND SCOPES ===========================================================
@@ -87,7 +97,7 @@ class PartyCard < Card
   end
 
   # INTEGER ATTRIBUTES
-  %i[position health_cap health].each do |attribute|
+  %i[position health_cap health attack].each do |attribute|
     define_method "increment_#{attribute}".to_sym do |amount = 1|
       increment!(attribute, amount)
     end
@@ -99,6 +109,7 @@ class PartyCard < Card
   # METHODS (PUBLIC) ==================================================================
   def put_card_in_battle(position)
     status_in_play
+    buffs << player.auras if player.auras.any?
     update(position: position)
     move_to_battle
   end
@@ -150,11 +161,22 @@ class PartyCard < Card
   end
 
   def silence
-    buffs.destroy_all
+    active_buffs.not_aura_source.each { |ab| buffs.destroy(ab.buff) }
+    aura&.stop_aura(self)
   end
 
   def taunting?
     buffs.where(name: 'Taunt').exists?
+  end
+
+  def increase_stats(amount = 1)
+    increase_health_cap(amount)
+    increment_attack(amount)
+  end
+
+  def decrease_stats(amount = 1)
+    decrease_health_cap(amount)
+    decrement_attack(amount)
   end
 
   # METHODS (PRIVATE) ==================================================================
@@ -188,7 +210,11 @@ class PartyCard < Card
   end
 
   def do_taunt
-    keywords.taunt.trigger(self)
+    taunt.trigger(self)
+  end
+
+  def do_aura
+    aura.trigger(self)
   end
 
   def create_space_for_tokens(amount_to_summon)

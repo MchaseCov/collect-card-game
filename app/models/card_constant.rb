@@ -41,6 +41,9 @@ class CardConstant < ApplicationRecord
   has_one :taunt, -> { where(type: 'Taunt') }, class_name: :Keyword,
                                                foreign_key: :card_constant_id,
                                                inverse_of: :card_constant
+  has_one :aura, -> { where(type: 'Aura') }, class_name: :Keyword,
+                                             foreign_key: :card_constant_id,
+                                             inverse_of: :card_constant
   has_one :ai_decision_datum
 
   %i[Beast Humanoid].each do |tribe|

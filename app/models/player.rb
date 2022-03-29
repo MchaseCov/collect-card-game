@@ -39,8 +39,19 @@ class Player < ApplicationRecord
   has_many :party_cards, through: :gamestate_deck, source: :cards, class_name: :PartyCard
   has_many :spell_cards, through: :gamestate_deck, source: :cards, class_name: :SpellCard
 
+  has_many :active_auras, as: :buffable, class_name: :ActiveBuff, dependent: :destroy
+  has_many :auras, through: :active_auras, after_add: :add_aura_to_cards,
+                   after_remove: :remove_aura_from_cards, source: :buff
+
   # METHODS (PUBLIC) ==================================================================
-  # Method to use as futureproofing/reminder
+
+  def add_aura_to_cards(aura)
+    cards.in_battle.each { |c| c.buffs << aura }
+  end
+
+  def remove_aura_from_cards(aura)
+    cards.in_battle.each { |c| c.buffs.destroy(aura) }
+  end
 
   def mulligan_cards
     cards.in_mulligan

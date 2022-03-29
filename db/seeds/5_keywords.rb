@@ -122,3 +122,21 @@ cards_with_taunt.each do |card|
   t = Taunt.create(card_constant: card, target: %w[invoking_card], body_text: taunt_text)
   t.buffs << taunt_buff
 end
+
+auras = [{
+  card_constant: CardConstant.find_by(name: 'Guild Leader'),
+  target: %w[party_cards in_battle],
+  associated_buff: Buff.find_by(name: 'Guild Membership'),
+  modifier: 1,
+  body_text: 'While this is in play, your Party Cards in battle have +1/+1'
+}]
+auras.each do |aura|
+  au = Aura.create(
+    card_constant: aura[:card_constant],
+    target: aura[:target],
+    player_choice: false,
+    modifier: aura[:modifier],
+    body_text: aura[:body_text]
+  )
+  au.buffs << aura[:associated_buff] if aura[:associated_buff].present?
+end

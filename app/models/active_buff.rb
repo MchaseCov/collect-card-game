@@ -9,4 +9,7 @@
 class ActiveBuff < ApplicationRecord
   belongs_to :buff
   belongs_to :buffable, polymorphic: true
+
+  has_many :keywords, through: :buff
+  scope :not_aura_source, -> { includes(:keywords).where.not(keywords: { type: 'Aura' }) }
 end

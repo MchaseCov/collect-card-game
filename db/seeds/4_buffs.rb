@@ -8,6 +8,12 @@ Buff.create(
     },
     {
       name: 'Taunt'
+    },
+    {
+      name: 'Guild Membership',
+      target_method: 'increase_stats',
+      removal_method: 'decrease_stats',
+      modifier: 1
     }
   ]
 )
