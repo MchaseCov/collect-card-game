@@ -103,7 +103,7 @@ class Player < ApplicationRecord
 
   def taunting_cards
     taunts = []
-    party_cards.in_battle.where.associated(:keywords).each { |card| card.taunt.present? ? taunts << card : next }
+    party_cards.in_battle.where.associated(:buffs).uniq.each { |card| taunts << card if card.taunting? }
     taunts
   end
 

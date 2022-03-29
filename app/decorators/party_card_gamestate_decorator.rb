@@ -40,7 +40,7 @@ class PartyCardGamestateDecorator
       'gameplay-drag-action-param' => 'combat',
       'action' => 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
-    data['style-cards-target'] += ' tauntingCard' if @card.taunt.present?
+    data['style-cards-target'] += ' tauntingCard' if @card.taunting?
     data
   end
 
@@ -55,7 +55,7 @@ class PartyCardGamestateDecorator
       'type' => 'party',
       'action' => 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd'
     }
-    return data unless @card.taunt.present?
+    return data unless @card.taunting?
 
     data.tap do |hash|
       hash['gameplay-drag-target'] += ' tauntingCard'

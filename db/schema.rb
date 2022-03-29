@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_26_152209) do
+ActiveRecord::Schema.define(version: 2022_03_29_154321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,10 +67,15 @@ ActiveRecord::Schema.define(version: 2022_03_26_152209) do
     t.string "target_method"
     t.string "removal_method"
     t.integer "modifier"
-    t.bigint "keyword_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["keyword_id"], name: "index_buffs_on_keyword_id"
+  end
+
+  create_table "buffs_keywords", id: false, force: :cascade do |t|
+    t.bigint "buff_id"
+    t.bigint "keyword_id"
+    t.index ["buff_id"], name: "index_buffs_keywords_on_buff_id"
+    t.index ["keyword_id"], name: "index_buffs_keywords_on_keyword_id"
   end
 
   create_table "card_constants", force: :cascade do |t|
@@ -195,7 +200,6 @@ ActiveRecord::Schema.define(version: 2022_03_26_152209) do
   add_foreign_key "account_decks", "users"
   add_foreign_key "active_buffs", "buffs"
   add_foreign_key "ai_decision_data", "card_constants"
-  add_foreign_key "buffs", "keywords"
   add_foreign_key "card_constants", "archetypes"
   add_foreign_key "card_constants", "card_constants", column: "summoner_id"
   add_foreign_key "card_references", "card_constants"

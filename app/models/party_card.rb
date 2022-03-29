@@ -19,8 +19,15 @@ class PartyCard < Card
 
   # CALLBACKS ===========================================================
   after_update :do_battlecry, if: proc { |card|
-                                    card.saved_change_to_location == %w[hand battle] && card.battlecry.present?
-                                  }
+    card.saved_change_to_location == %w[hand battle] && card.battlecry
+  }
+  after_update :do_taunt, if: proc { |card|
+    card.saved_change_to_location == %w[hand battle] && card.taunt
+  }
+
+  after_update :silence, if: proc { |card|
+    card.saved_change_to_location == %w[battle hand] && card.buffs.any?
+  }
 
   # ASSOCIATIONS ===========================================================
   # PLAYER
@@ -140,6 +147,10 @@ class PartyCard < Card
     buffs.destroy_all
   end
 
+  def taunting?
+    buffs.exists? { |b| b.name == 'Taunt' }
+  end
+
   # METHODS (PRIVATE) ==================================================================
   private
 
@@ -149,16 +160,24 @@ class PartyCard < Card
   end
 
   def run_buff_method_on_card(buff)
-    send(buff.target_method, buff.modifier)
+    return unless buff.target_method
+
+    buff.modifier ? send(buff.target_method, buff.modifier) : send(buff.target_method)
   end
 
   def run_buff_removal_on_card(buff)
-    send(buff.removal_method, buff.modifier)
+    return unless buff.removal_method
+
+    buff.modifier ? send(buff.removal_method, buff.modifier) : send(buff.removal_method)
   end
 
   def do_battlecry
     battlecry.trigger(self, current_target)
     self.current_target = nil
+  end
+
+  def do_taunt
+    keywords.taunt.trigger(self)
   end
 
   def create_space_for_tokens(amount_to_summon)

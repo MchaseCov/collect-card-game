@@ -13,11 +13,14 @@
 #
 class Keyword < ApplicationRecord
   belongs_to :card_constant
-  has_one :buff
-
+  has_and_belongs_to_many :buffs
   validates_presence_of :type, :target, :card_constant_id
   validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast Taunt] },
                    uniqueness: { scope: :card_constant_id }
+
+  def buff
+    buffs.first
+  end
 
   %i[Battlecry Cast Deathrattle Taunt].each do |type|
     scope type.to_s.downcase, -> { find_by('type': type) }
@@ -26,7 +29,7 @@ class Keyword < ApplicationRecord
   def trigger(invoking_card, target_input)
     @invoking_card = invoking_card
     @target_input = target_input if target_input
-    set_final_target.each { |c| c.buffs << buff } and return if buff
+    set_final_target.each { |c| c.buffs << buffs } and return if buffs.present?
 
     set_final_target.each { |t| modifier ? t.method(action).call(modifier) : t.method(action).call }
   end

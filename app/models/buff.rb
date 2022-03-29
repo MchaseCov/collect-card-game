@@ -7,11 +7,11 @@
 # target_method           :string
 # removal_method          :string
 # modifier                :integer
-# keyword_id              :bigint      foreign key of keyword, optional: true
 #
 class Buff < ApplicationRecord
-  validates_presence_of :name, :target_method, :removal_method, :modifier
+  validates_presence_of :name
+  validates_numericality_of :modifier, allow_nil: true
   validates_uniqueness_of :name
-  belongs_to :keyword, optional: true
+  has_and_belongs_to_many :keywords
   has_many :active_buffs
 end

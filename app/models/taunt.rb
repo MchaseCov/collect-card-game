@@ -1,3 +1,5 @@
 class Taunt < Keyword
-  def trigger; end
+  def trigger(card)
+    card.buffs << buff
+  end
 end
