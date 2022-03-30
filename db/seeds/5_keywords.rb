@@ -18,6 +18,7 @@ battlecries = [
   {
     player_choice: true,
     target: %w[player_of_card party_cards in_battle beast_tribe],
+    action: 'apply_buffs',
     card_constant: CardConstant.find_by(name: 'Beast Tamer'),
     body_text: 'Give +2 health to a friendly Beast in battle.',
     associated_buff: Buff.find_by(name: 'Bestial Strength')
@@ -40,7 +41,7 @@ battlecries = [
   {
     card_constant: CardConstant.find_by(name: 'Baby Alligator'),
     target: %w[invoking_card],
-    action: 'status_attacking',
+    action: 'instantly_attack',
     modifier: nil,
     body_text: 'Can instantly attack.'
   },
@@ -48,7 +49,7 @@ battlecries = [
     card_constant: CardConstant.find_by(name: 'Novice Summoner'),
     target: %w[invoking_card],
     action: 'summon_token',
-    modifier: nil,
+    modifier: 1,
     body_text: 'Summon a 1/1 Reinforcement'
   },
   {
@@ -61,7 +62,7 @@ battlecries = [
   {
     card_constant: CardConstant.find_by(name: 'Eager Pickpocket'),
     target: %w[player_of_card],
-    action: 'increment_cost_current',
+    action: 'increase_current_gold',
     modifier: 1,
     body_text: 'Gain 1 gold coin this turn.'
   },
@@ -77,21 +78,21 @@ battlecries = [
     target: %w[player_of_card party_cards in_battle],
     action: 'summon_copy',
     player_choice: true,
-    modifier: nil,
+    modifier: 1,
     body_text: 'Choose a friendly Party Card in battle. Summon a copy of it.'
   },
   {
     card_constant: CardConstant.find_by(name: 'Highlands Hyena'),
-    target: %w[game_of_card all_cards in_battle three_or_less_health],
-    action: 'put_card_in_graveyard',
+    target: %w[game_of_card cards in_battle],
+    action: 'highlands_hyena',
     modifier: nil,
-    body_text: 'Destroy ALL Party Cards in battle with three or less health'
+    body_text: 'Destroy ALL Party Cards in battle with two or less health'
   },
   {
     card_constant: CardConstant.find_by(name: 'Cavalry Leader'),
     target: %w[invoking_card],
     action: 'summon_token',
-    modifier: nil,
+    modifier: 1,
     body_text: 'Summon a 4/4 Knight.'
   },
   {

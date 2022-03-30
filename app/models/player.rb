@@ -122,16 +122,6 @@ class Player < ApplicationRecord
     increment!(:cost_current, amount)
   end
 
-  # METHODS (PRIVATE) ==================================================================
-  private
-
-  def increment_player_resources
-    increment!(:cost_cap) if cost_cap < 10
-    increment!(:resource_cap) if resource_cap < 20
-    # Interesting idea: What if resource does not replenish with turn and just goes up by X?
-    update(cost_current: cost_cap, resource_current: resource_cap)
-  end
-
   # Using an amount loop rather than .sample(amount) to burn individual cards
   def draw_cards(amount)
     amount.times do
@@ -145,6 +135,16 @@ class Player < ApplicationRecord
         topdeck.move_to_hand
       end
     end
+  end
+
+  # METHODS (PRIVATE) ==================================================================
+  private
+
+  def increment_player_resources
+    increment!(:cost_cap) if cost_cap < 10
+    increment!(:resource_cap) if resource_cap < 20
+    # Interesting idea: What if resource does not replenish with turn and just goes up by X?
+    update(cost_current: cost_cap, resource_current: resource_cap)
   end
 
   def take_empty_deck_fatigue

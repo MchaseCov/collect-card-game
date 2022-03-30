@@ -16,7 +16,7 @@
   { name: 'Faithful Priestess', cost: 4, attack: 3, health: 3 }, # Battlecry: Remove an enemy's status effects
   { name: 'Illusion Master', cost: 5, attack: 1, health: 1 }, # Battlecry: Choose a party member, summon a copy of it.
   { name: 'Cavalry Leader', cost: 5, attack: 2, health: 3 },  # Battlecry: Summon a 4/4 Knight
-  { name: 'Highlands Hyena', cost: 5, attack: 2, health: 2 }, # Battlecry: Kill a random enemy party member with 3 or less health
+  { name: 'Highlands Hyena', tribe: 'Beast', cost: 5, attack: 2, health: 2 }, # Battlecry: Kill a random enemy party member with 3 or less health
   { name: 'Defensive Shieldmaster', cost: 5, attack: 5, health: 5 }, # Taunt
   { name: 'Halfling Ritualist', cost: 6, attack: 3, health: 3 }, # Deathrattle: Take control of a random enemy party member
   { name: 'Backstabber', cost: 6, attack: 7, health: 7 }, # Battlecry: You take 3 damage

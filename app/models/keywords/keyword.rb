@@ -12,6 +12,8 @@
 # card_constant_id        :integer      null: true, foreign key of PCP
 #
 class Keyword < ApplicationRecord
+  include GenericKeywordActions
+  include SpecifiedKeywordActions
   belongs_to :card_constant
   has_and_belongs_to_many :buffs
   validates_presence_of :type, :target, :card_constant_id
@@ -29,9 +31,8 @@ class Keyword < ApplicationRecord
   def trigger(invoking_card, target_input)
     @invoking_card = invoking_card
     @target_input = target_input if target_input
-    set_final_target.each { |c| c.buffs << buffs } and return if buffs.present?
-
-    set_final_target.each { |t| modifier ? t.method(action).call(modifier) : t.method(action).call }
+    @targets = set_final_target
+    method(action).call
   end
 
   # For use in stimulus controller
@@ -53,9 +54,7 @@ class Keyword < ApplicationRecord
 
   def set_final_target
     valid_targets = find_valid_targets
-    return [valid_targets.find(@target_input)] if player_choice
-
-    [valid_targets].flatten
+    player_choice ? valid_targets.find(@target_input) : valid_targets
   end
 
   attr_reader :invoking_card

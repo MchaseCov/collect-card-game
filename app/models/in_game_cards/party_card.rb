@@ -36,38 +36,9 @@ class PartyCard < Card
   has_one :player, through: :gamestate_deck
   # KEYWORDS
   # KEYWORD
-  has_many :keywords, through: :card_constant do
-    def battlecry
-      find_by(type: 'Battlecry')
-    end
-
-    def taunt
-      find_by(type: 'Taunt')
-    end
-
-    def deathrattle
-      find_by(type: 'Deathrattle')
-    end
-
-    def aura
-      find_by(type: 'Aura')
-    end
-  end
-
-  def battlecry
-    keywords.battlecry
-  end
-
-  def taunt
-    keywords.taunt
-  end
-
-  def deathrattle
-    keywords.deathrattle
-  end
-
-  def aura
-    keywords.aura
+  has_many :keywords, through: :card_constant
+  %i[battlecry taunt deathrattle aura].each do |keyword_type|
+    define_method(keyword_type) { keywords.find_by(type: keyword_type.to_s.upcase_first) }
   end
 
   # ALIAS AND SCOPES ===========================================================
@@ -82,7 +53,6 @@ class PartyCard < Card
   end
 
   scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
-  scope :three_or_less_health, -> { where('health <= 3') } # For use in battlecries
 
   # VALIDATIONS ===========================================================
   validates_presence_of :health_cap, :health, :attack, :status, :cost
@@ -179,17 +149,17 @@ class PartyCard < Card
     decrement_attack(amount)
   end
 
+  def put_card_in_graveyard
+    player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
+    move_to_graveyard and status_dead
+  end
+
   # METHODS (PRIVATE) ==================================================================
   private
 
   def prepare_to_summon_cards(amount, card_stats, card_buffs = nil)
     create_space_for_tokens(amount)
     gamestate_deck.generate_cards(amount, card_stats, card_buffs)
-  end
-
-  def put_card_in_graveyard
-    player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
-    move_to_graveyard and status_dead
   end
 
   def run_buff_method_on_card(buff)
