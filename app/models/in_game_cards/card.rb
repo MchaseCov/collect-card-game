@@ -42,9 +42,9 @@ class Card < ApplicationRecord
   # GAME
   has_one :game, through: :gamestate_deck
   # BUFFS
-  has_many :active_buffs, as: :buffable
+  has_many :active_buffs, as: :buffable, dependent: :destroy
   has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,
-                   after_remove: :run_buff_removal_on_card, dependent: :destroy
+                   after_remove: :run_buff_removal_on_card
 
   # UPDATE METHODS ===========================================================
   # LOCATION
