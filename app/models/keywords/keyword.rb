@@ -65,7 +65,7 @@ class Keyword < ApplicationRecord
   end
 
   def opposing_player_of_card
-    @invoking_card.game.opposing_player_of(player_of_card)
+    game_of_card.opposing_player_of(player_of_card)
   end
 
   def game_of_card
