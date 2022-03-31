@@ -20,6 +20,12 @@ Buff.create(
       target_method: 'increase_health_cap',
       removal_method: 'decrease_health_cap',
       modifier: 2
+    },
+    {
+      name: 'Stabled Might',
+      target_method: 'increase_stats',
+      removal_method: 'decrease_stats',
+      modifier: 1
     }
   ]
 )

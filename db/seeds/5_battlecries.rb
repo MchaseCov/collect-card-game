@@ -1,19 +1,3 @@
-# If player_chice false, target is chain required to self-evaluate appropriate target
-# If true, target is in format [target_type, attribute, attribute_value]
-Keyword.create(
-  [
-    {
-      # SPELL CARD: FLAME NOVA : DEAL 1 DAMAGE TO ALL ENEMY PARTY MEMBERS IN PLAY
-      type: 'Cast',
-      player_choice: false,
-      target: %w[opposing_player_of_card party_cards in_battle],
-      action: 'take_damage',
-      modifier: 2,
-      card_constant: CardConstant.find_by(name: 'Flame Nova'),
-      body_text: 'Deal 2 damage to all enemy party members in battle.'
-    }
-  ]
-)
 battlecries = [
   {
     player_choice: true,
@@ -101,6 +85,13 @@ battlecries = [
     action: 'take_damage',
     modifier: 3,
     body_text: 'You take 3 damage when playing this card.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Charging Hound'),
+    target: %w[invoking_card],
+    action: 'instantly_attack',
+    modifier: nil,
+    body_text: 'Can instantly attack.'
   }
 ]
 battlecries.each do |battlecry|
@@ -113,52 +104,4 @@ battlecries.each do |battlecry|
     body_text: battlecry[:body_text]
   )
   bc.buffs << battlecry[:associated_buff] if battlecry[:associated_buff].present?
-end
-
-taunt_text = 'Must be attacked first'
-taunt_buff = Buff.find_by(name: 'Taunt')
-cards_with_taunt = [CardConstant.find_by(name: 'Distracting Bard'),
-                    CardConstant.find_by(name: 'Defensive Shieldmaster')]
-cards_with_taunt.each do |card|
-  t = Taunt.create(card_constant: card, target: %w[invoking_card], body_text: taunt_text)
-  t.buffs << taunt_buff
-end
-
-auras = [{
-  card_constant: CardConstant.find_by(name: 'Guild Leader'),
-  target: %w[party_cards in_battle],
-  associated_buff: Buff.find_by(name: 'Guild Membership'),
-  modifier: 1,
-  body_text: 'While this is in play, your Party Cards in battle have +1/+1'
-}]
-auras.each do |aura|
-  au = Aura.create(
-    card_constant: aura[:card_constant],
-    target: aura[:target],
-    player_choice: false,
-    modifier: aura[:modifier],
-    body_text: aura[:body_text]
-  )
-  au.buffs << aura[:associated_buff] if aura[:associated_buff].present?
-end
-
-deathrattles = [{
-  card_constant: CardConstant.find_by(name: 'Zealot of the Light'),
-  target: %w[player_of_card party_cards in_battle sample],
-  action: 'apply_buffs',
-  associated_buff: Buff.find_by(name: "Light's Grace"),
-  modifier: 1,
-  body_text: 'Give +2 health to a random friendly Party Card in battle.'
-
-}]
-deathrattles.each do |deathrattle|
-  dr = Deathrattle.create(
-    card_constant: deathrattle[:card_constant],
-    target: deathrattle[:target],
-    player_choice: false,
-    action: deathrattle[:action],
-    modifier: deathrattle[:modifier],
-    body_text: deathrattle[:body_text]
-  )
-  dr.buffs << deathrattle[:associated_buff] if deathrattle[:associated_buff].present?
 end

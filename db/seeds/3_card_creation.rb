@@ -64,7 +64,10 @@
 
   @token_party_cards = [
     { name: 'Summoned Reinforcement', cost: 1, attack: 1, health: 1, summoner: CardConstant.find_by(name: 'Novice Summoner') }, # Neutral
-    { name: 'Cavalry Knight', cost: 4, attack: 4, health: 4, summoner: CardConstant.find_by(name: 'Cavalry Leader') } # Neutral
+    { name: 'Cavalry Knight', cost: 4, attack: 4, health: 4, summoner: CardConstant.find_by(name: 'Cavalry Leader') }, # Neutral
+    { name: 'Hangry Bear', cost: 4, attack: 4, health: 5, summoner: CardConstant.find_by(name: 'Inexperienced Hunter'), tribe: 'Beast' }, # Neutral
+    { name: 'Lion Cub', cost: 2, attack: 2, health: 2, summoner: CardConstant.find_by(name: 'Protective Lioness'), tribe: 'Beast' } # Ranger
+
   ]
 
   @token_party_cards.each do |card|
