@@ -10,6 +10,7 @@
 # location                :string
 # status                  :string
 # position                :integer
+# silenced                :boolean
 # type                    :string       STI reference column
 # gamestate_deck_id       :bigint       null: false, foreign key
 # card_constant_id        :bigint       null: false, foreign key

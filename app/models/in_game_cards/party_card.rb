@@ -10,6 +10,7 @@
 # location                :string
 # status                  :string
 # position                :integer
+# silenced                :boolean
 # type                    :string       STI reference column              PARTY CARD
 # gamestate_deck_id       :bigint       null: false, foreign key
 # card_constant_id        :bigint       null: false, foreign key
@@ -29,6 +30,10 @@ class PartyCard < Card
   }
   after_update :silence, if: proc { |card|
     card.buffs.any? && card.saved_change_to_location&.[](0) == 'battle'
+  }
+
+  after_update :do_deathrattle, if: proc { |card|
+    card.deathrattle && card.saved_change_to_status&.[](1) == 'dead' && !card.silenced?
   }
 
   # ASSOCIATIONS ===========================================================
@@ -131,6 +136,7 @@ class PartyCard < Card
   end
 
   def silence
+    update(silenced: true)
     active_buffs.not_aura_source.each { |ab| buffs.destroy(ab.buff) }
     aura&.stop_aura(self)
   end
@@ -185,6 +191,10 @@ class PartyCard < Card
 
   def do_aura
     aura.trigger(self)
+  end
+
+  def do_deathrattle
+    deathrattle.trigger(self)
   end
 
   def create_space_for_tokens(amount_to_summon)
