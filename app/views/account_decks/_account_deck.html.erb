@@ -11,7 +11,7 @@
   </div>
 </div>
 <div class="relative">
-  <%account_deck.cards.includes(card_constant: %i[archetype keywords]).order(:cost).uniq.each do |card|%>
+  <%account_deck.cards.includes(card_constant: %i[archetype keywords]).order(:cost, :id).uniq.each do |card|%>
     <%= button_to remove_card_account_deck_path(id: account_deck&.id, card_id: card.id), class:'w-full border-2 border-slate-900 flex h-max items-center has-tooltip' do %>
       <section class="absolute tooltip -left-48">
         <%= render card, cached: true %>

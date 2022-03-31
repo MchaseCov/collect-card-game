@@ -5,9 +5,10 @@ class CardReferencesController < ApplicationController
     @card_references =
       if params[:name].in?(%w[Barbarian Wizard Ranger Neutral])
         archetype = Archetype.find_by(name: params[:name])
-        CardReference.includes(card_constant: %i[archetype keywords]).where(card_constant: { archetype: archetype }).all
+        CardReference.includes(card_constant: %i[archetype keywords]).where(card_constant: { archetype: archetype })
+                     .order(:cost, 'card_constant.name').all
       else
-        CardReference.includes(card_constant: %i[archetype keywords]).all
+        CardReference.includes(card_constant: %i[archetype keywords]).order(:cost, 'card_constant.name').all
       end
   end
 

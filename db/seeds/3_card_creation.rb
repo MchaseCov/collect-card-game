@@ -10,6 +10,7 @@
   { name: 'Novice Summoner', cost: 2, attack: 1, health: 2 }, # Battlecry: Summon a 1/1 soldier
   { name: 'Distracting Bard', cost: 2, attack: 2, health: 2 }, # Taunt
   { name: 'Rescue Party', cost: 2, attack: 3, health: 2 }, # Battlecry: Return a party member from the battlefield back to your hand
+  { name: 'Zealot of the Light', cost: 3, attack: 3, health: 3 }, # Deathrattle: Give a random friendly party member +2 health
   { name: 'Inexperienced Hunter', cost: 3, attack: 1, health: 1 }, # Deathrattle: Summon a 4/5 Bear
   { name: 'Eager Pickpocket', cost: 3, attack: 2, health: 3 }, # Battlecry: Gain a gold coin this turn
   { name: 'City Guard', cost: 4, attack: 4, health: 5 },
