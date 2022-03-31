@@ -28,6 +28,10 @@ class Card < ApplicationRecord
     scope "in_#{location}".to_sym, -> { where(location: location) }
   end
 
+  after_update do |card|
+    card.active_listeners.each { |listener| listener.activate_listener_effect if listener.listening_block.call(card) }
+  end
+
   # VALIDATIONS ===========================================================
   validates_presence_of :location, :type
   validates :type, inclusion: { in: %w[PartyCard SpellCard] }
@@ -46,6 +50,9 @@ class Card < ApplicationRecord
   has_many :active_buffs, as: :buffable, dependent: :destroy
   has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,
                    after_remove: :run_buff_removal_on_card
+
+  has_many :active_listener_cards
+  has_many :active_listeners, through: :active_listener_cards
 
   # UPDATE METHODS ===========================================================
   # LOCATION

@@ -22,7 +22,7 @@ class PartyCard < Card
   after_update do |card|
     if card.saved_change_to_location? && card.saved_change_to_location == %w[hand battle]
       card.battlecry&.trigger(card, card.current_target)
-      [card.taunt, card.aura].compact.each { |keyword| keyword.trigger(card) }
+      [card.taunt, card.aura, card.listener].compact.each { |keyword| keyword.trigger(card) }
     end
     if card.saved_change_to_status? && card.saved_change_to_status[1] == 'dead' && !card.silenced?
       card.deathrattle&.trigger(card)
@@ -35,9 +35,11 @@ class PartyCard < Card
   # KEYWORDS
   # KEYWORD
   has_many :keywords, through: :card_constant
-  %i[battlecry taunt deathrattle aura].each do |keyword_type|
+  %i[battlecry taunt deathrattle aura listener].each do |keyword_type|
     define_method(keyword_type) { keywords.find_by(type: keyword_type.to_s.upcase_first) }
   end
+
+  has_one :active_listener_effect, class_name: 'ActiveListener', foreign_key: :card_id
 
   # ALIAS AND SCOPES ===========================================================
   # TRIBE

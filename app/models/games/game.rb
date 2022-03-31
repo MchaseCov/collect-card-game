@@ -42,6 +42,8 @@ class Game < ApplicationRecord
                        end
                      end
 
+  has_many :cards, through: :players
+
   # ALIAS AND SCOPES ===========================================================
   def player_one
     players.player_one
@@ -59,8 +61,6 @@ class Game < ApplicationRecord
   def opposing_player_of(player)
     players.find_by('id != ?', player.id)
   end
-
-  has_many :cards, through: :players
 
   # METHODS (PUBLIC) ==================================================================
 

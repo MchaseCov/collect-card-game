@@ -17,7 +17,7 @@ class Keyword < ApplicationRecord
   belongs_to :card_constant
   has_and_belongs_to_many :buffs
   validates_presence_of :type, :target, :card_constant_id
-  validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast Taunt Aura] },
+  validates :type, inclusion: { in: %w[Deathrattle Battlecry Cast Taunt Aura Listener] },
                    uniqueness: { scope: :card_constant_id }
 
   def buff
