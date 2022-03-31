@@ -19,22 +19,15 @@ class PartyCard < Card
   attr_accessor :current_target
 
   # CALLBACKS ===========================================================
-  after_update :do_battlecry, if: proc { |card|
-    card.saved_change_to_location == %w[hand battle] && card.battlecry
-  }
-  after_update :do_taunt, if: proc { |card|
-    card.saved_change_to_location == %w[hand battle] && card.taunt
-  }
-  after_update :do_aura, if: proc { |card|
-    card.saved_change_to_location == %w[hand battle] && card.aura
-  }
-  after_update :silence, if: proc { |card|
-    card.buffs.any? && card.saved_change_to_location&.[](0) == 'battle'
-  }
-
-  after_update :do_deathrattle, if: proc { |card|
-    card.deathrattle && card.saved_change_to_status&.[](1) == 'dead' && !card.silenced?
-  }
+  after_update do |card|
+    if card.saved_change_to_location? && card.saved_change_to_location == %w[hand battle]
+      card.battlecry&.trigger(card, card.current_target)
+      [card.taunt, card.aura].compact.each { |keyword| keyword.trigger(card) }
+    end
+    if card.saved_change_to_status? && card.saved_change_to_status[1] == 'dead' && !card.silenced?
+      card.deathrattle&.trigger(card)
+    end
+  end
 
   # ASSOCIATIONS ===========================================================
   # PLAYER
@@ -92,6 +85,8 @@ class PartyCard < Card
   def return_to_hand
     status_unplayed
     move_to_hand
+    active_buffs.each { |ab| buffs.destroy(ab.buff) }
+    aura&.stop_aura(self)
     player.cards.in_battle.where('position > ?', position).each(&:decrement_position)
   end
 
@@ -178,23 +173,6 @@ class PartyCard < Card
     return unless buff.removal_method
 
     buff.modifier ? send(buff.removal_method, buff.modifier) : send(buff.removal_method)
-  end
-
-  def do_battlecry
-    battlecry.trigger(self, current_target)
-    self.current_target = nil
-  end
-
-  def do_taunt
-    taunt.trigger(self)
-  end
-
-  def do_aura
-    aura.trigger(self)
-  end
-
-  def do_deathrattle
-    deathrattle.trigger(self)
   end
 
   def create_space_for_tokens(amount_to_summon)
