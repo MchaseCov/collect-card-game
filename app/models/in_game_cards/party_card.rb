@@ -24,8 +24,9 @@ class PartyCard < Card
       card.battlecry&.trigger(card, card.current_target)
       [card.taunt, card.aura, card.listener].compact.each { |keyword| keyword.trigger(card) }
     end
-    if card.saved_change_to_status? && card.saved_change_to_status[1] == 'dead' && !card.silenced?
-      card.deathrattle&.trigger(card)
+    if card.saved_change_to_status? && card.saved_change_to_status[1] == 'dead'
+      card.deathrattle&.trigger(card) unless card.silenced?
+      clean_buffs_and_effects
     end
   end
 
@@ -87,8 +88,7 @@ class PartyCard < Card
   def return_to_hand
     status_unplayed
     move_to_hand
-    active_buffs.each { |ab| buffs.destroy(ab.buff) }
-    aura&.stop_aura(self)
+    clean_buffs_and_effects
     player.cards.in_battle.where('position > ?', position).each(&:decrement_position)
   end
 
@@ -135,7 +135,8 @@ class PartyCard < Card
   def silence
     update(silenced: true)
     active_buffs.not_aura_source.each { |ab| buffs.destroy(ab.buff) }
-    aura&.stop_aura(self)
+    deactivate_listener
+    stop_aura
   end
 
   def taunting?
@@ -181,5 +182,23 @@ class PartyCard < Card
     left_token_count = amount_to_summon / 2
     player.cards.in_battle.where('position > ?', position).each { |c| c.increment_position(amount_to_summon) }
     increment_position(left_token_count)
+  end
+
+  def deactivate_listener
+    active_listener_effect&.destroy
+  end
+
+  def stop_aura
+    aura&.stop_aura(self)
+  end
+
+  def remove_all_buffs
+    active_buffs.each { |ab| buffs.destroy(ab.buff) }
+  end
+
+  def clean_buffs_and_effects
+    deactivate_listener
+    stop_aura
+    remove_all_buffs
   end
 end

@@ -51,7 +51,7 @@ class Card < ApplicationRecord
   has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,
                    after_remove: :run_buff_removal_on_card
 
-  has_many :active_listener_cards
+  has_many :active_listener_cards, dependent: :destroy
   has_many :active_listeners, through: :active_listener_cards
 
   # UPDATE METHODS ===========================================================

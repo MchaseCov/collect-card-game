@@ -35,7 +35,7 @@
 @wizard_party_cards = [
   { name: 'Observant Student', cost: 1, attack: 1, health: 2 }, # When you cast a spell: gain +1 attack
   { name: 'Conjured Fey', cost: 2, attack: 3, health: 2 },
-  { name: 'Assistant Sorcerer', cost: 3, attack: 3, health: 2 }, # Battlecry: Reduce the cost of spells in your hand by 1
+  { name: 'Assistant Sorcerer', cost: 3, attack: 3, health: 2 }, # Battlecry: Reduce the cost of a spell in your hand by 1
   { name: 'Novice Caster', cost: 4, attack: 4, health: 5 }, # Battlecry: Deal 4 damage to a random enemy party minion
   { name: 'Mana Feeder', tribe: 'Beast', cost: 5, attack: 5, health: 6 } # When you cast a spell: gain +2/+1
 ]
