@@ -14,6 +14,13 @@ module Broadcastable
       broadcast_perspective_for(player_two, card)
     end
 
+    def broadcast_card_play_animations(card, position)
+      broadcast_animations(card.player, 'from_hand',
+                           { hand: 'fp', played_card_id: card.id, target_id: position })
+      broadcast_animations(opposing_player_of(card.player), 'from_hand',
+                           { hand: 'op', played_card_id: card.id, target_id: position })
+    end
+
     private
 
     def broadcast_battle_animations(attacker, defender, dead_cards)
@@ -24,13 +31,6 @@ module Broadcastable
                                defender: { defender.class.name => defender.id },
                                dead_cards: dead_cards })
       end
-    end
-
-    def broadcast_card_play_animations(card, position)
-      broadcast_animations(card.player, 'from_hand',
-                           { hand: 'fp', played_card_id: card.id, target_id: position })
-      broadcast_animations(opposing_player_of(card.player), 'from_hand',
-                           { hand: 'op', played_card_id: card.id, target_id: position })
     end
 
     def animate_end_of_mulligan

@@ -19,6 +19,7 @@
 require './app/decorators/party_card_gamestate_decorator'
 
 class Card < ApplicationRecord
+  include Playable
   # ALIAS AND SCOPES ===========================================================
   alias_attribute :parent, :card_constant
   delegate :archetype, :name, :tribe, to: :card_constant

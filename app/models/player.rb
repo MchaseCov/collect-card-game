@@ -106,6 +106,16 @@ class Player < ApplicationRecord
     decrement!(:cost_current, card.cost)
   end
 
+  def spend_resource_on_card(card)
+    return false if resource_current < card.cost
+
+    decrement!(:resource_current, card.cost)
+  end
+
+  def increment_position_of_cards(position)
+    party_cards.in_battle.where('position >= ?', position).each(&:increment_position)
+  end
+
   def put_cards_to_sleep
     party_cards.in_attack_mode.each(&:status_in_play)
   end

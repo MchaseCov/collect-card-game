@@ -72,19 +72,9 @@ class Game < ApplicationRecord
   # Played card move from hand to battle in position
 
   # NOTE: TO SELF: THIS WOULD MAKE MORE SENSE TO MOVE TO THE CARD STI SUBCLASSES
-  def play_party(card, position)
-    return unless (current_player.party_cards.in_battle.size < 7) && current_player.spend_coins_on_card(card)
 
-    broadcast_card_play_animations(card, position)
-    card.player.cards.in_battle.where('position >= ?', position += 1).each(&:increment_position)
-    card.put_card_in_battle(position)
-    broadcast_basic_update(card)
-  end
-
-  def play_spell(card)
-    # Return unless player sepdn resource points and then think of a broadcast here too.
-    card.spend_spell
-    broadcast_basic_update(card)
+  def play_card(card)
+    card.enter_play if card.playable?
   end
 
   #========|Party Card Battle|======

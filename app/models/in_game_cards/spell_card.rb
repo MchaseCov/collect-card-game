@@ -53,4 +53,21 @@ class SpellCard < Card
   def do_cast
     cast_effect.trigger(self, current_target)
   end
+
+  def required_currency
+    player.resource_current
+  end
+
+  def additional_requirements
+    []
+  end
+
+  def spend_currency_method
+    player.method(:spend_resource_on_card)
+  end
+
+  def enter_play_tasks
+    # WILL NEED A BROADCAST THATS COMPATIBLE game.broadcast_card_play_animations(self)
+    spend_spell
+  end
 end

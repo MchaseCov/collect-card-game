@@ -28,7 +28,9 @@ class GamesController < ApplicationController
                    .includes(:card_constant, :gamestate_deck)
                    .find(params[:card])
     party.current_target = params[:target].to_i if params[:target]
-    @game.play_party(party, params[:position].to_i)
+    party.chosen_position = params[:position].to_i + 1 if params[:position]
+
+    @game.play_card(party)
   end
 
   def play_spell
@@ -36,7 +38,7 @@ class GamesController < ApplicationController
                    .includes(:card_constant, :gamestate_deck)
                    .find(params[:card])
     spell.current_target = params[:target].to_i if params[:target]
-    @game.play_spell(spell)
+    @game.play_card(spell)
   end
 
   def end_turn

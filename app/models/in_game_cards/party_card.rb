@@ -20,6 +20,7 @@
 class PartyCard < Card
   # current_target is for setting the chosen target of a player during a Card play with a Battlecry Keyword.
   attr_accessor :current_target
+  attr_accessor :chosen_position
 
   # Callbacks: Evaluate PartyCard column changes after a save is committed to the database.
   #
@@ -297,5 +298,23 @@ class PartyCard < Card
     deactivate_listener
     stop_aura
     remove_all_buffs
+  end
+
+  def spend_currency_method
+    player.method(:spend_coins_on_card)
+  end
+
+  def required_currency
+    player.cost_current
+  end
+
+  def additional_requirements
+    [(player.party_cards.in_battle.size < 7)]
+  end
+
+  def enter_play_tasks
+    game.broadcast_card_play_animations(self, chosen_position - 1)
+    player.increment_position_of_cards(chosen_position)
+    put_card_in_battle(chosen_position)
   end
 end
