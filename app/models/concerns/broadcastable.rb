@@ -29,7 +29,7 @@ module Broadcastable
         broadcast_animations(p, 'battle',
                              { attacker: { attacker.class.name => attacker.id },
                                defender: { defender.class.name => defender.id },
-                               dead_cards: dead_cards })
+                               dead_cards: dead_cards || [] })
       end
     end
 

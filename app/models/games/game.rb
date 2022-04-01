@@ -88,10 +88,15 @@ class Game < ApplicationRecord
     defender_taunts = defender.is_a?(Player) ? defender.taunting_cards : defender.player.taunting_cards
     return if defender_taunts.present? && defender_taunts.exclude?(defender)
 
-    dead_cards = deal_attack_damage(attacker, defender)
-    broadcast_battle_animations(attacker, defender, dead_cards)
+    deal_attack_damage(attacker, defender)
+    broadcast_battle_animations(attacker, defender, @dead_cards)
 
     broadcast_basic_update
+  end
+
+  def add_dead_card(id)
+    @dead_cards ||= []
+    @dead_cards << id
   end
 
   # METHODS (PRIVATE) ==================================================================
@@ -107,10 +112,8 @@ class Game < ApplicationRecord
 
   # Update health of cards in battle
   def deal_attack_damage(attacker, defender)
-    dead = []
-    dead << defender.take_damage(attacker.attack)
-    dead << attacker.take_damage(defender.attack)
+    defender.take_damage(attacker.attack)
+    attacker.take_damage(defender.attack)
     attacker.status_in_play
-    dead.compact
   end
 end

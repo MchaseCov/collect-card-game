@@ -19,15 +19,15 @@
 #
 class Player < ApplicationRecord
   include BoardPositionable
+  include HasHealth
   # CALLBACKS ===========================================================
   after_create_commit do
     build_gamestate_deck(game: game, card_count: 30)
   end
 
   # ALIAS AND SCOPES ===========================================================
-  validates_presence_of :health_cap, :health_current, :cost_cap, :cost_current, :resource_cap, :resource_current
-  validates_numericality_of :health_cap, :cost_cap, :resource_cap, :cost_current
-  validates :health_current, numericality: { less_than_or_equal_to: :health_cap }
+  validates_presence_of :cost_cap, :cost_current, :resource_cap, :resource_current
+  validates_numericality_of :cost_cap, :resource_cap, :cost_current
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
   alias_attribute :health, :health_current
   # ASSOCIATIONS ===========================================================
@@ -117,10 +117,8 @@ class Player < ApplicationRecord
     party_cards.in_attack_mode.each(&:status_in_play)
   end
 
-  def take_damage(attack)
-    decrement!(:health_current, attack)
-    health_current <= 0 ? game.update(status: 'over', ongoing: false) : update(status: 'default')
-    nil
+  def die
+    game.update(status: 'over', ongoing: false)
   end
 
   def taunting_cards
@@ -156,11 +154,6 @@ class Player < ApplicationRecord
     increment!(:resource_cap) if resource_cap < 20
     # Interesting idea: What if resource does not replenish with turn and just goes up by X?
     update(cost_current: cost_cap, resource_current: resource_cap)
-  end
-
-  def take_empty_deck_fatigue
-    update(health_current: (health_current / 2))
-    game.update(status: 'over', ongoing: false) if health_current <= 0
   end
 
   def recount_deck_size

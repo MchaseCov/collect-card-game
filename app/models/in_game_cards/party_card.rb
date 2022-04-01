@@ -18,6 +18,7 @@
 # card_constant_id        :bigint       null: false, foreign key
 # timestamps              :datetime
 class PartyCard < Card
+  include HasHealth
   # current_target is for setting the chosen target of a player during a Card play with a Battlecry Keyword.
   attr_accessor :current_target
   attr_accessor :chosen_position
@@ -65,9 +66,8 @@ class PartyCard < Card
   scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
 
   # VALIDATIONS ===========================================================
-  validates_presence_of :health_cap, :health, :attack, :status, :cost
-  validates_numericality_of :health_cap, :attack, :cost
-  validates :health, numericality: { less_than_or_equal_to: :health_cap }
+  validates_presence_of :attack, :status, :cost
+  validates_numericality_of :attack, :cost
 
   # Updates the status column of the Card.
   #
@@ -90,7 +90,7 @@ class PartyCard < Card
   #   # =>  UPDATE "cards" SET "attack" = COALESCE("attack", 0) - 5 ...
   #
   # Returns true if SQL transaction is successful.
-  %i[position health_cap health attack].each do |attribute|
+  %i[position attack].each do |attribute|
     define_method "increment_#{attribute}".to_sym do |amount = 1|
       increment!(attribute, amount)
     end
@@ -117,33 +117,6 @@ class PartyCard < Card
     move_to_hand
     clean_buffs_and_effects
     player.shift_cards_left(position)
-  end
-
-  # take_damage: Decrements the health attribute of a Card by the amount supplied.
-  # If the health attribute is now less than 0, the card is moved to the graveyard.
-  #
-  # attack  - The Integer of the recieved attack to decrease the health attribute by.
-  def take_damage(attack)
-    decrement_health(attack)
-    put_card_in_graveyard and return id if health <= 0
-  end
-
-  # increase_health_cap: Increase the health cap of a Card by the amount supplied.
-  # This also increases the current health of the Card.
-  #
-  # amount  -  The Integer amount to increase the health attribute value.
-  def increase_health_cap(amount)
-    increment_health_cap(amount) and increment_health(amount)
-  end
-
-  # decrease_health_cap: Decrease the health cap of a Card by the amount supplied.
-  # If the current health of the card would be higher the cap, lower it to match the cap.
-  #
-  # amount  -  The Integer amount to decrease the health attribute value.
-  def decrease_health_cap(amount)
-    self.health_cap -= amount
-    self.health = self.health_cap if health > self.health_cap
-    save
   end
 
   # decorate: For use in view partials to assign specified classes and HTML data attributes.
@@ -316,5 +289,10 @@ class PartyCard < Card
     game.broadcast_card_play_animations(self, chosen_position - 1)
     player.shift_cards_right(chosen_position)
     put_card_in_battle(chosen_position)
+  end
+
+  def die
+    put_card_in_graveyard
+    game.add_dead_card(id)
   end
 end
