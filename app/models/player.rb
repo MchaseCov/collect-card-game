@@ -63,27 +63,6 @@ class Player < ApplicationRecord
     cards.in_mulligan
   end
 
-  def prepare_player(deck)
-    race = deck.race
-    archetype = deck.archetype
-    health = (race.health_modifier + 30)
-    cost = race.cost_modifier
-    resource = race.resource_modifier
-    update(
-      health_cap: health,
-      health_current: health,
-      cost_cap: cost,
-      cost_current: cost,
-      resource_cap: resource,
-      resource_current: resource,
-      race: race,
-      archetype: archetype,
-      user: deck.user,
-      status: 'mulligan'
-    )
-    save
-  end
-
   def draw_mulligan_cards
     initial_draw = (turn_order ? 3 : 4)
     cards.in_mulligan.each(&:move_to_deck)

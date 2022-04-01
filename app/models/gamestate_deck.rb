@@ -14,21 +14,6 @@ class GamestateDeck < ApplicationRecord
   belongs_to :game
   has_many :cards, dependent: :destroy
 
-  def prepare_deck(queued_deck)
-    queued_deck.card_references.includes(:card_constant).each do |card|
-      cards.create!(
-        cost: card.cost,
-        health: card.health,
-        attack: card.attack,
-        health_cap: card.health,
-        location: 'deck',
-        status: 'unplayed',
-        type: card.card_type,
-        card_constant: card.card_constant
-      )
-    end
-  end
-
   def generate_cards(amount, card_stats, buffs = nil)
     left_direction = right_direction = card_stats[:position]
     amount.times do |i|
