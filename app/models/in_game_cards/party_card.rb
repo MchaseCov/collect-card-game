@@ -19,6 +19,7 @@
 # timestamps              :datetime
 class PartyCard < Card
   include HasHealth
+  include HasAttack
   # current_target is for setting the chosen target of a player during a Card play with a Battlecry Keyword.
   attr_accessor :current_target
   attr_accessor :chosen_position
@@ -58,16 +59,9 @@ class PartyCard < Card
   end
 
   # Scope by status of card
-  %i[in_play attacking dead discarded].each do |status|
+  %i[in_play dead discarded].each do |status|
     scope "is_#{status}".to_sym, -> { where(status: status) }
   end
-
-  # Scope by status and location for selecting cards that are able to attack.
-  scope :in_attack_mode, -> { where(location: 'battle', status: 'attacking') }
-
-  # VALIDATIONS ===========================================================
-  validates_presence_of :attack, :status, :cost
-  validates_numericality_of :attack, :cost
 
   # Updates the status column of the Card.
   #
@@ -76,27 +70,18 @@ class PartyCard < Card
   #   # => UPDATE "cards" SET "status" = $1 ...[["status", "unplayed"]
   #
   # Returns true if SQL transaction is successful.
-  %i[in_play unplayed attacking dead discarded].each do |status|
+  %i[in_play unplayed dead discarded].each do |status|
     define_method "status_#{status}".to_sym do
       update(status: status)
     end
   end
 
-  # Increments or decrements integer columns of the Card.
-  #
-  # amount  - The amount to in/decrement by. Defaults to 1 if no input.
-  # Examples
-  #   card.decrement_attack(5)
-  #   # =>  UPDATE "cards" SET "attack" = COALESCE("attack", 0) - 5 ...
-  #
-  # Returns true if SQL transaction is successful.
-  %i[position attack].each do |attribute|
-    define_method "increment_#{attribute}".to_sym do |amount = 1|
-      increment!(attribute, amount)
-    end
-    define_method "decrement_#{attribute}".to_sym do |amount = 1|
-      decrement!(attribute, amount)
-    end
+  def increment_position(amount = 1)
+    increment!(:position, amount)
+  end
+
+  def decrement_position(amount = 1)
+    decrement!(:position, amount)
   end
 
   # put_card_in_battle: Updates a card status to be in play, activate any auras on the card

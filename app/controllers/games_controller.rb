@@ -46,7 +46,7 @@ class GamesController < ApplicationController
   end
 
   def party_combat
-    attacking_card = @player.party_cards.in_attack_mode.find(params[:card])
+    attacking_card = @player.party_cards.in_battle.is_attacking.find(params[:card])
     defending_card = @game.opposing_player_of(@player).party_cards.in_battle.find(params[:target])
 
     @game.conduct_attack(attacking_card, defending_card) if attacking_card && defending_card
@@ -55,7 +55,7 @@ class GamesController < ApplicationController
   def player_combat
     return unless @opposing_player.id == params[:target].to_i
 
-    attacking_card = @player.party_cards.in_attack_mode.find(params[:card])
+    attacking_card = @player.party_cards.in_battle.is_attacking.find(params[:card])
     @game.conduct_attack(attacking_card, @opposing_player) if attacking_card
   end
 

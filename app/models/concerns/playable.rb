@@ -3,6 +3,9 @@ module Playable
   extend ActiveSupport::Concern
 
   included do
+    validates_presence_of :cost
+    validates_numericality_of :cost
+
     def playable?
       return false unless can_be_played
 

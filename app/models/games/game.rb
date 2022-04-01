@@ -83,15 +83,7 @@ class Game < ApplicationRecord
   # (Through use of Stimulus controller that connects to status attribute)
   # THEN updates health attributes of cards in battle and broadcasts to both players
   def conduct_attack(attacker, defender)
-    return unless attacker.status == 'attacking'
-
-    defender_taunts = defender.is_a?(Player) ? defender.taunting_cards : defender.player.taunting_cards
-    return if defender_taunts.present? && defender_taunts.exclude?(defender)
-
-    deal_attack_damage(attacker, defender)
-    broadcast_battle_animations(attacker, defender, @dead_cards)
-
-    broadcast_basic_update
+    conduct_battle(attacker, defender) if attacker.can_attack?(defender)
   end
 
   def add_dead_card(id)
@@ -111,9 +103,9 @@ class Game < ApplicationRecord
   end
 
   # Update health of cards in battle
-  def deal_attack_damage(attacker, defender)
-    defender.take_damage(attacker.attack)
-    attacker.take_damage(defender.attack)
-    attacker.status_in_play
+  def conduct_battle(attacker, defender)
+    attacker.attack_enemy(defender)
+    broadcast_battle_animations(attacker, defender, @dead_cards)
+    broadcast_basic_update
   end
 end

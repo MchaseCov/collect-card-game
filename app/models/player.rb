@@ -20,6 +20,7 @@
 class Player < ApplicationRecord
   include BoardPositionable
   include HasHealth
+  include HasAttack
   # CALLBACKS ===========================================================
   after_create_commit do
     build_gamestate_deck(game: game, card_count: 30)
@@ -114,7 +115,7 @@ class Player < ApplicationRecord
   end
 
   def put_cards_to_sleep
-    party_cards.in_attack_mode.each(&:status_in_play)
+    party_cards.in_battle.is_attacking.each(&:status_in_play)
   end
 
   def die
