@@ -18,6 +18,7 @@
 # user_id                 :bigint       null: false, foreign key of user
 #
 class Player < ApplicationRecord
+  include BoardPositionable
   # CALLBACKS ===========================================================
   after_create_commit do
     build_gamestate_deck(game: game, card_count: 30)
@@ -110,10 +111,6 @@ class Player < ApplicationRecord
     return false if resource_current < card.cost
 
     decrement!(:resource_current, card.cost)
-  end
-
-  def increment_position_of_cards(position)
-    party_cards.in_battle.where('position >= ?', position).each(&:increment_position)
   end
 
   def put_cards_to_sleep

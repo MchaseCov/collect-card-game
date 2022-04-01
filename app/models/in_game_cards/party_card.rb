@@ -116,7 +116,7 @@ class PartyCard < Card
     status_unplayed
     move_to_hand
     clean_buffs_and_effects
-    player.cards.in_battle.where('position > ?', position).each(&:decrement_position)
+    player.shift_cards_left(position)
   end
 
   # take_damage: Decrements the health attribute of a Card by the amount supplied.
@@ -220,7 +220,7 @@ class PartyCard < Card
   # put_card_in_graveyard: "kills" a Card by setting its location to "graveyard" and status to "dead".
   # decrements the position of other cards on the board to fill the gap.
   def put_card_in_graveyard
-    player.cards.in_battle.where('position >= ?', position).each(&:decrement_position)
+    player.shift_cards_left(position)
     move_to_graveyard
     status_dead
   end
@@ -235,7 +235,7 @@ class PartyCard < Card
   # amount  -  The Integer amount of spaces to create
   def create_space_for_tokens(amount_to_summon)
     left_token_count = amount_to_summon / 2
-    player.cards.in_battle.where('position > ?', position).each { |c| c.increment_position(amount_to_summon) }
+    player.shift_cards_right(position + 1, amount_to_summon)
     increment_position(left_token_count)
   end
 
@@ -314,7 +314,7 @@ class PartyCard < Card
 
   def enter_play_tasks
     game.broadcast_card_play_animations(self, chosen_position - 1)
-    player.increment_position_of_cards(chosen_position)
+    player.shift_cards_right(chosen_position)
     put_card_in_battle(chosen_position)
   end
 end
