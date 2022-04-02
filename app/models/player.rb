@@ -21,15 +21,21 @@ class Player < ApplicationRecord
   include BoardPositionable
   include HasHealth
   include HasAttack
+
+  enum status: {
+    mulligan: 0, default: 1, attacking: 2, dead: 3
+  }, _prefix: true
+
   # CALLBACKS ===========================================================
   after_create_commit do
     build_gamestate_deck(game: game, card_count: 30)
   end
 
   # ALIAS AND SCOPES ===========================================================
-  validates_presence_of :cost_cap, :cost_current, :resource_cap, :resource_current
+  validates_presence_of :cost_cap, :cost_current, :resource_cap, :resource_current, :status
   validates_numericality_of :cost_cap, :resource_cap, :cost_current
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
+
   alias_attribute :health, :health_current
   # ASSOCIATIONS ===========================================================
   belongs_to :race
@@ -48,29 +54,25 @@ class Player < ApplicationRecord
   # METHODS (PUBLIC) ==================================================================
 
   def add_aura_to_cards(aura)
-    cards.in_battle.each { |c| c.buffs << aura }
+    cards.in_battlefield.each { |c| c.buffs << aura }
   end
 
   def remove_aura_from_cards(aura)
     # This prevents duplicate auras from being deleted, but we have to manually send the callback too.
-    cards.in_battle.each do |c|
+    cards.in_battlefield.each do |c|
       c.active_buffs.find_by(buff_id: aura.id).destroy
       c.method(:run_buff_removal_on_card).call(aura)
     end
   end
 
-  def mulligan_cards
-    cards.in_mulligan
-  end
-
   def draw_mulligan_cards
     initial_draw = (turn_order ? 3 : 4)
-    cards.in_mulligan.each(&:move_to_deck)
-    cards.sample(initial_draw).each(&:move_to_mulligan)
+    cards.in_mulligan.each(&:in_deck!)
+    cards.sample(initial_draw).each(&:in_mulligan!)
   end
 
   def set_starting_hand
-    cards.includes(:gamestate_deck).in_mulligan.each(&:move_to_hand)
+    cards.includes(:gamestate_deck).in_mulligan.each(&:in_hand!)
     recount_deck_size
   end
 
@@ -94,7 +96,7 @@ class Player < ApplicationRecord
   end
 
   def put_cards_to_sleep
-    party_cards.in_battle.is_attacking.each(&:status_in_play)
+    party_cards.in_battlefield.is_attacking.each(&:status_sleeping!)
   end
 
   def die
@@ -103,7 +105,7 @@ class Player < ApplicationRecord
 
   def taunting_cards
     taunts = []
-    party_cards.in_battle.where.associated(:buffs).uniq.each { |card| taunts << card if card.taunting? }
+    party_cards.in_battlefield.where.associated(:buffs).uniq.each { |card| taunts << card if card.taunting? }
     taunts
   end
 
@@ -118,10 +120,10 @@ class Player < ApplicationRecord
 
       topdeck = cards.includes(:gamestate_deck, :player).in_deck.sample
       if cards.in_hand.size >= 10
-        topdeck.move_to_discard
+        topdeck.in_discard!
       else
         game.broadcast_card_draw_animations(topdeck)
-        topdeck.move_to_hand
+        topdeck.in_hand!
       end
     end
   end
@@ -141,6 +143,6 @@ class Player < ApplicationRecord
   end
 
   def wake_up_party_cards
-    party_cards.in_battle.each(&:status_attacking)
+    party_cards.in_battlefield.each(&:status_attack_ready!)
   end
 end

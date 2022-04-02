@@ -109,7 +109,7 @@ RSpec.describe Player, type: :model do
     end
     it 'Wakes attack cards' do
       subject.prepare_new_turn
-      expect(subject.cards.in_battle.count).to eql(subject.party_cards.in_battle.is_attacking.count)
+      expect(subject.cards.in_battlefield.count).to eql(subject.party_cards.in_battlefield.is_attacking.count)
     end
   end
 end

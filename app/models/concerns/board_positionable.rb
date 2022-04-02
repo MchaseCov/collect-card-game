@@ -12,7 +12,7 @@ module BoardPositionable
     private
 
     def shift_cards(position, &block)
-      party_cards.in_battle.where('position >= ?', position).each(&block)
+      party_cards.in_battlefield.where('position >= ?', position).each(&block)
     end
   end
 end

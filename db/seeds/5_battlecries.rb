@@ -1,7 +1,7 @@
 battlecries = [
   {
     player_choice: true,
-    target: %w[player_of_card party_cards in_battle beast_tribe],
+    target: %w[player_of_card party_cards in_battlefield beast_tribe],
     action: 'apply_buffs',
     card_constant: CardConstant.find_by(name: 'Beast Tamer'),
     body_text: 'Give +2 health to a friendly Beast in battle.',
@@ -16,7 +16,7 @@ battlecries = [
   },
   {
     card_constant: CardConstant.find_by(name: 'Archer in Training'),
-    target: %w[opposing_player_of_card party_cards in_battle],
+    target: %w[opposing_player_of_card party_cards in_battlefield],
     player_choice: true,
     action: 'take_damage',
     modifier: 1,
@@ -38,7 +38,7 @@ battlecries = [
   },
   {
     card_constant: CardConstant.find_by(name: 'Rescue Party'),
-    target: %w[player_of_card party_cards in_battle],
+    target: %w[player_of_card party_cards in_battlefield],
     player_choice: true,
     action: 'return_to_hand',
     body_text: 'Return a friendly Party Card from the Battlefield to your Hand.'
@@ -52,14 +52,14 @@ battlecries = [
   },
   {
     card_constant: CardConstant.find_by(name: 'Faithful Priestess'),
-    target: %w[opposing_player_of_card party_cards in_battle],
+    target: %w[opposing_player_of_card party_cards in_battlefield],
     player_choice: true,
     action: 'silence',
     body_text: 'Silence an enemy Party Card, removing ALL of its status effects.'
   },
   {
     card_constant: CardConstant.find_by(name: 'Illusion Master'),
-    target: %w[player_of_card party_cards in_battle],
+    target: %w[player_of_card party_cards in_battlefield],
     action: 'summon_copy',
     player_choice: true,
     modifier: 1,
@@ -67,7 +67,7 @@ battlecries = [
   },
   {
     card_constant: CardConstant.find_by(name: 'Highlands Hyena'),
-    target: %w[game_of_card cards in_battle],
+    target: %w[game_of_card cards in_battlefield],
     action: 'highlands_hyena',
     modifier: nil,
     body_text: 'Destroy ALL Party Cards in battle with two or less health'

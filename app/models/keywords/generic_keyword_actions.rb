@@ -20,7 +20,7 @@ module GenericKeywordActions
 
   # Allows a party card to attack instantly without waiting a turn.
   def instantly_attack
-    Array(@targets).each(&:status_attacking)
+    Array(@targets).each(&:status_attack_ready!)
   end
 
   # A card summons x amount of its associated token

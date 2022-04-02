@@ -43,15 +43,15 @@ module Createable
       resource = race.resource_modifier
       player.update(health_cap: health, health_current: health, cost_cap: cost, cost_current: cost,
                     resource_cap: resource, resource_current: resource, race: race, archetype: archetype,
-                    user: deck.user, status: 'mulligan')
+                    user: deck.user)
       player.save
     end
 
     def prepare_deck(gamestate_deck, queued_deck)
+      gamestate_deck.save
       queued_deck.card_references.includes(:card_constant).each do |card|
         gamestate_deck.cards.create!(cost: card.cost, health: card.health, attack: card.attack,
-                                     health_cap: card.health, location: 'deck', status: 'unplayed',
-                                     type: card.card_type, card_constant: card.card_constant)
+                                     health_cap: card.health, type: card.card_type, card_constant: card.card_constant)
       end
     end
   end

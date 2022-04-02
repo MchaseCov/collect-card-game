@@ -20,7 +20,7 @@ export default class extends Controller {
   }
 
   friendlyActorTargetConnected(element) {
-    if (element.dataset.status !== 'attacking') return this.removeDragFromElement(element);
+    if (element.dataset.status !== 'attack_ready') return this.removeDragFromElement(element);
     this.bindToNode(element, 'createHandler', this.createDragBattleHandler);
   }
 

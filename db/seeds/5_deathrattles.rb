@@ -1,7 +1,7 @@
 deathrattles = [
   {
     card_constant: CardConstant.find_by(name: 'Zealot of the Light'),
-    target: %w[player_of_card party_cards in_battle sample],
+    target: %w[player_of_card party_cards in_battlefield sample],
     action: 'apply_buffs',
     associated_buff: Buff.find_by(name: "Light's Grace"),
     modifier: 1,

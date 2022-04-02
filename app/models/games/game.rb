@@ -14,6 +14,8 @@ class Game < ApplicationRecord
   include Createable
   include Broadcastable
 
+  enum status: { mulligan: 0, ongoing: 1, over: 2 }
+
   # ASSOCIATIONS ===========================================================
 
   # PLAYERS
@@ -22,7 +24,7 @@ class Game < ApplicationRecord
                      inverse_of: :game,
                      dependent: :destroy do
                        def in_mulligan?
-                         find_by(status: 'mulligan').present?
+                         status_mulligan.present?
                        end
                      end
 
@@ -50,7 +52,7 @@ class Game < ApplicationRecord
 
   def begin_first_turn
     players.each(&:set_starting_hand)
-    update(status: 'ongoing')
+    ongoing!
     animate_end_of_mulligan
     start_of_turn_actions
   end
@@ -97,7 +99,7 @@ class Game < ApplicationRecord
   ## GAMEPLAY RELATED PRIVATE FUNCTIONS
 
   def start_of_turn_actions
-    current_player.prepare_new_turn if status == 'ongoing'
+    current_player.prepare_new_turn if ongoing?
     update(turn_time: Time.now)
     broadcast_basic_update
   end

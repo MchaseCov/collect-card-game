@@ -15,7 +15,7 @@ class AiDecisionDatum < ApplicationRecord
     targets =
       case card_weight['target']
       when 'opponent_cards'
-        game.human_player.party_cards.in_battle
+        game.human_player.party_cards.in_battlefield
       when 'opponent_player'
         game.human_player
       end

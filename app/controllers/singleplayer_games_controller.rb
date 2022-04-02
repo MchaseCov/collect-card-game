@@ -24,7 +24,7 @@ class SingleplayerGamesController < GamesController
 
   def conduct_mulligan
     # Safety check for if game is in mulligan but player does not have any mulligan cards.
-    return if @first_person_player.mulligan_cards.any?
+    return if @first_person_player.cards.in_mulligan.any?
 
     @first_person_player.draw_mulligan_cards
   end

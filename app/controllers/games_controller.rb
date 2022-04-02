@@ -16,10 +16,10 @@ class GamesController < ApplicationController
     @player = @game.players.find_by(user: current_user)
     # "Turns" do not take effect yet, so we don't use the current_users_turn gat
 
-    return unless @player&.status == 'mulligan'
+    return unless @player&.status_mulligan?
 
     @player.draw_mulligan_cards if params[:mulligan] # When player requests a new hand
-    @player.update(status: 'default')
+    @player.status_default!
     @game.players.in_mulligan? ? @game.broadcast_basic_update : @game.begin_first_turn
   end
 
@@ -42,12 +42,12 @@ class GamesController < ApplicationController
   end
 
   def end_turn
-    @game.end_turn unless @game.status != 'ongoing'
+    @game.end_turn if @game.ongoing?
   end
 
   def party_combat
-    attacking_card = @player.party_cards.in_battle.is_attacking.find(params[:card])
-    defending_card = @game.opposing_player_of(@player).party_cards.in_battle.find(params[:target])
+    attacking_card = @player.party_cards.in_battlefield.is_attacking.find(params[:card])
+    defending_card = @game.opposing_player_of(@player).party_cards.in_battlefield.find(params[:target])
 
     @game.conduct_attack(attacking_card, defending_card) if attacking_card && defending_card
   end
@@ -55,7 +55,7 @@ class GamesController < ApplicationController
   def player_combat
     return unless @opposing_player.id == params[:target].to_i
 
-    attacking_card = @player.party_cards.in_battle.is_attacking.find(params[:card])
+    attacking_card = @player.party_cards.in_battlefield.is_attacking.find(params[:card])
     @game.conduct_attack(attacking_card, @opposing_player) if attacking_card
   end
 
@@ -77,7 +77,7 @@ class GamesController < ApplicationController
   def conduct_mulligan
     @player = @game.players.find_by(user: current_user)
     # Safety check for if game is in mulligan but player does not have any mulligan cards.
-    return if @player.mulligan_cards.any?
+    return if @player.cards.in_mulligan.any?
 
     @player.draw_mulligan_cards
   end

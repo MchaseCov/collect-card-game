@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_31_204427) do
+ActiveRecord::Schema.define(version: 2022_04_02_173005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,8 +123,6 @@ ActiveRecord::Schema.define(version: 2022_03_31_204427) do
     t.integer "health"
     t.integer "attack"
     t.integer "health_cap"
-    t.string "location"
-    t.string "status"
     t.integer "position"
     t.string "type"
     t.bigint "gamestate_deck_id", null: false
@@ -132,18 +130,24 @@ ActiveRecord::Schema.define(version: 2022_03_31_204427) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "silenced", default: false
+    t.integer "status", default: 0
+    t.integer "location", default: 0
     t.index ["card_constant_id"], name: "index_cards_on_card_constant_id"
     t.index ["gamestate_deck_id"], name: "index_cards_on_gamestate_deck_id"
+    t.index ["location"], name: "index_cards_on_location"
+    t.index ["status"], name: "index_cards_on_status"
+    t.index ["type"], name: "index_cards_on_type"
   end
 
   create_table "games", force: :cascade do |t|
     t.boolean "turn", default: true
     t.boolean "ongoing", default: true
-    t.string "status", default: "mulligan"
     t.datetime "turn_time", precision: 6
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "type", default: "MultiplayerGame"
+    t.integer "status", default: 0
+    t.index ["status"], name: "index_games_on_status"
   end
 
   create_table "gamestate_decks", force: :cascade do |t|
@@ -169,6 +173,7 @@ ActiveRecord::Schema.define(version: 2022_03_31_204427) do
     t.string "listening_condition"
     t.index ["card_constant_id"], name: "index_keywords_on_card_constant_id"
     t.index ["type", "card_constant_id"], name: "index_keywords_on_type_and_card_constant_id", unique: true
+    t.index ["type"], name: "index_keywords_on_type"
   end
 
   create_table "players", force: :cascade do |t|
@@ -180,16 +185,17 @@ ActiveRecord::Schema.define(version: 2022_03_31_204427) do
     t.integer "resource_current"
     t.boolean "turn_order"
     t.integer "attack", default: 0
-    t.string "status", default: "default"
     t.bigint "race_id", null: false
     t.bigint "archetype_id", null: false
     t.bigint "game_id", null: false
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "status", default: 0
     t.index ["archetype_id"], name: "index_players_on_archetype_id"
     t.index ["game_id"], name: "index_players_on_game_id"
     t.index ["race_id"], name: "index_players_on_race_id"
+    t.index ["status"], name: "index_players_on_status"
     t.index ["user_id"], name: "index_players_on_user_id"
   end
 

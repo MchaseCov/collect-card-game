@@ -17,20 +17,14 @@
 class SpellCard < Card
   attr_accessor :current_target
 
-  # CALLBACKS ===========================================================
-  after_update :do_cast, if: proc { |card|
-                               card.saved_change_to_status == %w[unplayed spent]
-                             }
-
-  # ASSOCIATIONS ===========================================================
-  # PLAYER
-  has_one :player, through: :gamestate_deck
-  # KEYWORDS
-  has_many :keywords, through: :card_constant do
-    def battlecry
-      find_by(type: 'Cast')
-    end
+  after_update do |card|
+    card.cast_effect.trigger(self, current_target) if card.saved_change_to_status == %w[unplayed spent]
   end
+
+  enum status: { unplayed: 0, discarded: 1, spent: 2 }, _prefix: true
+
+  has_one :player, through: :gamestate_deck
+  has_many :keywords, through: :card_constant
 
   def cast_effect
     keywords.cast
@@ -40,19 +34,7 @@ class SpellCard < Card
     SpellCardDecorator.new(self)
   end
 
-  def spend_spell
-    move_to_graveyard and status_spent
-  end
-
   private
-
-  def status_spent
-    update(status: 'spent')
-  end
-
-  def do_cast
-    cast_effect.trigger(self, current_target)
-  end
 
   def required_currency
     player.resource_current
@@ -68,6 +50,7 @@ class SpellCard < Card
 
   def enter_play_tasks
     # WILL NEED A BROADCAST THATS COMPATIBLE game.broadcast_card_play_animations(self)
-    spend_spell
+    in_graveyard!
+    status_spent!
   end
 end

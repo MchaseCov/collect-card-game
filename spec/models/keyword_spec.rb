@@ -10,7 +10,7 @@ RSpec.describe Keyword, type: :model do
   subject do
     Keyword.create!(type: 'Battlecry',
                     player_choice: true,
-                    target: %w[player_of_card cards in_battle beast_tribe],
+                    target: %w[player_of_card cards in_battlefield beast_tribe],
                     action: 'increase_health_cap',
                     modifier: 2,
                     party_card_parent_id: party_card_parent.id,

@@ -20,60 +20,36 @@
 class PartyCard < Card
   include HasHealth
   include HasAttack
-  # current_target is for setting the chosen target of a player during a Card play with a Battlecry Keyword.
-  attr_accessor :current_target
-  attr_accessor :chosen_position
+  attr_accessor :current_target, :chosen_position
 
   # Callbacks: Evaluate PartyCard column changes after a save is committed to the database.
   #
   # saved_change_to_attrubute? #=> True if 'attribute' has been changed.
   # saved_change_to_location # => Array containing the data before and after the change.
   #                               Example: card.saved_change_to_status # =>['attacking', 'dead']
-  after_update do |card|
-    if card.saved_change_to_location? && card.saved_change_to_location == %w[hand battle]
-      card.battlecry&.trigger(card, card.current_target)
-      [card.taunt, card.aura, card.listener].compact.each { |keyword| keyword.trigger(card) }
+  after_update do
+    if saved_change_to_location? && saved_change_to_location == %w[hand battlefield]
+      battlecry&.trigger(self, current_target)
+      [taunt, aura, listener].compact.each { |keyword| keyword.trigger(self) }
     end
-    if card.saved_change_to_status? && card.saved_change_to_status[1] == 'dead'
-      card.deathrattle&.trigger(card) unless card.silenced?
+    if saved_change_to_status? && saved_change_to_status[1] == 'dead'
+      deathrattle&.trigger(self) unless silenced?
       clean_buffs_and_effects
     end
   end
 
-  # ASSOCIATIONS ===========================================================
-  # PLAYER
+  enum status: { unplayed: 0, discarded: 1, dead: 2, sleeping: 3, attack_ready: 4, second_attack_ready: 5 },
+       _prefix: true
+
   has_one :player, through: :gamestate_deck
-  # KEYWORDS
-  # KEYWORD
   has_many :keywords, through: :card_constant
   %i[battlecry taunt deathrattle aura listener].each do |keyword_type|
     define_method(keyword_type) { keywords.find_by(type: keyword_type.to_s.upcase_first) }
   end
-  # ACTIVE LISTENER EFFECTS
-  has_one :active_listener_effect, class_name: 'ActiveListener', foreign_key: :card_id
+  has_one :active_listener_effect, class_name: 'ActiveListener', foreign_key: :card_id, dependent: :destroy
 
-  # SCOPES ===========================================================
-  # Scope by tribe tag
   %i[Beast Humanoid].each do |tribe|
     scope "#{tribe.downcase}_tribe".to_sym, -> { includes(:card_constant).where('card_constant.tribe': tribe) }
-  end
-
-  # Scope by status of card
-  %i[in_play dead discarded].each do |status|
-    scope "is_#{status}".to_sym, -> { where(status: status) }
-  end
-
-  # Updates the status column of the Card.
-  #
-  # Examples
-  #   card.move_to_battle
-  #   # => UPDATE "cards" SET "status" = $1 ...[["status", "unplayed"]
-  #
-  # Returns true if SQL transaction is successful.
-  %i[in_play unplayed dead discarded].each do |status|
-    define_method "status_#{status}".to_sym do
-      update(status: status)
-    end
   end
 
   def increment_position(amount = 1)
@@ -89,17 +65,17 @@ class PartyCard < Card
   #
   # position  - The Integer in range (1..7) for the Card's position on the board.
   def put_card_in_battle(position)
-    status_in_play
+    status_sleeping!
     buffs << player.auras if player.auras.any?
     update(position: position)
-    move_to_battle
+    in_battlefield!
   end
 
   # return_to_hand: Updates a card status to be unplayed, location to the hand, wipes all buffs,
   # and decrements the position of other cards on the board to fill the gap.
   def return_to_hand
-    status_unplayed
-    move_to_hand
+    status_unplayed!
+    in_hand!
     clean_buffs_and_effects
     player.shift_cards_left(position)
   end
@@ -117,11 +93,11 @@ class PartyCard < Card
   #
   # TODO(4/1/22): Evaluate if there is a more suitable location for this method and related methods.
   def summon_copy(amount = 1)
-    amount_to_summon = [player.party_cards.in_battle.size, amount].min
+    amount_to_summon = [player.party_cards.in_battlefield.size, amount].min
     return unless amount_to_summon.positive?
 
-    card_stats = { cost: cost, health: health, attack: attack, health_cap: health_cap, location: 'battle',
-                   status: 'in_battle', type: 'PartyCard', card_constant: card_constant, position: position }
+    card_stats = { cost: cost, health: health, attack: attack, health_cap: health_cap, location: 3,
+                   status: 3, type: 'PartyCard', card_constant: card_constant, position: position }
     prepare_to_summon_cards(amount_to_summon, card_stats, buffs)
   end
 
@@ -135,11 +111,11 @@ class PartyCard < Card
   def summon_token(amount = 1)
     token = card_constant.token
     token_reference = token.card_reference
-    amount_to_summon = [player.party_cards.in_battle.size, amount].min
+    amount_to_summon = [player.party_cards.in_battlefield.size, amount].min
     return unless token && amount_to_summon.positive?
 
     card_stats = { cost: token_reference.cost, health: token_reference.health, attack: token_reference.attack,
-                   health_cap: token_reference.health, location: 'battle', status: 'in_battle', type: 'PartyCard',
+                   health_cap: token_reference.health, location: 3, status: 3, type: 'PartyCard',
                    card_constant: token, position: position }
     prepare_to_summon_cards(amount_to_summon, card_stats)
   end
@@ -179,8 +155,8 @@ class PartyCard < Card
   # decrements the position of other cards on the board to fill the gap.
   def put_card_in_graveyard
     player.shift_cards_left(position)
-    move_to_graveyard
-    status_dead
+    in_graveyard!
+    status_dead!
   end
 
   private
@@ -267,7 +243,7 @@ class PartyCard < Card
   end
 
   def additional_requirements
-    [(player.party_cards.in_battle.size < 7)]
+    [(player.party_cards.in_battlefield.size < 7)]
   end
 
   def enter_play_tasks

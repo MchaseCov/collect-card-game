@@ -12,10 +12,10 @@ module SingleplayerAi
   end
 
   def begin_ai_turn
-    @attacking_cards = ai_player.party_cards.in_battle.where(status: 'attacking')
+    @attacking_cards = ai_player.party_cards.in_battlefield.where(status: 'attacking')
     @ai_can_play_party_card = ai_can_play_party_card
     sleep 2
-    if human_player.party_cards.in_battle.size > 0 && ai_player.spell_cards.in_hand.size > 0
+    if human_player.party_cards.in_battlefield.size > 0 && ai_player.spell_cards.in_hand.size > 0
       bc_score = analyze_board_clear_cards
     end
     if bc_score.present? && bc_score[:score].positive?
@@ -48,7 +48,7 @@ module SingleplayerAi
     puts 'Final Card'
     puts final_card
     { card: final_card[:constant],
-      score: ((final_card[:kills].to_f / human_player.party_cards.in_battle.size) * 100).to_i }
+      score: ((final_card[:kills].to_f / human_player.party_cards.in_battlefield.size) * 100).to_i }
   end
 
   def ai_can_play_party_card
@@ -56,12 +56,12 @@ module SingleplayerAi
       'cost <= ?', player_two.cost_current
     )
 
-    (@playable_party_cards.any? && ai_player.party_cards.in_battle.size < 7)
+    (@playable_party_cards.any? && ai_player.party_cards.in_battlefield.size < 7)
   end
 
   def conduct_ai_attack
     attacking_card = @attacking_cards.sample
-    enemy_to_attack = human_player.party_cards.in_battle.sample || human_player
+    enemy_to_attack = human_player.party_cards.in_battlefield.sample || human_player
     conduct_attack(attacking_card, enemy_to_attack)
     @attacking_cards -= [attacking_card]
     sleep 1
@@ -70,7 +70,7 @@ module SingleplayerAi
   def ai_play_party_card
     analyzed_card = analyze_party_cards
     puts analyzed_card
-    max_position = ai_player.party_cards.in_battle&.pluck(:position)&.max || 0
+    max_position = ai_player.party_cards.in_battlefield&.pluck(:position)&.max || 0
     chosen_position = rand(0..max_position)
     play_party(analyzed_card[:card], chosen_position)
     @ai_can_play_party_card = ai_can_play_party_card
@@ -79,7 +79,7 @@ module SingleplayerAi
 
   def play_ai_party_card
     card_to_play = @playable_party_cards.sample
-    max_position = ai_player.party_cards.in_battle&.pluck(:position)&.max || 0
+    max_position = ai_player.party_cards.in_battlefield&.pluck(:position)&.max || 0
     chosen_position = rand(0..max_position)
     play_party(card_to_play, chosen_position)
     @ai_can_play_party_card = ai_can_play_party_card
