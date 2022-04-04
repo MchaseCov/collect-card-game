@@ -92,6 +92,20 @@ battlecries = [
     action: 'instantly_attack',
     modifier: nil,
     body_text: 'Can instantly attack.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Assistant Sorcerer'),
+    target: %w[player_of_card spell_cards in_hand sample],
+    action: 'reduce_cost',
+    modifier: 1,
+    body_text: 'Reduce the cost of a Spell Card in your Hand by 1.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Novice Caster'),
+    target: %w[opposing_player_of_card party_cards in_battlefield sample],
+    action: 'take_damage',
+    modifier: 4,
+    body_text: 'Deal 4 damage to a random enemy Party Card in battle.'
   }
 ]
 battlecries.each do |battlecry|

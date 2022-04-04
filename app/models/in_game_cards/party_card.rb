@@ -139,9 +139,10 @@ class PartyCard < Card
 
   # increase_stats: increase both the attack and health of a Card by the amount supplied.
   # amount  -  The Integer amount to increase both attributes.
-  def increase_stats(amount = 1)
-    increase_health_cap(amount)
-    increment_attack(amount)
+  def increase_stats(health_amount = 1, attack_amount = nil)
+    attack_amount ||= health_amount
+    increase_health_cap(health_amount)
+    increment_attack(attack_amount)
   end
 
   # decrease_stats: decrease both the attack and health of a Card by the amount supplied.

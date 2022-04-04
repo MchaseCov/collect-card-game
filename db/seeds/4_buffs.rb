@@ -32,6 +32,12 @@ Buff.create(
       target_method: 'increment_attack',
       removal_method: 'decrement_attack',
       modifier: 1
+    },
+    {
+      name: 'Mana Engorged',
+      target_method: 'increase_stats',
+      removal_method: 'decrease_stats',
+      modifier: 2
     }
   ]
 )

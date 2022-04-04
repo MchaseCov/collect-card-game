@@ -49,8 +49,7 @@ class Keyword < ApplicationRecord
   end
 
   def set_final_target
-    valid_targets = find_valid_targets
-    player_choice ? valid_targets.find(@target_input) : valid_targets
+    player_choice ? find_valid_targets.find(@target_input) : find_valid_targets
   end
 
   attr_reader :invoking_card

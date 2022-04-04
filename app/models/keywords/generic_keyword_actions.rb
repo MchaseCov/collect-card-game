@@ -47,4 +47,9 @@ module GenericKeywordActions
   def silence
     Array(@targets).each(&:silence)
   end
+
+  # Reduce the cost of a card, spell or party
+  def reduce_cost
+    Array(@targets).each(&:decrement_cost)
+  end
 end

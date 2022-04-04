@@ -7,6 +7,15 @@ listeners = [
     associated_buff: Buff.find_by(name: 'Wizard Wisdom'),
     modifier: 1,
     body_text: 'Whenever you cast a spell, gain +1 attack.'
+  },
+  {
+    card_constant: CardConstant.find_by(name: 'Mana Feeder'),
+    target: %w[player_of_card spell_cards],
+    listening_condition: 'spell_card_played',
+    action: 'apply_buffs',
+    associated_buff: Buff.find_by(name: 'Mana Engorged'),
+    modifier: 1,
+    body_text: 'Whenever you cast a spell, gain +2/+2.'
   }
 ]
 listeners.each do |listener|

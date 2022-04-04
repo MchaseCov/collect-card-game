@@ -37,4 +37,12 @@ class Card < ApplicationRecord
   has_many :active_listeners, through: :active_listener_cards
   alias_attribute :parent, :card_constant
   delegate :archetype, :name, :tribe, to: :card_constant
+
+  def increment_cost(amount = 1)
+    decrement!(:cost, amount)
+  end
+
+  def decrement_cost(amount = 1)
+    decrement!(:cost, amount)
+  end
 end
