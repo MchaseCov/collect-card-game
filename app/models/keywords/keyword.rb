@@ -36,8 +36,8 @@ class Keyword < ApplicationRecord
   end
 
   # For use in stimulus controller
-  def find_target_options(game)
-    @invoking_card = game.current_player.cards.in_hand.first # Arbitrary
+  def find_target_options(card)
+    @invoking_card = card # Arbitrary
     target_data = find_valid_targets
     { ids: target_data.map(&:id) }
   end
@@ -45,11 +45,7 @@ class Keyword < ApplicationRecord
   private
 
   def find_valid_targets
-    evaluated_target = self
-    target.each do |target_scope|
-      evaluated_target = evaluated_target.send(target_scope)
-    end
-    evaluated_target
+    target.inject(self, &:send)
   end
 
   def set_final_target

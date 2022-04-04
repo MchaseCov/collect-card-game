@@ -1,7 +1,7 @@
 auras = [
   {
     card_constant: CardConstant.find_by(name: 'Guild Leader'),
-    target: %w[party_cards in_battlefield],
+    target: %w[player_of_card party_cards in_battlefield],
     associated_buff: Buff.find_by(name: 'Guild Membership'),
     modifier: 1,
     body_text: 'While this is in play, your Party Cards in battle have +1/+1'

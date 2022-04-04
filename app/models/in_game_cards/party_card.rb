@@ -66,9 +66,9 @@ class PartyCard < Card
   # position  - The Integer in range (1..7) for the Card's position on the board.
   def put_card_in_battle(position)
     status_sleeping!
-    buffs << player.auras if player.auras.any?
     update(position: position)
     in_battlefield!
+    recieve_valid_auras if player.active_auras.any?
   end
 
   # return_to_hand: Updates a card status to be unplayed, location to the hand, wipes all buffs,
@@ -255,5 +255,9 @@ class PartyCard < Card
   def die
     put_card_in_graveyard
     game.add_dead_card(id)
+  end
+
+  def recieve_valid_auras
+    player.active_auras.each { |aa| buffs << aa.buff if id.in? aa.keywords.first.find_target_options(self)[:ids] }
   end
 end

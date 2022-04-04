@@ -48,19 +48,13 @@ class Player < ApplicationRecord
   has_many :spell_cards, through: :gamestate_deck, source: :cards, class_name: :SpellCard
 
   has_many :active_auras, as: :buffable, class_name: :ActiveBuff, dependent: :destroy
-  has_many :auras, through: :active_auras, after_add: :add_aura_to_cards,
-                   after_remove: :remove_aura_from_cards, source: :buff
-
+  has_many :auras, through: :active_auras, source: :buff, after_remove: :remove_aura_from_cards
   # METHODS (PUBLIC) ==================================================================
-
-  def add_aura_to_cards(aura)
-    cards.in_battlefield.each { |c| c.buffs << aura }
-  end
 
   def remove_aura_from_cards(aura)
     # This prevents duplicate auras from being deleted, but we have to manually send the callback too.
     cards.in_battlefield.each do |c|
-      c.active_buffs.find_by(buff_id: aura.id).destroy
+      c.active_buffs.find_by(buff_id: aura.id)&.destroy
       c.method(:run_buff_removal_on_card).call(aura)
     end
   end
