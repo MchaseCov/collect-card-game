@@ -93,7 +93,7 @@ class PartyCard < Card
   #
   # TODO(4/1/22): Evaluate if there is a more suitable location for this method and related methods.
   def summon_copy(amount = 1)
-    amount_to_summon = [player.party_cards.in_battlefield.size, amount].min
+    amount_to_summon = [(7 - player.party_cards.in_battlefield.size), amount].min
     return unless amount_to_summon.positive?
 
     card_stats = { cost: cost, health: health, attack: attack, health_cap: health_cap, location: 3,
@@ -111,7 +111,7 @@ class PartyCard < Card
   def summon_token(amount = 1)
     token = card_constant.token
     token_reference = token.card_reference
-    amount_to_summon = [player.party_cards.in_battlefield.size, amount].min
+    amount_to_summon = [(7 - player.party_cards.in_battlefield.size), amount].min
     return unless token && amount_to_summon.positive?
 
     card_stats = { cost: token_reference.cost, health: token_reference.health, attack: token_reference.attack,
