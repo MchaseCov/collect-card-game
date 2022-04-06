@@ -39,7 +39,7 @@ class Game < ApplicationRecord
 
   # Input player, output opposing player in same game
   def opposing_player_of(player)
-    player == player_one ? player_two : player_one
+    player.turn_order ? player_two : player_one
   end
 
   # METHODS (PUBLIC) ==================================================================
@@ -56,9 +56,11 @@ class Game < ApplicationRecord
   # Game turn flips, current_player flips as a result
   # Current_player attributes updated for new turn
   def end_turn
-    current_player.put_cards_to_sleep
-    update(turn: !turn) and reload.current_player
-    start_of_turn_actions
+    transaction do
+      current_player.put_cards_to_sleep
+      update(turn: !turn) and reload.current_player
+      start_of_turn_actions
+    end
   end
 
   #========|Party Card Play|======
@@ -70,7 +72,7 @@ class Game < ApplicationRecord
   # NOTE: TO SELF: THIS WOULD MAKE MORE SENSE TO MOVE TO THE CARD STI SUBCLASSES
 
   def play_card(card)
-    card.enter_play if card.playable?
+    transaction { card.enter_play if card.playable? }
   end
 
   #========|Party Card Battle|======
@@ -79,7 +81,7 @@ class Game < ApplicationRecord
   # (Through use of Stimulus controller that connects to status attribute)
   # THEN updates health attributes of cards in battle and broadcasts to both players
   def conduct_attack(attacker, defender)
-    conduct_battle(attacker, defender) if attacker.can_attack?(defender)
+    with_lock { conduct_battle(attacker, defender) if attacker.can_attack?(defender) }
   end
 
   def add_dead_card(id)

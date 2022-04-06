@@ -3,23 +3,18 @@ module Broadcastable
 
   included do
     def broadcast_card_draw_animations(card)
-      @game ||= self
-      @game.touch
+      touch
       broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
-      broadcast_animations(@game.opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
+      broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
     end
 
     def broadcast_basic_update(card = nil)
-      @game ||= self
-      @game.touch
-      player_one = @game.player_one
-      player_two = @game.player_two
+      touch
       broadcast_perspective_for(player_one, card)
       broadcast_perspective_for(player_two, card)
     end
 
     def broadcast_card_play_animations(card, position)
-      @game ||= self
       broadcast_animations(card.player, 'from_hand',
                            { hand: 'fp', played_card_id: card.id, target_id: position })
       broadcast_animations(opposing_player_of(card.player), 'from_hand',
@@ -29,9 +24,8 @@ module Broadcastable
     private
 
     def broadcast_battle_animations(attacker, defender, dead_cards)
-      @game ||= self
-      @game.touch
-      @game.players.each do |p|
+      touch
+      players.each do |p|
         broadcast_animations(p, 'battle',
                              { attacker: { attacker.class.name => attacker.id },
                                defender: { defender.class.name => defender.id },
@@ -40,19 +34,18 @@ module Broadcastable
     end
 
     def animate_end_of_mulligan
-      @game ||= self
-      broadcast_animations(@game.player_one, 'end_mulligan', { count: @game.player_two.cards.in_hand.size })
-      broadcast_animations(@game.player_two, 'end_mulligan', { count: @game.player_one.cards.in_hand.size })
+      broadcast_animations(player_one, 'end_mulligan', { count: player_two.cards.in_hand.size })
+      broadcast_animations(player_two, 'end_mulligan', { count: player_one.cards.in_hand.size })
     end
 
     # Broadcast game over websocket
     def broadcast_perspective_for(player, last_played_card = nil)
-      broadcast_update_later_to [(@game || self), player.user], partial: 'games/game',
-                                                                target: "game_#{id}_for_#{player.user.id}",
-                                                                locals: { game: self,
-                                                                          first_person_player: player,
-                                                                          opposing_player: @game.opposing_player_of(player),
-                                                                          last_played_card: last_played_card }
+      broadcast_update_later_to [self, player], partial: 'games/game',
+                                                target: "game_#{id}_for_#{player.id}",
+                                                locals: { game: self,
+                                                          first_person_player: player,
+                                                          opposing_player: opposing_player_of(player),
+                                                          last_played_card: last_played_card }
     end
 
     # Broadcast animations by streaming an update to a specific div that passes data to a Stimulus controller.
@@ -71,9 +64,9 @@ module Broadcastable
     # locals: { count: count }
     #
     def broadcast_animations(player, animation_type, locals)
-      broadcast_update_later_to [(@game || self), player.user], partial: "games/animations/#{animation_type}",
-                                                                target: 'animation-data',
-                                                                locals: locals
+      broadcast_update_later_to [self, player], partial: "games/animations/#{animation_type}",
+                                                target: 'animation-data',
+                                                locals: locals
     end
   end
 end

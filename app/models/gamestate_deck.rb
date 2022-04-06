@@ -21,7 +21,7 @@ class GamestateDeck < ApplicationRecord
       generated_card = cards.new(card_stats)
       generated_card.buffs << buffs if buffs
       generated_card.attributes = card_stats if buffs # "Undo" the buff callbacks
-      generated_card.position = generated_position
+      generated_card.position = [generated_position, 1].max
       generated_card.save
     end
   end

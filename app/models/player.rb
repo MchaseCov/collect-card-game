@@ -90,7 +90,8 @@ class Player < ApplicationRecord
   end
 
   def put_cards_to_sleep
-    party_cards.in_battlefield.is_attacking.each(&:status_sleeping!)
+    party_cards.includes(:card_constant, :gamestate_deck,
+                         :active_listeners).in_battlefield.is_attacking.each(&:status_sleeping!)
   end
 
   def die
@@ -112,7 +113,8 @@ class Player < ApplicationRecord
     amount.times do
       next take_empty_deck_fatigue if cards.in_deck.size <= 0
 
-      topdeck = cards.includes(:gamestate_deck, :player).in_deck.sample
+      topdeck = cards.includes(:card_constant, :gamestate_deck,
+                               :active_listeners).in_deck.sample
       if cards.in_hand.size >= 10
         topdeck.in_discard!
       else
@@ -133,10 +135,11 @@ class Player < ApplicationRecord
   end
 
   def recount_deck_size
-    gamestate_deck.update(card_count: cards.in_deck.size)
+    gamestate_deck.update(card_count: cards.in_deck.count)
   end
 
   def wake_up_party_cards
-    party_cards.in_battlefield.each(&:status_attack_ready!)
+    party_cards.includes(:card_constant, :gamestate_deck,
+                         :active_listeners).in_battlefield.each(&:status_attack_ready!)
   end
 end

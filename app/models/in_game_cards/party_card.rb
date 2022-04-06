@@ -69,19 +69,23 @@ class PartyCard < Card
   #
   # position  - The Integer in range (1..7) for the Card's position on the board.
   def put_card_in_battle(position)
-    status_sleeping!
-    update(position: position)
-    in_battlefield!
-    recieve_valid_auras if player.active_auras.any?
+    transaction do
+      status_sleeping!
+      update(position: position)
+      in_battlefield!
+      recieve_valid_auras if player.active_auras.any?
+    end
   end
 
   # return_to_hand: Updates a card status to be unplayed, location to the hand, wipes all buffs,
   # and decrements the position of other cards on the board to fill the gap.
   def return_to_hand
-    status_unplayed!
-    in_hand!
-    clean_buffs_and_effects
-    player.shift_cards_left(position)
+    transaction do
+      status_unplayed!
+      in_hand!
+      clean_buffs_and_effects
+      player.shift_cards_left(position)
+    end
   end
 
   # decorate: For use in view partials to assign specified classes and HTML data attributes.
@@ -129,33 +133,41 @@ class PartyCard < Card
   # AUra buffs that originate from another card on the board will not be silenced, as the aura is still being output.
   # Auras sourced from the silenced target will be silenced, all beneficiaries of the aura lose the associated buff.
   def silence
-    update(silenced: true)
-    active_buffs.not_aura_source.each { |ab| buffs.destroy(ab.buff) }
-    deactivate_listener
-    stop_aura
+    transaction do
+      update(silenced: true)
+      active_buffs.not_aura_source.each { |ab| buffs.destroy(ab.buff) }
+      deactivate_listener
+      stop_aura
+    end
   end
 
   # increase_stats: increase both the attack and health of a Card by the amount supplied.
   # amount  -  The Integer amount to increase both attributes.
   def increase_stats(health_amount = 1, attack_amount = nil)
-    attack_amount ||= health_amount
-    increase_health_cap(health_amount)
-    increment_attack(attack_amount)
+    transaction do
+      attack_amount ||= health_amount
+      increase_health_cap(health_amount)
+      increment_attack(attack_amount)
+    end
   end
 
   # decrease_stats: decrease both the attack and health of a Card by the amount supplied.
   # amount  -  The Integer amount to decrease both attributes.
   def decrease_stats(amount = 1)
-    decrease_health_cap(amount)
-    decrement_attack(amount)
+    transaction do
+      decrease_health_cap(amount)
+      decrement_attack(amount)
+    end
   end
 
   # put_card_in_graveyard: "kills" a Card by setting its location to "graveyard" and status to "dead".
   # decrements the position of other cards on the board to fill the gap.
   def put_card_in_graveyard
     player.shift_cards_left(position)
-    in_graveyard!
-    status_dead!
+    transaction do
+      in_graveyard!
+      status_dead!
+    end
   end
 
   private
