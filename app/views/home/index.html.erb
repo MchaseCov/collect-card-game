@@ -10,4 +10,9 @@
   <br>
   single player thing
   <%= button_to "new game SINGLEPLAYER", singleplayer_games_path(deck_one_id: 1)%>
+  <br>
+  ok now for some queue stuff:
+  <%= button_to "DEV VIEW IT", queue_view_path%>
+  <%= button_to "Queue deck one", queue_join_path(deck_id: 1)%>
+  <%= button_to "Queue deck two", queue_join_path(deck_id: 2)%>
 </div>

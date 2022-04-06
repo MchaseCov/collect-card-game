@@ -22,6 +22,9 @@ Rails.application.routes.draw do
   resources :card_references, only: %i[index show]
   devise_for :users
   get 'home/index'
+  post '/queue/join', to: 'game_queue#join'
+  post '/queue/view', to: 'game_queue#view'
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
