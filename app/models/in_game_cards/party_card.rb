@@ -20,6 +20,7 @@
 class PartyCard < Card
   include HasHealth
   include HasAttack
+  include Summonable
   attr_accessor :current_target, :chosen_position
 
   # Callbacks: Evaluate PartyCard column changes after a save is committed to the database.
@@ -94,40 +95,6 @@ class PartyCard < Card
     PartyCardGamestateDecorator.new(self)
   end
 
-  # summon_copy: Create a copy of the PartyCard being called upon, directly in battle.
-  # The new Card is generated in the Gamestate Deck model, this method simply prepares the data.
-  #
-  # amount  - the Integer represeting the amount of copies to generate. Defaults to 1 if no input.
-  #
-  # TODO(4/1/22): Evaluate if there is a more suitable location for this method and related methods.
-  def summon_copy(amount = 1)
-    amount_to_summon = [(7 - player.party_cards.in_battlefield.size), amount].min
-    return unless amount_to_summon.positive?
-
-    card_stats = { cost: cost, health: health, attack: attack, health_cap: health_cap, location: 3,
-                   status: 3, type: 'PartyCard', card_constant: card_constant, position: position }
-    prepare_to_summon_cards(amount_to_summon, card_stats, buffs)
-  end
-
-  # summon_token: Create a copy of the associated token of a card, directly in battle.
-  # Token associations are connected on the "card constant" level and are created during database seed.
-  # The new Card is generated in the Gamestate Deck model, this method simply prepares the data.
-  #
-  # amount  - the Integer represeting the amount of copies to generate. Defaults to 1 if no input.
-  #
-  # TODO(4/1/22): Evaluate if there is a more suitable location for this method and related methods.
-  def summon_token(amount = 1)
-    token = card_constant.token
-    token_reference = token.card_reference
-    amount_to_summon = [(7 - player.party_cards.in_battlefield.size), amount].min
-    return unless token && amount_to_summon.positive?
-
-    card_stats = { cost: token_reference.cost, health: token_reference.health, attack: token_reference.attack,
-                   health_cap: token_reference.health, location: 3, status: 3, type: 'PartyCard',
-                   card_constant: token, position: position }
-    prepare_to_summon_cards(amount_to_summon, card_stats)
-  end
-
   # silence: Mark a card as silenced and remove all of its personal buffs, auras, and observers.
   # the silenced attribute will disable Deathrattle callbacks when true.
   # AUra buffs that originate from another card on the board will not be silenced, as the aura is still being output.
@@ -171,30 +138,6 @@ class PartyCard < Card
   end
 
   private
-
-  # PRIVATE create_space_for_tokens: Private method called by prepare_to_summon_cards
-  # Increments positions to create "gaps" for newly summoned cards.
-  # Given an amount, it will create an equal amount of spaces on the left and right side of the invoking card,
-  # favoring the right/greater side when an odd number is supplied.
-  #
-  # amount  -  The Integer amount of spaces to create
-  def create_space_for_tokens(amount_to_summon)
-    left_token_count = amount_to_summon / 2
-    player.shift_cards_right(position + 1, amount_to_summon)
-    increment_position(left_token_count)
-  end
-
-  # PRIVATE create_space_for_tokens: Private method called by token generation effects.
-  # Creates gaps for cards to be summoned.
-  # Calls on associated deck to generate the summoned cards.
-  #
-  # amount      -  The Integer amount of cards to be summoned
-  # card_stats  -  Hash object of card stat data
-  # card_buffs  -  ActiveRecord_AssociationRelation of buffs to be applied to the created card(s), nil if unsupplied.
-  def prepare_to_summon_cards(amount, card_stats, card_buffs = nil)
-    create_space_for_tokens(amount)
-    gamestate_deck.generate_cards(amount, card_stats, card_buffs)
-  end
 
   # PRIVATE run_buff_method_on_card: Private method called by buffs association callbacks.
   # Sends the target_method of an associated buff onto the Card.

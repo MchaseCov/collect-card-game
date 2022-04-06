@@ -25,12 +25,12 @@ module GenericKeywordActions
 
   # A card summons x amount of its associated token
   def summon_token
-    Array(@targets).each { |t| t.summon_token(modifier) }
+    Array(@targets).each { |t| t.summon_units('token', modifier) }
   end
 
   # Summon a copy of the target card.
   def summon_copy
-    Array(@targets).each { |t| t.summon_copy(modifier) }
+    Array(@targets).each { |t| t.summon_units('copy', modifier) }
   end
 
   # A card is returned to hand
