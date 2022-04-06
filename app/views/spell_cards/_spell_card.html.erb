@@ -10,8 +10,9 @@
     <%=spell_card.parent.name%>
   </div>
   <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-<%=spell_card.archetype.color%>-700 h-24 whitespace-normal">
-    <p class="break-normal"><strong>On Cast</strong>: <%=spell_card.cast_effect.body_text%></p>
-  </div>
+    <%spell_card.keywords.each do |k|%>
+      <p class="break-normal"><strong>On Cast</strong>: <%=k.body_text%></p>
+    <% end %>  </div>
   <div class="text-center text-xs absolute bottom-0 inset-x-0 bg-<%=spell_card.archetype.color%>-700 select-none pointer-events-none h-4">
     <%=spell_card.tribe%>
   </div>

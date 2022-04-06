@@ -24,8 +24,8 @@ class Keyword < ApplicationRecord
     buffs.first
   end
 
-  %i[Battlecry Cast Deathrattle Taunt].each do |type|
-    scope type.to_s.downcase, -> { find_by('type': type) }
+  %i[Battlecry Cast Deathrattle Aura Taunt Listener].each do |type|
+    scope type.to_s.downcase, -> { where('type': type) }
   end
 
   def trigger(invoking_card, target_input)

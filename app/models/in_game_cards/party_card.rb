@@ -43,9 +43,13 @@ class PartyCard < Card
 
   has_one :player, through: :gamestate_deck
   has_many :keywords, through: :card_constant
-  %i[battlecry taunt deathrattle aura listener].each do |keyword_type|
-    define_method(keyword_type) { keywords.find_by(type: keyword_type.to_s.upcase_first) }
-  end
+
+  has_one :battlecry, -> { merge(Keyword.battlecry) }, through: :card_constant, source: :keywords
+  has_one :taunt, -> { merge(Keyword.taunt) }, through: :card_constant, source: :keywords
+  has_one :deathrattle, -> { merge(Keyword.deathrattle) }, through: :card_constant, source: :keywords
+  has_one :aura, -> { merge(Keyword.aura) }, through: :card_constant, source: :keywords
+  has_one :listener, -> { merge(Keyword.listener) }, through: :card_constant, source: :keywords
+
   has_one :active_listener_effect, class_name: 'ActiveListener', foreign_key: :card_id, dependent: :destroy
 
   %i[Beast Humanoid].each do |tribe|
@@ -129,12 +133,6 @@ class PartyCard < Card
     active_buffs.not_aura_source.each { |ab| buffs.destroy(ab.buff) }
     deactivate_listener
     stop_aura
-  end
-
-  # taunting?: Check to see if a card has a "taunt" buff.
-  # returns true when a taunt buff association is present.
-  def taunting?
-    buffs.where(name: 'Taunt').exists?
   end
 
   # increase_stats: increase both the attack and health of a Card by the amount supplied.
@@ -260,5 +258,13 @@ class PartyCard < Card
 
   def recieve_valid_auras
     player.active_auras.each { |aa| buffs << aa.buff if id.in? aa.keywords.first.find_target_options(self)[:ids] }
+  end
+
+  def begin_taunt
+    update(taunt: true)
+  end
+
+  def end_taunt
+    update(taunt: false)
   end
 end

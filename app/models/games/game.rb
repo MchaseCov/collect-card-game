@@ -19,6 +19,7 @@ class Game < ApplicationRecord
   # ASSOCIATIONS ===========================================================
 
   # PLAYERS
+  has_many :gamestate_decks
   has_many :players, class_name: :Player,
                      foreign_key: :game_id,
                      inverse_of: :game,
@@ -28,24 +29,17 @@ class Game < ApplicationRecord
                        end
                      end
 
+  has_one :player_one, -> { where(turn_order: true) }, class_name: :Player
+  has_one :player_two, -> { where(turn_order: false) }, class_name: :Player
+  has_one :current_player, ->(game) { where(turn_order: game.turn) }, class_name: :Player
+
   has_many :cards, through: :players
 
   # ALIAS AND SCOPES ===========================================================
-  def player_one
-    players.find_by('turn_order = true')
-  end
-
-  def player_two
-    players.find_by('turn_order = false')
-  end
-
-  def current_player
-    players.find_by('turn_order = ?', turn)
-  end
 
   # Input player, output opposing player in same game
   def opposing_player_of(player)
-    players.find_by('id != ?', player.id)
+    player == player_one ? player_two : player_one
   end
 
   # METHODS (PUBLIC) ==================================================================

@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   before_action :validate_decks_for_game_creation, only: [:create]
-  before_action :set_game_and_perspective, except: [:create]
+  before_action :set_game, except: [:create]
+  before_action :set_perspective, only: [:show]
   before_action :conduct_mulligan, only: [:show], if: -> { @game.status == 'mulligan' }
   before_action :current_users_turn, only: %i[play_party play_spell end_turn party_combat player_combat]
 
@@ -24,11 +25,13 @@ class GamesController < ApplicationController
   end
 
   def play_party
+    return unless params[:position]
+
     party = @player.party_cards
                    .includes(:card_constant, :gamestate_deck)
                    .find(params[:card])
     party.current_target = params[:target].to_i if params[:target]
-    party.chosen_position = params[:position].to_i + 1 if params[:position]
+    party.chosen_position = params[:position].to_i + 1
 
     @game.play_card(party)
   end
@@ -67,8 +70,11 @@ class GamesController < ApplicationController
     redirect_to root_path and return if @queued_deck_one.card_count != 30 || @queued_deck_two.card_count != 30
   end
 
-  def set_game_and_perspective
+  def set_game
     @game = Game.find(params[:id])
+  end
+
+  def set_perspective
     # Intended as a plan for spectating perspective but may not be compatible with actioncable turbo streaming
     @first_person_player = @game.players.find_by(user: current_user) || @game.player_one
     @opposing_player = @game.opposing_player_of(@first_person_player)

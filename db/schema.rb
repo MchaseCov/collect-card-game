@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_02_173005) do
+ActiveRecord::Schema.define(version: 2022_04_05_201908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 2022_04_02_173005) do
     t.boolean "silenced", default: false
     t.integer "status", default: 0
     t.integer "location", default: 0
+    t.boolean "taunting", default: false
     t.index ["card_constant_id"], name: "index_cards_on_card_constant_id"
     t.index ["gamestate_deck_id"], name: "index_cards_on_gamestate_deck_id"
     t.index ["location"], name: "index_cards_on_location"

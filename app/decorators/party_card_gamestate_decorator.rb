@@ -5,6 +5,7 @@ class PartyCardGamestateDecorator
   end
 
   def data_for_hand
+    battlecry = @card.battlecry
     data = {
       'id' => @card.id,
       'resource' => 'Cost',
@@ -15,11 +16,11 @@ class PartyCardGamestateDecorator
       'gameplay-drag-action-param' => 'play_card'
     }
 
-    return data unless @card.battlecry.present? && @card.battlecry.player_choice
+    return data unless battlecry.present? && battlecry.player_choice
 
     data.tap do |hash|
       hash['gameplay-drag-target-type-param'] = 'battlecry'
-      hash['battlecry'] = @card.battlecry.id
+      hash['battlecry'] = battlecry.id
       hash['gameplay-drag-target'] += ' takesPlayerInput'
     end
     data

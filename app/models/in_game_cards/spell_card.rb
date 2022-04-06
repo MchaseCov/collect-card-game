@@ -24,10 +24,14 @@ class SpellCard < Card
   enum status: { unplayed: 0, discarded: 1, spent: 2 }, _prefix: true
 
   has_one :player, through: :gamestate_deck
-  has_many :keywords, through: :card_constant
+  has_many :keywords, through: :card_constant do
+    def cast_effect
+      where(type: 'Cast')
+    end
+  end
 
   def cast_effect
-    keywords.cast
+    keywords.cast_effect.first
   end
 
   def decorate

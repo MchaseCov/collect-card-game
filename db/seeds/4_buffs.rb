@@ -7,7 +7,9 @@ Buff.create(
       modifier: 2
     },
     {
-      name: 'Taunt'
+      name: 'Taunt',
+      target_method: 'begin_taunt',
+      removal_method: 'end_taunt'
     },
     {
       name: 'Guild Membership',

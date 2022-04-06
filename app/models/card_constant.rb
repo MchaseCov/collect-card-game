@@ -19,7 +19,11 @@ class CardConstant < ApplicationRecord
   has_many :keywords, class_name: :Keyword,
                       foreign_key: :card_constant_id,
                       inverse_of: :card_constant,
-                      dependent: :destroy
+                      dependent: :destroy do
+                        %i[battlecry taunt deathrattle aura listener cast_effect].each do |keyword_type|
+                          define_method(keyword_type) { find_by(type: keyword_type.to_s.upcase_first) }
+                        end
+                      end
   belongs_to :summoner, class_name: :CardConstant,
                         optional: true,
                         foreign_key: :summoner_id,
@@ -30,20 +34,9 @@ class CardConstant < ApplicationRecord
 
   has_one :card_reference, dependent: :destroy
   has_many :cards, dependent: :destroy
-
-  has_one :battlecry, -> { where(type: 'Battlecry') }, class_name: :Keyword,
-                                                       foreign_key: :card_constant_id,
-                                                       inverse_of: :card_constant
-
-  has_one :cast_effect, -> { where(type: 'Cast') }, class_name: :Keyword,
-                                                    foreign_key: :card_constant_id,
-                                                    inverse_of: :card_constant
-  has_one :taunt, -> { where(type: 'Taunt') }, class_name: :Keyword,
-                                               foreign_key: :card_constant_id,
-                                               inverse_of: :card_constant
-  has_one :aura, -> { where(type: 'Aura') }, class_name: :Keyword,
-                                             foreign_key: :card_constant_id,
-                                             inverse_of: :card_constant
+  %i[battlecry taunt deathrattle aura listener cast_effect].each do |keyword_type|
+    define_method(keyword_type) { keywords.send(keyword_type) }
+  end
   has_one :ai_decision_datum
 
   %i[Beast Humanoid].each do |tribe|
