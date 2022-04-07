@@ -24,9 +24,11 @@ Rails.application.routes.draw do
   get 'home/index'
   post '/queue/join', to: 'game_queue#join'
   post '/queue/view', to: 'game_queue#view'
+  post '/queue/leave', to: 'game_queue#leave'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
   # root "articles#index"
+  mount ActionCable.server => '/cable'
 end
