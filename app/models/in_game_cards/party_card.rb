@@ -92,7 +92,7 @@ class PartyCard < Card
   # decorate: For use in view partials to assign specified classes and HTML data attributes.
   # Class is located in '../../decorators/'
   def decorate
-    PartyCardGamestateDecorator.new(self)
+    PartyCardGamestateDecorator
   end
 
   # silence: Mark a card as silenced and remove all of its personal buffs, auras, and observers.

@@ -90,6 +90,7 @@ GEM
     erubi (1.10.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
+    hiredis (0.6.3)
     i18n (1.9.1)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.0.2)
@@ -230,6 +231,7 @@ DEPENDENCIES
   bullet
   debug
   devise
+  hiredis
   importmap-rails
   jbuilder
   pg (~> 1.1)

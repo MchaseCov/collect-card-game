@@ -5,7 +5,8 @@ class PartyCardGamestateDecorator
   end
 
   def data_for_hand
-    battlecry = @card.battlecry
+    # Rails is NOT satisfied with searching an eager_loaded keyword association for battlecry, but as array it's fine.
+    battlecry = @card.keywords.to_a.find { |k| k[:type] == 'Battlecry' }
     data = {
       'id' => @card.id,
       'resource' => 'Cost',

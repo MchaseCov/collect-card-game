@@ -35,7 +35,7 @@ class SpellCard < Card
   end
 
   def decorate
-    SpellCardDecorator.new(self)
+    SpellCardDecorator
   end
 
   private

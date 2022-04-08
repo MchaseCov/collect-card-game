@@ -4,7 +4,7 @@
 <aside id="sidebar" class="fixed right-0 z-50 w-1/12 h-full">
   <section id="op-deck" class="absolute flex flex-row gap-x-3 top-5">
     <div class="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
-      In Deck:<%=opposing_player.gamestate_deck.card_count%>
+      In Deck:<%=opposing_player_cards[:in_deck]%>
     </div>
   </section>
   <section id="turn-button" class="absolute top-1/2 bottom 1/2">
@@ -15,7 +15,7 @@
   </section>
   <section id="fp-deck" class="absolute flex flex-row flex-col gap-x-3 flex-nowrap bottom-5">
     <div class="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
-      In Deck:<%=first_person_player.gamestate_deck.card_count%>
+      In Deck:<%=first_person_player_cards[:in_deck]%>
     </div>
     <div class="min-w-max">Gold: <%=first_person_player.cost_current%> / <%=first_person_player.cost_cap%></div>
   </section>
@@ -34,9 +34,9 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
   <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" class='fixed z-50 pointer-events-none select-none'></canvas>
   <section id="op-info" class="relative w-full h-1/3">
     <section id="op-cards-hand" class="absolute flex-1 w-full ml-auto text-center has-tooltip shrink flex-nowrap whitespace-nowrap -top-16" data-animations-target="hand">
-      <div class="left-0 right-0 text-center tooltip -bottom-10" >Your opponent has <%=opposing_player.cards.in_hand.size%> cards in hand.</div>
-      <% opposing_player.cards.in_hand.each do |c|%>
-        <div class="relative inline-block w-40 -mt-12 -ml-10 text-white border-2 border-black rounded h-60 max-h-60 bg-slate-700" data-id="<%=c.id%>"></div>
+      <div class="left-0 right-0 text-center tooltip -bottom-10" >Your opponent has <%=opposing_player_cards_in_hand.length%> cards in hand.</div>
+      <% opposing_player_cards_in_hand.each do |c|%>
+        <div class="relative inline-block w-40 -mt-12 -ml-10 text-white border-2 border-black rounded h-60 max-h-60 bg-slate-700" data-id="<%=c%>"></div>
       <% end %>
     </section>
     <div id="op-player-info"
@@ -63,18 +63,16 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
     <%=render(last_played_card,
          locals: { class: 'absolute left-[15%] bottom-1/2 z-50',
                    id: "animated-card",
-                   decorator_data_method: :data_for_last_played},
-         cached: true ) if last_played_card  %>
+                   decorator_data_method: :data_for_last_played} ) if last_played_card  %>
     <%= render 'games/mulligan', first_person_player: first_person_player, game: game if game.status == "mulligan"%>
     <div id="op-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="hidden" data-board-id="0"></div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: opposing_player.party_cards.in_battlefield.includes(:keywords, card_constant: [:archetype]).order(:position),
+         collection: opposing_player_cards[:in_battlefield],
          as: :card,
          locals: { class: 'enemy-card z-30 hover:ring-4 hover:ring-red-300',
                    decorator_data_method: :data_opposing_card_board_battle,
-                   draggable: false},
-         cached: true %>
+                   draggable: false}%>
     </div>
     <div id="fp-cards-battle" class="flex flex-row items-center justify-center w-full">
       <div class="rounded-full opacity-50 board-space"
@@ -85,13 +83,12 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
         >
       </div>
       <%=render partial: 'party_card_gamestates/in_battle',
-         collection: first_person_player.party_cards.in_battlefield.includes(:keywords, card_constant: [:archetype]).order(:position),
+         collection: first_person_player_cards[:in_battlefield],
          as: :card,
          locals: { class: 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 ',
                    decorator_data_method: :data_friendly_card_board_battle,
                    first_person_pov: true,
-                   draggable: true },
-         cached: true %>
+                   draggable: true }%>
     </div>
   </section>
   <section id="fp-info" class="relative w-full mt-auto h-1/3">
@@ -112,7 +109,7 @@ data-gameboard-animations-turn-value='<%=game.turn_time%>'>
       </div>
     </div>
     <div id="fp-cards-hand" class="absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0" data-animations-target="hand">
-      <%=render first_person_player.cards.includes(:keywords, card_constant: [:archetype]).in_hand.order(updated_at: :asc),
+      <%=render first_person_player_cards[:in_hand],
          locals: { game: game,
                    first_person_player: first_person_player,
                    class: 'relative ring ring-lime-500 playing-card inline-block -ml-10 z-10 hover:z-20 hover:bottom-8 hover:scale-125',

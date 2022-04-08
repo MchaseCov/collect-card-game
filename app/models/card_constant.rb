@@ -34,9 +34,14 @@ class CardConstant < ApplicationRecord
 
   has_one :card_reference, dependent: :destroy
   has_many :cards, dependent: :destroy
-  %i[battlecry taunt deathrattle aura listener cast_effect].each do |keyword_type|
-    define_method(keyword_type) { keywords.send(keyword_type) }
-  end
+  has_one :battlecry, -> { merge(Keyword.battlecry) }
+  has_one :taunt, -> { merge(Keyword.taunt) }
+  has_one :deathrattle, -> { merge(Keyword.deathrattle) }
+  has_one :aura, -> { merge(Keyword.aura) }
+  has_one :listener, -> { merge(Keyword.listener) }
+  # %i[battlecry taunt deathrattle aura listener cast_effect].each do |keyword_type|
+  # define_method(keyword_type) { keywords.send(keyword_type) }
+  # end
   has_one :ai_decision_datum
 
   %i[Beast Humanoid].each do |tribe|

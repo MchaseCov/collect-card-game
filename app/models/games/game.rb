@@ -13,6 +13,7 @@
 class Game < ApplicationRecord
   include Createable
   include Broadcastable
+  include Cacheable
 
   enum status: { mulligan: 0, ongoing: 1, over: 2 }
 
@@ -56,11 +57,9 @@ class Game < ApplicationRecord
   # Game turn flips, current_player flips as a result
   # Current_player attributes updated for new turn
   def end_turn
-    transaction do
-      current_player.put_cards_to_sleep
-      update(turn: !turn) and reload.current_player
-      start_of_turn_actions
-    end
+    current_player.put_cards_to_sleep
+    update(turn: !turn) and reload.current_player
+    start_of_turn_actions
   end
 
   #========|Party Card Play|======
@@ -81,7 +80,7 @@ class Game < ApplicationRecord
   # (Through use of Stimulus controller that connects to status attribute)
   # THEN updates health attributes of cards in battle and broadcasts to both players
   def conduct_attack(attacker, defender)
-    with_lock { conduct_battle(attacker, defender) if attacker.can_attack?(defender) }
+    conduct_battle(attacker, defender) if attacker.can_attack?(defender)
   end
 
   def add_dead_card(id)
@@ -102,8 +101,10 @@ class Game < ApplicationRecord
 
   # Update health of cards in battle
   def conduct_battle(attacker, defender)
-    attacker.attack_enemy(defender)
-    broadcast_battle_animations(attacker, defender, @dead_cards)
+    transaction do
+      attacker.attack_enemy(defender)
+      broadcast_battle_animations(attacker, defender, @dead_cards)
+    end
     broadcast_basic_update
   end
 end

@@ -4,7 +4,10 @@
     <%= render partial: 'games/game',
                locals: {game: @game, 
                         first_person_player: @first_person_player,
+                        first_person_player_cards: @first_person_player_cards,
                         opposing_player: @opposing_player,
+                        opposing_player_cards: @opposing_player_cards,
+                        opposing_player_cards_in_hand: @opposing_player_cards_in_hand,
                         last_played_card: nil} %>
   </div>
 </div>

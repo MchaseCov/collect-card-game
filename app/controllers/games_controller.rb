@@ -70,13 +70,18 @@ class GamesController < ApplicationController
   end
 
   def set_game
-    @game = Game.find(params[:id])
+    @game_data = Rails.cache.fetch("game_#{params[:id]}", expires_in: 2.hours) do
+      Game.find(params[:id]).return_cache_data
+    end
+    @game = @game_data[:game]
   end
 
   def set_perspective
-    # Intended as a plan for spectating perspective but may not be compatible with actioncable turbo streaming
-    @first_person_player = @game.players.find_by(user: current_user) || @game.player_one
-    @opposing_player = @game.opposing_player_of(@first_person_player)
+    @first_person_player,
+    @first_person_player_cards,
+    @opposing_player,
+    @opposing_player_cards,
+    @opposing_player_cards_in_hand = @game.curate_cache_for_perspective(current_user.id, @game_data).values
   end
 
   def conduct_mulligan

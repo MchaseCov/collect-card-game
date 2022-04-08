@@ -14,7 +14,7 @@ class SpellCardDecorator
       'gameplay-drag-type-param' => 'spell',
       'gameplay-drag-action-param' => 'play_card'
     }
-    if @card.cast_effect.player_choice
+    if @card.keywords.to_a.find { |k| k[:type] == 'Cast' }.player_choice
       data.tap do |hash|
         hash['gameplay-drag-target-type-param'] = 'cast'
         hash['cast'] = @card.cast_effect.id
