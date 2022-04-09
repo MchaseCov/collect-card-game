@@ -10,9 +10,8 @@ module Broadcastable
     def broadcast_basic_update(card = nil)
       touch
       Rails.cache.delete("game_#{id}")
-      Rails.cache.write("game_#{id}", return_cache_data, expires_in: 2.hours)
-      @game_data = Rails.cache.read("game_#{id}")
-
+      @game_data = return_cache_data
+      Rails.cache.write("game_#{id}", @game_data, expires_in: 2.hours)
       broadcast_perspective_for(player_one, card)
       broadcast_perspective_for(player_two, card)
     end
@@ -45,21 +44,22 @@ module Broadcastable
       @first_person_player_cards,
       @opposing_player,
       @opposing_player_cards,
-      @opposing_player_cards_in_hand = curate_cache_for_perspective(player.user.id, @game_data).values
+      @opposing_player_cards_in_hand = curate_cache_for_perspective(player.user.id,
+                                                                    @game_data).values
     end
 
     # Broadcast game over websocket
     def broadcast_perspective_for(player, last_played_card = nil)
       initialize_broadcast_variables(player)
-      broadcast_update_later_to [self, player], partial: 'games/game',
-                                                target: "game_#{id}_for_#{player.id}",
-                                                locals: { game: self,
-                                                          first_person_player: @first_person_player,
-                                                          first_person_player_cards: @first_person_player_cards,
-                                                          opposing_player: @opposing_player,
-                                                          opposing_player_cards: @opposing_player_cards,
-                                                          opposing_player_cards_in_hand: @opposing_player_cards_in_hand,
-                                                          last_played_card: last_played_card }
+      broadcast_update_to [self, player], partial: 'games/game',
+                                          target: "game_#{id}_for_#{player.id}",
+                                          locals: { game: self,
+                                                    first_person_player: @first_person_player,
+                                                    first_person_player_cards: @first_person_player_cards,
+                                                    opposing_player: @opposing_player,
+                                                    opposing_player_cards: @opposing_player_cards,
+                                                    opposing_player_cards_in_hand: @opposing_player_cards_in_hand,
+                                                    last_played_card: last_played_card }
     end
 
     # Broadcast animations by streaming an update to a specific div that passes data to a Stimulus controller.
