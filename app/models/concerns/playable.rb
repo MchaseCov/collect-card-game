@@ -14,7 +14,8 @@ module Playable
 
     def enter_play
       enter_play_tasks
-      game.broadcast_basic_update(self)
+      game.last_played_card = self
+      game.broadcast_basic_update
     end
 
     private

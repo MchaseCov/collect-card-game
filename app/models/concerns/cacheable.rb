@@ -7,7 +7,7 @@ module Cacheable
       { game: self,
         player_one: {
           player_data: p1,
-          uid: p1.user.id,
+          uid: p1.user_id,
           cards: {
             in_hand: p1.cards.in_hand.includes(:keywords, card_constant: [:archetype]).order(updated_at: :asc).to_a,
             in_battlefield: p1.party_cards.in_battlefield.includes(:keywords,
@@ -17,7 +17,7 @@ module Cacheable
         },
         player_two: {
           player_data: p2,
-          uid: p2.user.id,
+          uid: p2.user_id,
           cards: {
             in_hand: p2.cards.in_hand.includes(:keywords, card_constant: [:archetype]).order(updated_at: :asc).to_a,
             in_battlefield: p2.party_cards.in_battlefield.includes(:keywords,

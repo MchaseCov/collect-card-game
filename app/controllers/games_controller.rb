@@ -85,7 +85,7 @@ class GamesController < ApplicationController
   end
 
   def conduct_mulligan
-    @player = @game.players.find_by(user: current_user)
+    @player = @game.players.find_by(user_id: current_user.id)
     # Safety check for if game is in mulligan but player does not have any mulligan cards.
     return if @player.cards.in_mulligan.any?
 
@@ -93,7 +93,7 @@ class GamesController < ApplicationController
   end
 
   def current_users_turn
-    head(401) unless current_user == @game.current_player.user
+    head(401) unless current_user.id == @game.current_player.user_id
 
     @player = @game.current_player
   end

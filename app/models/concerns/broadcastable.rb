@@ -7,13 +7,12 @@ module Broadcastable
       broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
     end
 
-    def broadcast_basic_update(card = nil)
+    def broadcast_basic_update
       touch
-      Rails.cache.delete("game_#{id}")
       @game_data = return_cache_data
+      players.each { |player| broadcast_perspective_for(player) }
+      @last_played_card = nil
       Rails.cache.write("game_#{id}", @game_data, expires_in: 2.hours)
-      broadcast_perspective_for(player_one, card)
-      broadcast_perspective_for(player_two, card)
     end
 
     def broadcast_card_play_animations(card, position)
@@ -49,7 +48,7 @@ module Broadcastable
     end
 
     # Broadcast game over websocket
-    def broadcast_perspective_for(player, last_played_card = nil)
+    def broadcast_perspective_for(player)
       initialize_broadcast_variables(player)
       broadcast_update_to [self, player], partial: 'games/game',
                                           target: "game_#{id}_for_#{player.id}",
@@ -59,7 +58,7 @@ module Broadcastable
                                                     opposing_player: @opposing_player,
                                                     opposing_player_cards: @opposing_player_cards,
                                                     opposing_player_cards_in_hand: @opposing_player_cards_in_hand,
-                                                    last_played_card: last_played_card }
+                                                    last_played_card: @last_played_card }
     end
 
     # Broadcast animations by streaming an update to a specific div that passes data to a Stimulus controller.
