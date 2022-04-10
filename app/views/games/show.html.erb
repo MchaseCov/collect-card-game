@@ -1,4 +1,7 @@
 <%= turbo_stream_from @game, @first_person_player%>
+<script id="game-data">
+  const gameData = <%= raw @game_json %>
+</script>
 <div id="game-animations-container" class="relative w-full h-full max-h-screen my-auto overflow-clip">
   <div id="<%="game_#{@game.id}_for_#{@first_person_player.id}"%>" class="absolute w-full h-full my-auto bg-white" data-controller="animations">
     <%= render partial: 'games/game',

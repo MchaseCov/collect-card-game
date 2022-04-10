@@ -8,11 +8,11 @@ import SpellPlayHandler from '../spell_play_handler';
 export default class extends Controller {
   static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor', 'tauntingCard'];
 
-  static values = {
-    playerCost: Number,
-    playerResource: Number,
-    currentTurn: Boolean,
-    playerTurn: Boolean,
+  initializeValues(gameData) {
+    this.playerCost = gameData.player.player_data.cost_current;
+    this.playerResource = gameData.player.player_data.resource_current;
+    this.currentTurn = gameData.game.turn;
+    this.playerTurn = gameData.player.player_data.turn_order;
   };
 
   playsToBoardTargetConnected(element) {
@@ -34,7 +34,8 @@ export default class extends Controller {
   }
 
   async initialize() {
-    if (this.currentTurnValue !== this.playerTurnValue) {
+    this.initializeValues(gameData)
+      if (this.currentTurnValue !== this.playerTurnValue) {
       this.playsToBoardTargets.concat(this.takesPlayerInputTargets).forEach((el) => {
         this.removeDragFromElement(el);
       });

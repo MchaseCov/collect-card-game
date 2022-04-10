@@ -5,7 +5,9 @@ class GamesController < ApplicationController
   before_action :conduct_mulligan, only: [:show], if: -> { @game.status == 'mulligan' }
   before_action :current_users_turn, only: %i[play_party play_spell end_turn party_combat player_combat]
 
-  def show; end
+  def show
+    @game_json = @game.curate_json_for_perspective(current_user.id, @game_data)
+  end
 
   # Not 100% sure how queue and form will be designed yet
   def create
