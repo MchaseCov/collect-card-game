@@ -1,14 +1,26 @@
-import createOpponentCardsHand from './opponent_card_hand';
-import createPlayers from './players';
-import createMainGameBoard from './main_game_board';
-import createBattlefieldCards from './battlefield_cards';
+import decorateGameBoard from './decorate_game_board';
+import createOpponentPlayerInfo from './opponent_player_side/op_info';
+import createFriendlyPlayerInfo from './friendly_player_side/fp_info';
+import createBattlefield from './battlefield/battlefield';
 
 export class GameRenderer {
   constructor(jsonData) {
-    console.log(jsonData);
-    createMainGameBoard(jsonData.game);
-    createPlayers(jsonData.player.player_data, jsonData.opponent.player_data);
-    createOpponentCardsHand(jsonData.opponent.cards.in_hand);
-    createBattlefieldCards(jsonData);
+    const gameData = this.matchConstantsAndKeywords(jsonData);
+    decorateGameBoard(gameData.game);
+    createOpponentPlayerInfo(gameData.opponent);
+    createFriendlyPlayerInfo(gameData.player);
+    createBattlefield(gameData.player.cards.in_battlefield, gameData.opponent.cards.in_battlefield);
+  }
+
+  matchConstantsAndKeywords(jsonData) {
+    [jsonData.player.cards.in_hand,
+      jsonData.player.cards.in_battlefield,
+      jsonData.opponent.cards.in_battlefield].forEach((cardSet) => {
+      cardSet.forEach((cardData) => {
+        cardData.cardConstant = jsonData.card_constant_data.find((c) => c.id === cardData.card_constant_id);
+        cardData.keywords = jsonData.card_keywords.filter((c) => c.card_constant_id === cardData.card_constant_id);
+      });
+    });
+    return jsonData;
   }
 }
