@@ -5,9 +5,7 @@ class GamesController < ApplicationController
   before_action :conduct_mulligan, only: [:show], if: -> { @game.status == 'mulligan' }
   before_action :current_users_turn, only: %i[play_party play_spell end_turn party_combat player_combat]
 
-  def show
-    @game_json = @game.curate_json_for_perspective(current_user.id, @game_data)
-  end
+  def show; end
 
   # Not 100% sure how queue and form will be designed yet
   def create
@@ -79,6 +77,8 @@ class GamesController < ApplicationController
   end
 
   def set_perspective
+    @first_person_player = @game.players.find_by(user_id: current_user.id)
+    return
     @first_person_player,
     @first_person_player_cards,
     @opposing_player,

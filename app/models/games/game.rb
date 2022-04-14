@@ -75,7 +75,11 @@ class Game < ApplicationRecord
   # NOTE: TO SELF: THIS WOULD MAKE MORE SENSE TO MOVE TO THE CARD STI SUBCLASSES
 
   def play_card(card)
-    transaction { card.enter_play if card.playable? }
+    transaction do
+      card.enter_play if card.playable?
+      touch
+      broadcast_basic_update
+    end
   end
 
   #========|Party Card Battle|======
@@ -107,6 +111,7 @@ class Game < ApplicationRecord
   def conduct_battle(attacker, defender)
     attacker.attack_enemy(defender)
     broadcast_battle_animations(attacker, defender, @dead_cards)
+    touch
     broadcast_basic_update
   end
 end

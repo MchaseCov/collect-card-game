@@ -6,18 +6,18 @@ const containerClasslist = 'absolute w-full ml-auto text-center whitespace-nowra
 const cardInHandClassList = 'relative ring ring-lime-500 playing-card inline-block -ml-10 z-10 hover:z-20 hover:bottom-8 hover:scale-125';
 const cardInHandDataAttributes = (card) => {
   const data = {
-    id: card.id,
-    resource: 'Cost',
-    cost: card.cost,
-    'gameplay-drag-target': 'playsToBoard',
-    action: 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd',
-    'gameplay-drag-type-param': 'party',
-    'gameplay-drag-action-param': 'play_card',
+    'data-id': card.id,
+    'data-resource': 'Cost',
+    'data-cost': card.cost,
+    'data-gameplay-drag-target': 'playsToBoard',
+    'data-action': 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd',
+    'data-gameplay-drag-type-param': 'party',
+    'data-gameplay-drag-action-param': 'play_card',
   };
   if (card.keywords.find((c) => c.type === 'Battlecry')?.player_choice) {
-    data['gameplay-drag-target-type-param'] = 'battlecry';
-    data.battlecry = battlecry.id;
-    data['gameplay-drag-target'] += ' takesPlayerInput';
+    data['data-gameplay-drag-target-type-param'] = 'battlecry';
+    data['data-battlecry']= battlecry.id;
+    data['data-gameplay-drag-target'] += ' takesPlayerInput';
   }
   return data;
 };

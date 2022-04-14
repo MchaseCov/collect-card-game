@@ -44,8 +44,10 @@ function opponentPlayerCardDataset(card) {
   return data;
 }
 
+const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 '
+
 export default function createBattlefield(friendlyPlayerCards, opponentPlayerCards) {
   const battlefieldState = [createBattlefieldRow(opponentPlayerCards, { identifier: 'op', cardDataset: opponentPlayerCardDataset }),
-    createBattlefieldRow(friendlyPlayerCards, { identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset })];
+    createBattlefieldRow(friendlyPlayerCards, { identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses })];
   render(battlefieldState, battlefieldContainer);
 }

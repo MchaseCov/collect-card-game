@@ -10,6 +10,7 @@ export class GameRenderer {
     createOpponentPlayerInfo(gameData.opponent);
     createFriendlyPlayerInfo(gameData.player);
     createBattlefield(gameData.player.cards.in_battlefield, gameData.opponent.cards.in_battlefield);
+    this.provideDataToDragController(gameData)
   }
 
   matchConstantsAndKeywords(jsonData) {
@@ -22,5 +23,10 @@ export class GameRenderer {
       });
     });
     return jsonData;
+  }
+
+  provideDataToDragController(gameData){
+    if(typeof document['gameplay-drag'] !== "undefined") document['gameplay-drag'].loadControllerFromData(gameData)
+    else setTimeout(this.provideDataToDragController, 250, gameData);
   }
 }

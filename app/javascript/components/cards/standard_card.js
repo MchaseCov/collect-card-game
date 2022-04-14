@@ -10,9 +10,9 @@ import Tribe from '../shared/tribe';
 
 const classList = 'w-40 text-white border-2 border-black rounded h-60 ';
 
-export default function StandardCard(props, cardInHandClassList, dataset) {
+export default function StandardCard(props, cardInHandClassList, dataset, customId) {
   return html`
-    <div id=${props.id} class=${classList + cardInHandClassList} draggable="true" ...${dataset} >
+    <div id=${customId||props.id} class=${classList + cardInHandClassList} draggable="true" ...${dataset} >
     <${CostBubble} cost=${props.cost}/>
     <${NameBubble} name=${props.cardConstant.name}/>
     <${Healthbubble} health=${props.health} healthCap=${props.health_cap} additionalClasses="w-10 h-10 text-3xl -bottom-2" />

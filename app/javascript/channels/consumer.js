@@ -4,5 +4,3 @@
 import { createConsumer } from "@rails/actioncable"
 
 export default createConsumer()
-
-//createConsumer(`ws://${window.location.hostname}:3000/cable`)

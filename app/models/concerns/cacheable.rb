@@ -56,6 +56,7 @@ module Cacheable
   end
 
   def curate_json_for_perspective(uid, cached_data)
+    cached_data = cached_data.deep_symbolize_keys
     case uid
     when cached_data[:player_two][:uid]
       return_personalized_json(

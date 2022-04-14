@@ -7,6 +7,7 @@ export default function PlayerPortrait(props, id, classList, dataset) {
   return html`<div id='${id}-player-info'
         class="${classList}"
         data-status="${props.status}"
+        data-id="${props.id}"
         data-player-id="${props.id}"
         data-animations-target="player"
         data-style-cards-target="player"

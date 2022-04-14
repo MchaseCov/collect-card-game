@@ -1,17 +1,14 @@
 <%= turbo_stream_from @game, @first_person_player%>
 <script id="game-data">
   const temporaryImagePath = "<%= asset_path('cardplaceholder.webp') %>";
-  const gameData = <%= raw @game_json %>
+  const player = <%= @first_person_player.id %>
+  const game = <%= @game.id %>
 </script>
 <div id="game-animations-container" class="relative w-full h-full max-h-screen my-auto overflow-clip">
   <div id="<%="game_#{@game.id}_for_#{@first_person_player.id}"%>" class="absolute w-full h-full my-auto bg-white" data-controller="animations">
     <%= render partial: 'games/game',
                locals: {game: @game, 
                         first_person_player: @first_person_player,
-                        first_person_player_cards: @first_person_player_cards,
-                        opposing_player: @opposing_player,
-                        opposing_player_cards: @opposing_player_cards,
-                        opposing_player_cards_in_hand: @opposing_player_cards_in_hand,
                         last_played_card: nil} %>
   </div>
 </div>

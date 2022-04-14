@@ -4,7 +4,7 @@
 <aside id="sidebar" class="fixed right-0 z-50 w-1/12 h-full">
   <section id="op-deck" class="absolute flex flex-row gap-x-3 top-5">
     <div class="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
-      In Deck:<%=opposing_player_cards[:in_deck]%>
+      In Deck:<%#=opposing_player_cards[:in_deck]%>
     </div>
   </section>
   <section id="turn-button" class="absolute top-1/2 bottom 1/2">
@@ -15,7 +15,7 @@
   </section>
   <section id="fp-deck" class="absolute flex flex-row flex-col gap-x-3 flex-nowrap bottom-5">
     <div class="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
-      In Deck:<%=first_person_player_cards[:in_deck]%>
+      In Deck:<%#=first_person_player_cards[:in_deck]%>
     </div>
     <div class="min-w-max">Gold: <%=first_person_player.cost_current%> / <%=first_person_player.cost_cap%></div>
   </section>

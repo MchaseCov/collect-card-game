@@ -9,17 +9,19 @@ export default class extends Controller {
   static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor', 'tauntingCard'];
 
   initializeValues(gameData) {
-    this.playerCost = gameData.player.player_data.cost_current;
-    this.playerResource = gameData.player.player_data.resource_current;
-    this.currentTurn = gameData.game.turn;
-    this.playerTurn = gameData.player.player_data.turn_order;
+    this.playerCostValue = gameData.player.player_data.cost_current;
+    this.playerResourceValue = gameData.player.player_data.resource_current;
+    this.currentTurnValue = gameData.game.turn;
+    this.playerTurnValue = gameData.player.player_data.turn_order;
   };
 
   playsToBoardTargetConnected(element) {
+    console.log(element)
     this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
   }
 
   friendlyActorTargetConnected(element) {
+    console.log(element)
     if (element.dataset.status !== 'attack_ready') return this.removeDragFromElement(element);
     this.bindToNode(element, 'createHandler', this.createDragBattleHandler);
   }
@@ -33,16 +35,20 @@ export default class extends Controller {
     }
   }
 
-  async initialize() {
+  async loadControllerFromData(gameData) {
     this.initializeValues(gameData)
-      if (this.currentTurnValue !== this.playerTurnValue) {
-      this.playsToBoardTargets.concat(this.takesPlayerInputTargets).forEach((el) => {
-        this.removeDragFromElement(el);
-      });
-      return;
-    }
-    this.validatePartyCardsArePlayable();
-    await this.prepareBattlecryData();
+    if (this.currentTurnValue !== this.playerTurnValue) {
+    this.playsToBoardTargets.concat(this.takesPlayerInputTargets).forEach((el) => {
+      this.removeDragFromElement(el);
+    });
+    return;
+  }
+  this.validatePartyCardsArePlayable();
+  await this.prepareBattlecryData();
+  }
+
+  initialize() {
+   document[this.identifier] = this
   }
 
   dragStart(event) {
@@ -108,6 +114,7 @@ export default class extends Controller {
   validatePartyCardsArePlayable() {
     const boardIsFull = (this.recievesPlayToBoardTargets?.length >= 8);
     this.playsToBoardTargets.forEach((element) => {
+      console.log(+this[`player${element.dataset.resource}Value`])
       if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) this.removeDragFromElement(element);
     });
   }
