@@ -9,7 +9,7 @@ const hoverTooltip = (count) => {
   return html`<div class=${cardInHandTooltipClassList}>Your opponent has ${count} card${plural} in hand. </div>`;
 };
 
-const cardInHand = (id) => html`<div id=${id} class=${cardInHandClassList} />`;
+const cardInHand = (id) => html`<div key=${id} id=${id} class=${cardInHandClassList} />`;
 
 export default function OpponentPlayerHand(handData) {
   const cardsInHand = handData.map((id) => cardInHand(id));

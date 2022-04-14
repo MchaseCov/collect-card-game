@@ -16,12 +16,10 @@ export default class extends Controller {
   };
 
   playsToBoardTargetConnected(element) {
-    console.log(element)
     this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
   }
 
   friendlyActorTargetConnected(element) {
-    console.log(element)
     if (element.dataset.status !== 'attack_ready') return this.removeDragFromElement(element);
     this.bindToNode(element, 'createHandler', this.createDragBattleHandler);
   }
@@ -114,7 +112,6 @@ export default class extends Controller {
   validatePartyCardsArePlayable() {
     const boardIsFull = (this.recievesPlayToBoardTargets?.length >= 8);
     this.playsToBoardTargets.forEach((element) => {
-      console.log(+this[`player${element.dataset.resource}Value`])
       if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) this.removeDragFromElement(element);
     });
   }

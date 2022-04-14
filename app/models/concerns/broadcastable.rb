@@ -8,8 +8,8 @@ module Broadcastable
     end
 
     def fetch_game_data
-      current_cache = Rails.cache.read('game_68')
-      if current_cache[:game].updated_at == updated_at
+      current_cache = Rails.cache.read("game_#{id}")
+      if current_cache && current_cache[:game].updated_at == updated_at
         @game_data = current_cache
       else
         @game_data = return_cache_data

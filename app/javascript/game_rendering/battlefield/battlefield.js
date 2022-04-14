@@ -1,8 +1,9 @@
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import createBattlefieldRow from './battlefield_row';
 
 const battlefieldContainer = document.getElementById('battlefield');
+const root = createRoot(battlefieldContainer);
 
 const initialFriendlyBoardSpaceElement = {
   class: 'rounded-full opacity-50 board-space',
@@ -44,10 +45,12 @@ function opponentPlayerCardDataset(card) {
   return data;
 }
 
-const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 '
+const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 ';
 
 export default function createBattlefield(friendlyPlayerCards, opponentPlayerCards) {
   const battlefieldState = [createBattlefieldRow(opponentPlayerCards, { identifier: 'op', cardDataset: opponentPlayerCardDataset }),
-    createBattlefieldRow(friendlyPlayerCards, { identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses })];
-  render(battlefieldState, battlefieldContainer);
+    createBattlefieldRow(friendlyPlayerCards, {
+      identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses, firstPerson: true,
+    })];
+  root.render(battlefieldState);
 }
