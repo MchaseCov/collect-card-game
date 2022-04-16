@@ -1,9 +1,8 @@
-import { createRoot } from 'react-dom/client';
+import html from '../../components/htm_create_element';
 
 import createBattlefieldRow from './battlefield_row';
 
-const battlefieldContainer = document.getElementById('battlefield');
-const root = createRoot(battlefieldContainer);
+import { forwardRef } from 'react';
 
 const initialFriendlyBoardSpaceElement = {
   class: 'rounded-full opacity-50 board-space',
@@ -34,7 +33,7 @@ function opponentPlayerCardDataset(card) {
     'data-id': card.id,
     'data-status': card.status,
     'data-health-current': card.health,
-    'data-health-cap': card.health_cap,
+  'data-health-cap': card.health_cap,
     'data-type': 'party',
     'data-action': 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd',
   };
@@ -45,12 +44,18 @@ function opponentPlayerCardDataset(card) {
   return data;
 }
 
-const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500 ';
+const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500';
 
-export default function createBattlefield(friendlyPlayerCards, opponentPlayerCards) {
-  const battlefieldState = [createBattlefieldRow(opponentPlayerCards, { identifier: 'op', cardDataset: opponentPlayerCardDataset }),
-    createBattlefieldRow(friendlyPlayerCards, {
-      identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses, firstPerson: true,
-    })];
-  root.render(battlefieldState);
-}
+const firstPersonSpecificData = {identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses, firstPerson: true }
+const opponentSpecificData = { identifier: 'op', cardDataset: opponentPlayerCardDataset}
+
+const createBattlefield = forwardRef((props, ref) => {
+  const opponentCards = props.opponentCards
+  const friendlyCards = props.friendlyCards
+  return html`
+  <section id="battlefield" class="grid w-full grid-cols-1 grid-rows-2 h-1/3 rounded-2xl" data-animations-target="battlefield">
+    <${createBattlefieldRow} ref=${ref} cards=${opponentCards} playerSpecificData=${opponentSpecificData}/>
+    <${createBattlefieldRow} ref=${ref} cards=${friendlyCards} playerSpecificData=${firstPersonSpecificData}/>
+  </section>`
+})
+export default createBattlefield

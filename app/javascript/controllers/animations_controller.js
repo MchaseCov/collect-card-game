@@ -2,7 +2,14 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
+  static targets = ['attacker', 'battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
+
+
+  defenderTargetConnected(defender){
+    if (typeof this.attackerTarget === 'undefined') return
+    this.animateBattle(this.attackerTarget, defender);
+  }
+
 
   // RELATED FUNCTIONS ARE LISTED IN ORDER OF CONNECTION FUNCTION
 
@@ -48,14 +55,13 @@ export default class extends Controller {
 
   // BATTLE ANIMATION FUNCTIONS
 
-  animateBattle(attackerObj, defenderObj, deadCardIds) {
-    const attacker = this.getActorFromObject(attackerObj);
-    const defender = this.getActorFromObject(defenderObj);
+  animateBattle(attacker, defender, deadCardIds) {
     const translation = this.findDifferenceInPositions(attacker, defender);
-    const dyingCards = deadCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`)).filter(Boolean);
+    //const dyingCards = deadCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`)).filter(Boolean);
+    this.dyingCards = []
     this.translateToAndFrom(attacker, translation);
     this.createDamageIndicators(attacker, defender);
-    attacker.onanimationend = () => dyingCards.filter(Boolean).forEach((card) => this.killCard(card));
+    attacker.onanimationend = () => this.dyingCards.forEach((card) => this.killCard(card));
   }
   
   async createDamageIndicators(attacker, defender){
@@ -71,6 +77,7 @@ export default class extends Controller {
     const newHp = (original_hp - pair.damage)
     pair.card.querySelector('#health').innerText = newHp
     if(newHp < original_hp) pair.card.querySelector('#health').classList.add('text-red-500')
+    if(newHp <= 0)this.dyingCards.push(pair.card)
   }
 
   indicateDamageTaken(pair){
@@ -176,7 +183,6 @@ export default class extends Controller {
     card.nextElementSibling.style.width = '0px';
     card.style.width = '0px';
     card.style.margin = '0px'
-    card.onanimationend = () => console.log(Date(Date.now()))
   }
 
   // CARD DRAW ANIMATION FUNCTION

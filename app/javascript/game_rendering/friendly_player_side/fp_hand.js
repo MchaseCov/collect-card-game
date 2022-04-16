@@ -14,7 +14,8 @@ const cardInHandDataAttributes = (card) => {
     'data-gameplay-drag-type-param': 'party',
     'data-gameplay-drag-action-param': 'play_card',
   };
-  if (card.keywords.find((c) => c.type === 'Battlecry')?.player_choice) {
+  const battlecry = card.keywords.find((c) => c.type === 'Battlecry');
+  if (battlecry?.player_choice) {
     data['data-gameplay-drag-target-type-param'] = 'battlecry';
     data['data-battlecry']= battlecry.id;
     data['data-gameplay-drag-target'] += ' takesPlayerInput';

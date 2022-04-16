@@ -80,12 +80,22 @@ module Broadcastable
     # end_mulligan -- Animation for ending mulligan by moving cards from stage to hand and fading mulligan menu
     # locals: { count: count }
     #
-    def broadcast_animations(player, animation_type, locals)
-      return
-
-      broadcast_update_later_to [self, player], partial: "games/animations/#{animation_type}",
-                                                target: 'animation-data',
-                                                locals: locals
+    def broadcast_animations(player, *_args) # , _animation_type, _locals)
+      fetch_game_data unless @game_data.present?
+      game_json = curate_json_for_perspective(player.user_id, @game_data)
+      GameChannel.broadcast_to([self, player], {
+                                 streamPurpose: 'animation',
+                                 animationData: { targets: {
+                                   target_one: {
+                                     id: player_two.cards.in_battlefield.pluck(:id).first,
+                                     animationTag: 'attacker'
+                                   },
+                                   target_two: {
+                                     id: player_one.cards.in_battlefield.pluck(:id).first,
+                                     animationTag: 'defender'
+                                   }
+                                 } }
+                               })
     end
   end
 end
