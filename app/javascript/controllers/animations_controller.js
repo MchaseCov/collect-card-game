@@ -4,12 +4,14 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
   static targets = ['attacker', 'battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
 
-
   defenderTargetConnected(defender){
     if (typeof this.attackerTarget === 'undefined') return
     this.animateBattle(this.attackerTarget, defender);
   }
 
+  drawnCardTargetConnected(card){
+    console.log(card)
+  }
 
   // RELATED FUNCTIONS ARE LISTED IN ORDER OF CONNECTION FUNCTION
 

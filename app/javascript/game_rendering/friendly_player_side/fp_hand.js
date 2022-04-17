@@ -1,4 +1,6 @@
 import html from 'components/htm_create_element';
+import { forwardRef } from 'react';
+
 
 import StandardCard from '../../components/cards/standard_card';
 
@@ -23,10 +25,25 @@ const cardInHandDataAttributes = (card) => {
   return data;
 };
 
-export default function FriendlyPlayerHand(props) {
-  const cardsInHand = props.map((card) => StandardCard(card, cardInHandClassList, cardInHandDataAttributes(card)));
+const FriendlyPlayerHand  = forwardRef((props, ref) => {
+  const {cards}= props
+  //const cardsInHand = cards.map((card) => StandardCard(card, cardInHandClassList, cardInHandDataAttributes(card)));
 
-  return html`<div id='fp-cards-hand' class="${containerClasslist}" data-animations-target="hand">
-        ${cardsInHand}
-        </div>`;
-}
+  return html`
+  <div id='fp-cards-hand' class="${containerClasslist}" data-animations-target="hand">
+    ${cards.map((card) => html`<${StandardCard} id=${card.id} 
+                                                key=${card.id}
+                                                cardConstant=${card.cardConstant}
+                                                health=${card.health}
+                                                attack=${card.attack}
+                                                health_cap=${card.health_cap}
+                                                dataset=${cardInHandDataAttributes(card)}
+                                                additionalClasses=${cardInHandClassList}
+                                                keywords=${card.keywords}
+                                                cost=${card.cost}
+                                                ref=${ref}
+                                              />`)}
+  </div>`; 
+});
+
+export default FriendlyPlayerHand

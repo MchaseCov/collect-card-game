@@ -7,8 +7,8 @@ const gameContainer = document.getElementById('game-container');
 const gameRoot = createRoot(gameContainer);
 
 export class GameRenderer {
-  constructor(jsonData) {
-    this.gameData = this.matchConstantsAndKeywords(jsonData);
+  updateGameData(newGameData) {
+    this.gameData = this.matchConstantsAndKeywords(newGameData);
     this.provideDataToDragController(this.gameData);
   }
 
@@ -26,6 +26,8 @@ export class GameRenderer {
         cardData.keywords = jsonData.card_keywords.filter((c) => c.card_constant_id === cardData.card_constant_id);
       });
     });
+    delete jsonData.card_keywords;
+    delete jsonData.card_constant_data;
     return jsonData;
   }
 

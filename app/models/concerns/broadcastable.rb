@@ -3,8 +3,20 @@ module Broadcastable
 
   included do
     def broadcast_card_draw_animations(card)
-      broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
-      broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
+      card_draw_animation_data = {
+        targets: {
+          target_one: {
+            id: card.id,
+            animationTag: 'drawnCard'
+          }
+        }
+      }
+      touch && fetch_game_data
+      players.each do |p|
+        broadcast_animations(p, card_draw_animation_data)
+      end
+      # broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
+      # broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
     end
 
     def fetch_game_data
@@ -24,6 +36,7 @@ module Broadcastable
     end
 
     def broadcast_card_play_animations(card, position)
+      return
       broadcast_animations(card.player, 'from_hand',
                            { hand: 'fp', played_card_id: card.id, target_id: position })
       broadcast_animations(opposing_player_of(card.player), 'from_hand',
@@ -32,16 +45,26 @@ module Broadcastable
 
     private
 
-    def broadcast_battle_animations(attacker, defender, dead_cards)
+    def broadcast_battle_animations(attacker, defender, _dead_cards = nil)
+      battle_animation_data = {
+        targets: {
+          target_one: {
+            id: attacker.id,
+            animationTag: 'attacker'
+          },
+          target_two: {
+            id: defender.id,
+            animationTag: 'defender'
+          }
+        }
+      }
       players.each do |p|
-        broadcast_animations(p, 'battle',
-                             { attacker: { attacker.class.name => attacker.id },
-                               defender: { defender.class.name => defender.id },
-                               dead_cards: dead_cards || [] })
+        broadcast_animations(p, battle_animation_data)
       end
     end
 
     def animate_end_of_mulligan
+      return
       broadcast_animations(player_one, 'end_mulligan', { count: player_two.cards.in_hand.size })
       broadcast_animations(player_two, 'end_mulligan', { count: player_one.cards.in_hand.size })
     end
@@ -80,21 +103,12 @@ module Broadcastable
     # end_mulligan -- Animation for ending mulligan by moving cards from stage to hand and fading mulligan menu
     # locals: { count: count }
     #
-    def broadcast_animations(player, *_args) # , _animation_type, _locals)
-      fetch_game_data unless @game_data.present?
-      game_json = curate_json_for_perspective(player.user_id, @game_data)
+    def broadcast_animations(player, animation_object) # , _animation_type, _locals)
+      game_json = JSON.parse(curate_json_for_perspective(player.user_id, @game_data)) if @game_data
       GameChannel.broadcast_to([self, player], {
                                  streamPurpose: 'animation',
-                                 animationData: { targets: {
-                                   target_one: {
-                                     id: player_two.cards.in_battlefield.pluck(:id).first,
-                                     animationTag: 'attacker'
-                                   },
-                                   target_two: {
-                                     id: player_one.cards.in_battlefield.pluck(:id).first,
-                                     animationTag: 'defender'
-                                   }
-                                 } }
+                                 animationData: animation_object,
+                                 gameData: game_json
                                })
     end
   end

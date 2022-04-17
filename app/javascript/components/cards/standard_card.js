@@ -1,4 +1,5 @@
 import html from 'components/htm_create_element';
+import { forwardRef } from 'react';
 
 import Healthbubble from '../shared/health_bubble';
 import AttackBubble from '../shared/attack_bubble';
@@ -9,10 +10,9 @@ import Keyword from '../shared/keyword';
 import Tribe from '../shared/tribe';
 
 const classList = 'w-40 text-white border-2 border-black rounded h-60 ';
-
-export default function StandardCard(props, cardInHandClassList, dataset, customId) {
+const StandardCard = forwardRef((props, ref) => {
   return html`
-    <div key=${props.id} id=${customId||props.id} class=${classList + cardInHandClassList} draggable="true" ...${dataset} >
+    <div key=${props.id} id=${props.id} class=${classList + props.additionalClasses } draggable="true" ...${props.dataset} ref=${(el) => { if(ref) ref.current[props.id] = el}} >
     <${CostBubble} cost=${props.cost}/>
     <${NameBubble} name=${props.cardConstant.name}/>
     <${Healthbubble} health=${props.health} healthCap=${props.health_cap} additionalClasses="w-10 h-10 text-3xl -bottom-2" />
@@ -24,4 +24,6 @@ export default function StandardCard(props, cardInHandClassList, dataset, custom
     <${Art} />
     </div>
   `;
-}
+})
+
+export default StandardCard

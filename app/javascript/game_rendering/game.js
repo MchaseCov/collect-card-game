@@ -7,6 +7,7 @@ import createBattlefield from './battlefield/battlefield';
 
 const Game = forwardRef((props, ref) => {
   const { gameData } = props;
+  const { cardInBattleReference, friendlyCardInHandReference } = ref.current
   const gameInformationData = gameData.game
   const playerInformationData = gameData.player.player_data
   const playerCardData = gameData.player.cards
@@ -50,8 +51,8 @@ const Game = forwardRef((props, ref) => {
         >
   <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" class='fixed z-50 pointer-events-none select-none'></canvas>
   <${createOpponentPlayerInfo} gameData=${gameData.opponent}/>
-  <${createBattlefield} ref=${ref}friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield}/>
-  <${createFriendlyPlayerInfo} gameData=${gameData.player}/>
+  <${createBattlefield} ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield}/>
+  <${createFriendlyPlayerInfo} ref=${friendlyCardInHandReference} gameData=${gameData.player}/>
 </article>
   `;
 })

@@ -2,25 +2,39 @@ import consumer from 'channels/consumer';
 import { GameRenderer } from '../game_rendering/game_renderer';
 
 let ongoingAnimations = 0;
-let delayMulti = 1
+const delayMulti = 1;
 
 export default function connectToGameChannel(gameId, playerId) {
   consumer.subscriptions.create({ channel: 'GameChannel', game: gameId, player: playerId }, {
 
-    async evaluateStreamPurpose(data) {
+    connected() {
+      this.gameRenderer = new GameRenderer();
+    },
+
+    disconnected() {
+    },
+
+    async updateGameWithNewData(gameData) {
+      this.gameRenderer.updateGameData(gameData);
+      await this.waitForOngoingAnimations();
+      this.gameRenderer.renderGameWindow();
+    },
+
+    async beginNewAnimation(animationData) {
+      ongoingAnimations++;
+      this.gameRenderer.renderGameWindow(animationData);
+      await new Promise((r) => setTimeout(r, (1000)));
+      ongoingAnimations--;
+    },
+
+    evaluateStreamPurpose(data) {
       switch (data.streamPurpose) {
         case 'basicUpdate':
-          this.lastRecievedData = data.gameData
-          this.gameRenderer = new GameRenderer(this.lastRecievedData);
-          await this.waitForOngoingAnimations();
-          this.gameRenderer.renderGameWindow()
+          this.updateGameWithNewData(data.gameData);
           break;
         case 'animation':
-          await this.waitForOngoingAnimations();
-          ongoingAnimations++
-          this.gameRenderer.renderGameWindow(data.animationData);
-          await new Promise((r) => setTimeout(r, (1000)));
-          ongoingAnimations--
+          if (data.gameData) this.gameRenderer.updateGameData(data.gameData);
+          this.beginNewAnimation(data.animationData);
           break;
       }
     },
@@ -28,18 +42,10 @@ export default function connectToGameChannel(gameId, playerId) {
     async waitForOngoingAnimations() {
       const seconds = (ongoingAnimations * delayMulti);
       await new Promise((r) => setTimeout(r, (1000 * seconds)));
-    }, 
-
-    connected() {
-      console.log('connected');
-    },
-
-    disconnected() {
-    // Called when the subscription has been terminated by the server
     },
 
     async received(data) {
-      console.log(data);
+      await this.waitForOngoingAnimations();
       this.evaluateStreamPurpose(data);
     },
   });
