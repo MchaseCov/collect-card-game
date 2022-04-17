@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'battleAnimationValues', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawCardAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
+  static targets = ['attacker', 'defender', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
 
   defenderTargetConnected(defender){
     if (typeof this.attackerTarget === 'undefined') return
@@ -10,17 +10,26 @@ export default class extends Controller {
   }
 
   drawnCardTargetConnected(card){
-    console.log(card)
+    console.log(card);
+    this.drawCardToHand(card);
+  }
+
+  // CARD DRAW ANIMATION FUNCTION
+
+  drawCardToHand(card){
+    const ytrans = (card.getBoundingClientRect().y > 0 ? -9 : 9)
+    card.style.transform = `translate(33vw, ${ytrans}rem) rotateY(180deg)`;
+    card.classList.add('last-drawn');
+    card.onanimationend = () => {
+      card.style.removeProperty('transform')
+      card.classList.remove('last-drawn')
+      card.removeAttribute('data-animations-target')
+    }
   }
 
   // RELATED FUNCTIONS ARE LISTED IN ORDER OF CONNECTION FUNCTION
 
-  // ANIMATION FOR CARDS MEETING IN BATTLE
-  battleAnimationValuesTargetConnected(element) {
-    const animationData = element.dataset;
-    this.animateBattle(JSON.parse(animationData.attackerValue), JSON.parse(animationData.defenderValue), JSON.parse(animationData.deadCards));
-    element.remove()
-  }
+
 
   // ANIMATION FOR CARD MOVING FROM HAND TO BATTLEFIELD & FADING
   fromHandAnimationValuesTargetConnected(element) {
@@ -57,9 +66,8 @@ export default class extends Controller {
 
   // BATTLE ANIMATION FUNCTIONS
 
-  animateBattle(attacker, defender, deadCardIds) {
+  animateBattle(attacker, defender) {
     const translation = this.findDifferenceInPositions(attacker, defender);
-    //const dyingCards = deadCardIds.map((id) => this.battlefieldTarget.querySelector(`[data-id="${id}"]`)).filter(Boolean);
     this.dyingCards = []
     this.translateToAndFrom(attacker, translation);
     this.createDamageIndicators(attacker, defender);
@@ -130,7 +138,6 @@ export default class extends Controller {
   // CARD PLAY ANIMATION FUNCTIONS
 
   animateCardPlay(playedCardValues) {
-    console.log(playedCardValues)
     const leftCards = this.collectRelatives(playedCardValues.targetPosition, 'previousElementSibling');
     const rightCards = this.collectRelatives(playedCardValues.targetPosition, 'nextElementSibling');
     this.animateCardsOnBoard(leftCards, 'left');
@@ -185,16 +192,6 @@ export default class extends Controller {
     card.nextElementSibling.style.width = '0px';
     card.style.width = '0px';
     card.style.margin = '0px'
-  }
-
-  // CARD DRAW ANIMATION FUNCTION
-
-  drawCardToHand(card, identifier){
-    const hand = this.handTargets.find((el) => el.id === `${identifier}-cards-hand`);
-    hand.appendChild(card)
-    const ytrans = (identifier == "fp" ? -8.6 : 8.6)
-    card.style.transform = `translate(33vw, ${ytrans}rem) rotateY(180deg)`;
-    card.classList.add('last-drawn');
   }
 
   // END OF MULLIGAN TRANSITION FUNCTIONS
