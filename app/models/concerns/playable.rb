@@ -14,7 +14,7 @@ module Playable
 
     def enter_play
       enter_play_tasks
-      game.last_played_card = self
+      self
     end
 
     private

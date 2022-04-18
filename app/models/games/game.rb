@@ -14,9 +14,6 @@ class Game < ApplicationRecord
   include Createable
   include Broadcastable
   include Cacheable
-
-  attr_writer :last_played_card
-
   enum status: { mulligan: 0, ongoing: 1, over: 2 }
 
   # ASSOCIATIONS ===========================================================
@@ -76,9 +73,9 @@ class Game < ApplicationRecord
 
   def play_card(card)
     transaction do
-      card.enter_play if card.playable?
-      touch
-      broadcast_basic_update
+      @last_played_card = card.enter_play if card.playable?
+      broadcast_card_play_animations(@last_played_card)
+      @last_played_card = nil
     end
   end
 

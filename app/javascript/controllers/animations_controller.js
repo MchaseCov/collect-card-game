@@ -2,7 +2,33 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'defender', 'fromHandAnimationValues', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding'];
+  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'romHand'];
+
+
+  fromHandTargetConnected(card){
+    const id = card.getBoundingClientRect().y > 0 ? 'fp' : 'op'
+    const row = document.getElementById(`${id}-cards-battle`)
+    const target = row.querySelector(`[data-board-id="${card.dataset.targetPosition || 0}"]`);
+
+    this.animateCardFromHand(card, target)
+  }
+
+  enterBattleTargetConnected(card){
+    card.classList.add('last-played-card')
+    const leftCards = [...document.getElementsByClassName('card-to-left')]
+    leftCards.forEach((el)=> el.classList.remove('card-to-left'));
+    const rightCards = [...document.getElementsByClassName('card-to-right')]
+    rightCards.forEach((el)=> el.classList.remove('card-to-right'))
+  }
+
+  shiftLeftTargetConnected(card){
+    card.classList.add(`card-to-left`);
+  }
+
+  shiftRightTargetConnected(card){
+   card.classList.add('card-to-right')
+  }
+
 
   defenderTargetConnected(defender){
     if (typeof this.attackerTarget === 'undefined') return
@@ -10,7 +36,6 @@ export default class extends Controller {
   }
 
   drawnCardTargetConnected(card){
-    console.log(card);
     this.drawCardToHand(card);
   }
 
@@ -31,14 +56,6 @@ export default class extends Controller {
 
 
 
-  // ANIMATION FOR CARD MOVING FROM HAND TO BATTLEFIELD & FADING
-  fromHandAnimationValuesTargetConnected(element) {
-    const animationData = element.dataset;
-    if (this.lastPlayedCard) { this.lastPlayedCard.classList.remove('last-played-card'); }
-    this.animateCardPlay(this.setCardAnimationValues(animationData));
-    element.remove()
-  }
-
   // ANIMATION FOR CARDS DYING AND FADING FROM BATTLE
   cardDeathAnimationValuesTargetConnected(element) {
     const dyingCardIds = JSON.parse(element.dataset.deadCards);
@@ -47,18 +64,7 @@ export default class extends Controller {
     element.remove()
   }
 
-  // ANIMATION FOR CARD BEING DRAWN TO HAND
-  drawCardAnimationValuesTargetConnected(element) {
-    this.drawCardToHand(this.drawnCardTarget, element.dataset.playerIdentifier)
-    element.remove()
-  }
   
-  // ANIMATION FOR EASING IN A CARD PLAYED TO BOARD
-  lastPlayedTargetConnected(element) {
-    this.lastPlayedCard = this.battlefieldTarget.querySelector(`[data-id="${element.dataset.animationOf}"]`);
-    this.lastPlayedCard.classList.add('last-played-card');
-  }
-
   // ANIMATIONS FOR END OF MULLIGAN TRANSITION
   mulliganEndingTargetConnected(element){
     this.animateEndOfMulligan(this.setMulliganAnimationData(element))
@@ -137,34 +143,10 @@ export default class extends Controller {
 
   // CARD PLAY ANIMATION FUNCTIONS
 
-  animateCardPlay(playedCardValues) {
-    const leftCards = this.collectRelatives(playedCardValues.targetPosition, 'previousElementSibling');
-    const rightCards = this.collectRelatives(playedCardValues.targetPosition, 'nextElementSibling');
-    this.animateCardsOnBoard(leftCards, 'left');
-    this.animateCardsOnBoard(rightCards, 'right');
-    this.animateCardFromHand(playedCardValues);
-  }
-
-  animateCardFromHand(playedCardValues) {
-    const translation = this.findDifferenceInPositions(playedCardValues.cardElement, playedCardValues.targetPosition);
-    playedCardValues.cardElement.classList.add('card-from-hand');
-    playedCardValues.cardElement.style.transform = `translate(${translation.x}px, ${translation.y}px)`;
-  }
-
-  animateCardsOnBoard(cards, direction) {
-    cards.forEach((e) => {
-      e.classList.add(`card-to-${direction}`);
-    });
-  }
-
-  setCardAnimationValues(animationData) {
-    const hand = this.handTargets.find((el) => el.id === `${animationData.playerIdentifier}-cards-hand`);
-    const battlefieldOfPlayer = this.battlefieldTarget.querySelector(`#${animationData.playerIdentifier}-cards-battle`);
-    return {
-      cardElement: hand.querySelector(`[data-id="${animationData.playedCardId}"]`),
-      targetPosition: battlefieldOfPlayer.querySelector(`[data-board-id="${animationData.targetId}"]`),
-      positionNumber: animationData.targetId,
-    };
+  animateCardFromHand(card, target) {
+    const translation = this.findDifferenceInPositions(card, target);
+    card.classList.add('card-from-hand');
+    card.style.transform = `translate(${translation.x}px, ${translation.y}px)`;
   }
 
   translateTo(actor, translation, timing = 500) {
@@ -175,15 +157,6 @@ export default class extends Controller {
     );
   }
 
-  collectRelatives(element, relation) {
-    const relatives = [];
-    let e = element;
-    while (e[relation]) {
-      e = e[relation];
-      relatives.push(e);
-    }
-    return relatives;
-  }
 
   // CARD DEATH ANIMATION FUNCTION
 

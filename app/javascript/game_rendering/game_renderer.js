@@ -7,8 +7,8 @@ const gameContainer = document.getElementById('game-container');
 const gameRoot = createRoot(gameContainer);
 
 export class GameRenderer {
-  updateGameData(newGameData) {
-    this.gameData = this.matchConstantsAndKeywords(newGameData);
+  updateGameData(updatedGameData) {
+    this.gameData = this.filterAndOrganizeData(updatedGameData);
     this.provideDataToDragController(this.gameData);
   }
 
@@ -17,18 +17,30 @@ export class GameRenderer {
     gameRoot.render(gameElement);
   }
 
-  matchConstantsAndKeywords(jsonData) {
-    [jsonData.player.cards.in_hand,
-      jsonData.player.cards.in_battlefield,
-      jsonData.opponent.cards.in_battlefield].forEach((cardSet) => {
-      cardSet.forEach((cardData) => {
-        cardData.cardConstant = jsonData.card_constant_data.find((c) => c.id === cardData.card_constant_id);
-        cardData.keywords = jsonData.card_keywords.filter((c) => c.card_constant_id === cardData.card_constant_id);
-      });
-    });
-    delete jsonData.card_keywords;
-    delete jsonData.card_constant_data;
-    return jsonData;
+  filterAndOrganizeData(updatedGameData) {
+    let filteredData = this.filterKeywordsAndConstants(updatedGameData);
+    filteredData = this.purgeExtraData(updatedGameData);
+    return filteredData;
+  }
+
+  filterKeywordsAndConstants(updatedGameData) {
+    this.cardConstants = updatedGameData.card_constant_data;
+    this.cardKeywords = updatedGameData.card_keywords;
+    const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield];
+    cardsSetsToMatch.filter((item) => item).forEach((cardSet) => cardSet.forEach(((card) => this.matchKeywordsAndConstantsToCard(card))));
+    if (updatedGameData.lastPlayedCard) this.matchKeywordsAndConstantsToCard(updatedGameData.lastPlayedCard);
+    return updatedGameData;
+  }
+
+  matchKeywordsAndConstantsToCard(card) {
+    card.cardConstant = this.cardConstants.find((c) => c.id === card.card_constant_id);
+    card.keywords = this.cardKeywords.filter((c) => c.card_constant_id === card.card_constant_id);
+  }
+
+  purgeExtraData(updatedGameData) {
+    delete updatedGameData.card_keywords;
+    delete updatedGameData.card_constant_data;
+    return updatedGameData;
   }
 
   provideDataToDragController(gameData) {

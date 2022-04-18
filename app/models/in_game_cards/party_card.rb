@@ -201,7 +201,6 @@ class PartyCard < Card
   end
 
   def enter_play_tasks
-    game.broadcast_card_play_animations(self, chosen_position - 1)
     player.shift_cards_right(chosen_position)
     put_card_in_battle(chosen_position)
   end

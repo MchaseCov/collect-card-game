@@ -1,6 +1,7 @@
 import html from '../../components/htm_create_element';
 
 import createBattlefieldRow from './battlefield_row';
+import StandardCard from '../../components/cards/standard_card';
 
 import { forwardRef } from 'react';
 
@@ -52,8 +53,27 @@ const opponentSpecificData = { identifier: 'op', cardDataset: opponentPlayerCard
 const createBattlefield = forwardRef((props, ref) => {
   const opponentCards = props.opponentCards
   const friendlyCards = props.friendlyCards
+
+  let lastPlayedCardElement = (() => {
+    if (props.lastPlayedCard) {
+      const card = props.lastPlayedCard
+      return html `<${StandardCard} id="animated-card"
+      cardConstant=${card.cardConstant}
+      health=${card.health}
+      attack=${card.attack}
+      health_cap=${card.health_cap}
+      additionalClasses="absolute left-[15%] bottom-1/2 z-50"
+      keywords=${card.keywords}
+      cost=${card.cost}
+     />`
+    } else {
+      return undefined
+    }
+  })();
+
   return html`
   <section id="battlefield" class="grid w-full grid-cols-1 grid-rows-2 h-1/3 rounded-2xl" data-animations-target="battlefield">
+    ${lastPlayedCardElement}
     <${createBattlefieldRow} ref=${ref} cards=${opponentCards} playerSpecificData=${opponentSpecificData}/>
     <${createBattlefieldRow} ref=${ref} cards=${friendlyCards} playerSpecificData=${firstPersonSpecificData}/>
   </section>`

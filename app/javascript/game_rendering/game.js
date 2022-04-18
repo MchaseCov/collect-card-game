@@ -51,7 +51,7 @@ const Game = forwardRef((props, ref) => {
         >
   <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" class='fixed z-50 pointer-events-none select-none'></canvas>
   <${createOpponentPlayerInfo} gameData=${gameData.opponent}/>
-  <${createBattlefield} ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield}/>
+  <${createBattlefield} ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield} lastPlayedCard=${gameData.lastPlayedCard}/>
   <${createFriendlyPlayerInfo} ref=${friendlyCardInHandReference} gameData=${gameData.player}/>
 </article>
   `;
