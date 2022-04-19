@@ -84,7 +84,11 @@ export default class extends Controller {
     this.dyingCards = []
     this.translateToAndFrom(attacker, translation);
     this.createDamageIndicators(attacker, defender);
-    attacker.onanimationend = () => this.dyingCards.forEach((card) => this.killCard(card));
+    attacker.onanimationend = () => {
+      this.dyingCards.forEach((card) => this.killCard(card));
+      attacker.removeAttribute('data-animations-target');
+      defender.removeAttribute('data-animations-target');
+    }
   }
   
   async createDamageIndicators(attacker, defender){
@@ -110,7 +114,7 @@ export default class extends Controller {
     indicator.innerText = -pair.damage
     pair.card.appendChild(indicator)
     pair.card.classList.add('shake')
-    indicator.onanimationend = () => indicator.remove()
+    indicator.onanimationend = () => {indicator.remove(); pair.card.classList.remove('shake')}
   }
 
   getActorFromObject(object) {

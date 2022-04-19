@@ -28,6 +28,9 @@ const CardInBattle = forwardRef((props, ref) => {
 
   return html`
     <div id=${props.id} ref=${(el) => ref.current[props.id] = el} className=${[classList, props.additionalClasses].join(' ')} ...${props.dataset}>
+    <${Healthbubble} health=${props.health} healthCap=${props.health_cap} />
+    <${AttackBubble} attack=${props.attack} />
+    <${Art} rounded="true" />
     <${StandardCard} id=${`card_${props.id}_tooltip`}
                      cardConstant=${props.cardConstant}
                      health=${props.health}
@@ -37,9 +40,6 @@ const CardInBattle = forwardRef((props, ref) => {
                      keywords=${props.keywords}
                      cost=${props.cost}
                     />
-    <${Healthbubble} health=${props.health} healthCap=${props.health_cap} />
-    <${AttackBubble} attack=${props.attack} />
-    <${Art} rounded="true" />
     </div>
   `;
 });
