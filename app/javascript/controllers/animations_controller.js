@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'romHand'];
+  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand'];
 
 
   fromHandTargetConnected(card){
@@ -11,6 +11,14 @@ export default class extends Controller {
     const target = row.querySelector(`[data-board-id="${card.dataset.targetPosition || 0}"]`);
 
     this.animateCardFromHand(card, target)
+    this.animateCardInHandGapFill(card)
+  }
+
+  animateCardInHandGapFill(card) {
+    const cardSiblings = [...card.parentNode.children]
+    const position = cardSiblings.indexOf(card)
+    cardSiblings.slice(position+1).forEach((card)=> card.classList.add(`card-to-left`))
+    cardSiblings.slice(0, position).forEach((card)=> card.classList.add(`card-to-right`))
   }
 
   enterBattleTargetConnected(card){
@@ -162,7 +170,6 @@ export default class extends Controller {
 
   killCard(card) {
     card.classList.add('grayscale', 'dying-card', 'overflow-hidden');
-    card.nextElementSibling.style.width = '0px';
     card.style.width = '0px';
     card.style.margin = '0px'
   }

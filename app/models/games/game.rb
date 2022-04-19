@@ -73,9 +73,8 @@ class Game < ApplicationRecord
 
   def play_card(card)
     transaction do
-      @last_played_card = card.enter_play if card.playable?
-      broadcast_card_play_animations(@last_played_card)
-      @last_played_card = nil
+      last_played_card = card.enter_play if card.playable?
+      broadcast_card_play_animations(last_played_card)
     end
   end
 

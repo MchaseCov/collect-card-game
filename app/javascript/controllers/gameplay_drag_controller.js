@@ -16,7 +16,8 @@ export default class extends Controller {
   };
 
   playsToBoardTargetConnected(element) {
-    this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
+    if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) return this.removeDragFromElement(element);
+    else this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
   }
 
   friendlyActorTargetConnected(element) {
@@ -109,18 +110,29 @@ export default class extends Controller {
     playableBattlecryTakesInput.forEach((el) => el.dataset.targets = this.battlecryTargetData[el.dataset.battlecry]);
   }
 
+
   validatePartyCardsArePlayable() {
     const boardIsFull = (this.recievesPlayToBoardTargets?.length >= 8);
     this.playsToBoardTargets.forEach((element) => {
-      if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) this.removeDragFromElement(element);
+      if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) {this.removeDragFromElement(element);}
+      else if (element.draggable === false) {this.returnDragToElement(element)}
     });
   }
+
+
+ returnDragToElement(element){
+    element.dataset.action = element.dataset.action.replace('#errorFeedback', '#dragStart');  
+    element.classList.add('ring');
+    element.setAttribute('draggable', true);
+  }
+
 
   removeDragFromElement(element) {
     element.dataset.action = element.dataset.action.replace('#dragStart', '#errorFeedback');
     element.classList.remove('ring');
     element.setAttribute('draggable', false);
   }
+  
 
   errorFeedback(event) {
     event.target.classList.add('shake');

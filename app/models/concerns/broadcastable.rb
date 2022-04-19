@@ -17,9 +17,19 @@ module Broadcastable
       players.each do |p|
         broadcast_animations(p, card_draw_animation_data)
       end
-      # broadcast_animations(card.player, 'fp_draw_card', { tag: 'fp', card: card })
-      # broadcast_animations(opposing_player_of(card.player), 'op_draw_card', { tag: 'op' })
     end
+
+    def broadcast_basic_update
+      fetch_game_data
+      players.each { |player| broadcast_perspective_for(player) }
+    end
+
+    def broadcast_card_play_animations(card)
+      broadcast_play_phase(card)
+      broadcast_board_entry_phase(card)
+    end
+
+    private
 
     def fetch_game_data
       current_cache = Rails.cache.read("game_#{id}")
@@ -30,19 +40,6 @@ module Broadcastable
         Rails.cache.write("game_#{id}", @game_data, expires_in: 2.hours)
       end
     end
-
-    def broadcast_basic_update
-      fetch_game_data
-      players.each { |player| broadcast_perspective_for(player) }
-      @last_played_card = nil
-    end
-
-    def broadcast_card_play_animations(card, _position = nil)
-      broadcast_play_phase(card)
-      broadcast_board_entry_phase(card)
-    end
-
-    private
 
     def broadcast_play_phase(card)
       from_hand_animation_data = {
@@ -76,7 +73,7 @@ module Broadcastable
 
       touch && fetch_game_data
       players.each do |p|
-        broadcast_animations(p, card_play_animation_data)
+        broadcast_animations(p, card_play_animation_data, card)
       end
     end
 
@@ -107,7 +104,7 @@ module Broadcastable
                                                                     @game_data).values
     end
 
-    # Broadcast game over websocket
+    # Broadcast game data in JSON format over websocket to re-render with React.
     def broadcast_perspective_for(player)
       fetch_game_data unless @game_data.present?
       game_json = JSON.parse(curate_json_for_perspective(player.user_id, @game_data))
@@ -117,24 +114,11 @@ module Broadcastable
                                })
     end
 
-    # Broadcast animations by streaming an update to a specific div that passes data to a Stimulus controller.
-    # Current animation_type options:
-    #
-    # battle -- Animation for attackers meeting defenders and fighting
-    # locals: { attacker: { attacker.class.name => attacker.id }, defender: { defender.class.name => defender.id }, dead_cards: [dead_cards] }
-    #
-    # from_hand -- Animation for cards being played from hand to the game board
-    # locals: { hand: hand, played_card_id: played_card_id, target_id: target_id }
-    #
-    # [fp/op]_draw_card -- Animation for drawing a card from deck to hand
-    # locals: { tag: tag, card: card }
-    #
-    # end_mulligan -- Animation for ending mulligan by moving cards from stage to hand and fading mulligan menu
-    # locals: { count: count }
-    #
-    def broadcast_animations(player, animation_object) # , _animation_type, _locals)
+    # Broadcast animations by adding data attributes to objects through animation_object.
+    # Will also pass along updated game data if @game_data is initialized before this call.
+    def broadcast_animations(player, animation_object, last_played_card = nil)
       game_json = JSON.parse(curate_json_for_perspective(player.user_id, @game_data)) if @game_data
-      game_json['lastPlayedCard'] = @last_played_card if @last_played_card
+      game_json['lastPlayedCard'] = last_played_card if last_played_card
       GameChannel.broadcast_to([self, player], {
                                  streamPurpose: 'animation',
                                  animationData: animation_object,

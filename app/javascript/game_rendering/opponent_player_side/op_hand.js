@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import html from '../../components/htm_create_element';
 
 const cardInHandTooltipClassList = 'left-0 right-0 text-center tooltip -bottom-10';
@@ -6,19 +7,20 @@ const containerClasslist = 'absolute flex-1 w-full ml-auto text-center has-toolt
 
 const hoverTooltip = (count) => {
   const plural = count > 1 ? 's' : null;
-  return html`<div class=${cardInHandTooltipClassList}>Your opponent has ${count} card${plural} in hand. </div>`;
+  return html`<div className=${cardInHandTooltipClassList}>Your opponent has ${count} card${plural} in hand. </div>`;
 };
 
-const cardInHand = (id) => html`<div key=${id} id=${id} class=${cardInHandClassList} />`;
+const cardInHand = forwardRef((props,ref) => {return html`<div id=${props.id} className=${cardInHandClassList} ref=${(el) => { ref.current[props.id] = el}}/>`;})
 
-export default function OpponentPlayerHand(handData) {
-  const cardsInHand = handData.map((id) => cardInHand(id));
-
+const OpponentPlayerHand = forwardRef((props, ref) => {
+ const {cards} = props
   return html`<div id='op-cards-hand'
-        class="${containerClasslist}"
+        className="${containerClasslist}"
         data-animations-target="hand"
         >
-        ${hoverTooltip(cardsInHand.length)}
-        ${cardsInHand}
+        ${hoverTooltip(cards.length)}
+        ${cards.map((card) => html`<${cardInHand} id=${card} ref=${ref} key=${card}/>`)}
         </div>`;
-}
+})
+
+export default OpponentPlayerHand

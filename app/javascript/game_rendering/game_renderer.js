@@ -9,12 +9,12 @@ const gameRoot = createRoot(gameContainer);
 export class GameRenderer {
   updateGameData(updatedGameData) {
     this.gameData = this.filterAndOrganizeData(updatedGameData);
-    this.provideDataToDragController(this.gameData);
   }
 
   renderGameWindow(animationData) {
     const gameElement = html`<${GameContainer} gameData=${this.gameData} animationData=${animationData}/>`;
     gameRoot.render(gameElement);
+    this.provideDataToDragController(this.gameData);
   }
 
   filterAndOrganizeData(updatedGameData) {

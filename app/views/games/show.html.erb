@@ -8,10 +8,6 @@
   <article id="main-game-board"
 class="flex flex-col h-full flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
 data-controller="gameplay-drag line-drawer style-cards gameboard-animations">
-    <%=render(@last_played_card,
-         locals: { class: 'absolute left-[15%] bottom-1/2 z-50',
-                   id: "animated-card",
-                   decorator_data_method: :data_for_last_played} ) if @last_played_card  %>
     <%= render 'games/mulligan', first_person_player: @first_person_player, game: @game if @game.status == "mulligan"%>
   </article>
 </div>

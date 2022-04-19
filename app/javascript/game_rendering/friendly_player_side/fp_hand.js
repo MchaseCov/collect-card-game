@@ -30,7 +30,7 @@ const FriendlyPlayerHand  = forwardRef((props, ref) => {
   //const cardsInHand = cards.map((card) => StandardCard(card, cardInHandClassList, cardInHandDataAttributes(card)));
 
   return html`
-  <div id='fp-cards-hand' class="${containerClasslist}" data-animations-target="hand">
+  <div id='fp-cards-hand' className="${containerClasslist}" data-animations-target="hand">
     ${cards.map((card) => html`<${StandardCard} id=${card.id} 
                                                 key=${card.id}
                                                 cardConstant=${card.cardConstant}
@@ -42,6 +42,7 @@ const FriendlyPlayerHand  = forwardRef((props, ref) => {
                                                 keywords=${card.keywords}
                                                 cost=${card.cost}
                                                 ref=${ref}
+                                                draggable=${true}
                                               />`)}
   </div>`; 
 });

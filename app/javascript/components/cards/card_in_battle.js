@@ -7,7 +7,7 @@ import Art from '../shared/art';
 import StandardCard from './standard_card';
 
 const classList = 'relative text-white border-2 border-black rounded-full w-36 h-52 mx-2.5 card-on-board min-w-36 has-tooltip';
-const tooltipClassList = 'tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200'
+const tooltipClassList = 'tooltip top-0 -left-44 z-50 shadow-2xl shadow-cyan-200 pointer-events-none select-none'
 const CardInBattle = forwardRef((props, ref) => {
   const [status, setStatus] = useState(props.status);
 
@@ -31,8 +31,7 @@ const CardInBattle = forwardRef((props, ref) => {
   });
 
   return html`
-    <div id=${props.id} ref=${(el) => ref.current[props.id] = el} class=${[classList, props.additionalClasses].join(' ')} ...${props.dataset}>
-    <${Healthbubble} health=${props.health} healthCap=${props.health_cap} />
+    <div id=${props.id} ref=${(el) => ref.current[props.id] = el} className=${[classList, props.additionalClasses].join(' ')} ...${props.dataset}>
     <${StandardCard} id=${`card_${props.id}_tooltip`}
                      cardConstant=${props.cardConstant}
                      health=${props.health}
@@ -42,6 +41,7 @@ const CardInBattle = forwardRef((props, ref) => {
                      keywords=${props.keywords}
                      cost=${props.cost}
                     />
+    <${Healthbubble} health=${props.health} healthCap=${props.health_cap} />
     <${AttackBubble} attack=${props.attack} />
     <${Art} rounded="true" />
     </div>

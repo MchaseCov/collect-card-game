@@ -12,12 +12,12 @@ import Tribe from '../shared/tribe';
 const classList = 'w-40 text-white border-2 border-black rounded h-60 ';
 const StandardCard = forwardRef((props, ref) => {
   return html`
-    <div key=${props.id} id=${props.id} class=${classList + props.additionalClasses } draggable="true" ...${props.dataset} ref=${(el) => { if(ref) ref.current[props.id] = el}} >
+    <div id=${props.id} className=${classList + props.additionalClasses } draggable=${props.draggable || false} ...${props.dataset} ref=${(el) => { if(ref) ref.current[props.id] = el}} >
     <${CostBubble} cost=${props.cost}/>
     <${NameBubble} name=${props.cardConstant.name}/>
     <${Healthbubble} health=${props.health} healthCap=${props.health_cap} additionalClasses="w-10 h-10 text-3xl -bottom-2" />
     <${AttackBubble} attack=${props.attack} additionalClasses=" w-10 h-10 text-3xl -bottom-2" />
-    <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-red-700 h-24 whitespace-normal pointer-events-none select-none">
+    <div className="absolute inset-x-0 h-24 text-xs text-center whitespace-normal bg-red-700 border-2 rounded pointer-events-none select-none bottom-2 border-slate-900">
     ${props.keywords.map((kw) => Keyword(kw))}
     </div>
     <${Tribe} tribe=${props.tribe} />

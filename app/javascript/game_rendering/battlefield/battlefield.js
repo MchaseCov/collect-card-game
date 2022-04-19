@@ -6,7 +6,7 @@ import StandardCard from '../../components/cards/standard_card';
 import { forwardRef } from 'react';
 
 const initialFriendlyBoardSpaceElement = {
-  class: 'rounded-full opacity-50 board-space',
+  className: 'rounded-full opacity-50 board-space',
   'data-gameplay-drag-target': 'recievesPlayToBoard',
   'data-action': 'drop->gameplay-drag#boardspaceDrop dragenter->gameplay-drag#boardspaceDragEnter dragover->gameplay-drag#dragOver',
 };
@@ -65,17 +65,18 @@ const createBattlefield = forwardRef((props, ref) => {
       additionalClasses="absolute left-[15%] bottom-1/2 z-50"
       keywords=${card.keywords}
       cost=${card.cost}
+      key=${card.id}
      />`
     } else {
-      return undefined
+      return ''
     }
   })();
 
   return html`
-  <section id="battlefield" class="grid w-full grid-cols-1 grid-rows-2 h-1/3 rounded-2xl" data-animations-target="battlefield">
+  <section id="battlefield" className="grid w-full grid-cols-1 grid-rows-2 h-1/3 rounded-2xl" data-animations-target="battlefield">
     ${lastPlayedCardElement}
-    <${createBattlefieldRow} ref=${ref} cards=${opponentCards} playerSpecificData=${opponentSpecificData}/>
-    <${createBattlefieldRow} ref=${ref} cards=${friendlyCards} playerSpecificData=${firstPersonSpecificData}/>
+    <${createBattlefieldRow} key="OpBattlefield" ref=${ref} cards=${opponentCards} playerSpecificData=${opponentSpecificData}/>
+    <${createBattlefieldRow} key="FpBattlefield" ref=${ref} cards=${friendlyCards} playerSpecificData=${firstPersonSpecificData}/>
   </section>`
 })
 export default createBattlefield

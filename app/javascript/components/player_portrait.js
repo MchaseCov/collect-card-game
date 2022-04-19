@@ -6,7 +6,7 @@ import AttackBubble from './shared/attack_bubble';
 export default function PlayerPortrait(props, id, classList, dataset) {
   return html`<div id='${id}-player-info'
                   key=${id}
-                  class="${classList}"
+                  className="${classList}"
                   data-status="${props.status}"
                   data-id="${props.id}"
                   data-player-id="${props.id}"

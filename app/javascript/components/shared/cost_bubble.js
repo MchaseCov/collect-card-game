@@ -4,7 +4,7 @@ const classList = 'absolute z-10 w-10 h-10 text-3xl text-center text-white borde
 
 export default function CostBubble(props) {
   return html`
-    <div id="cost" class=${classList} >
+    <div id="cost" className=${classList} >
     ${props.cost}
     </div>
   `;

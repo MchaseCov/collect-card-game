@@ -5,7 +5,7 @@ const classList = 'absolute bottom-0 z-10 w-12 h-12 pb-1 mt-1 text-4xl text-cent
 export default function AttackBubble(props) {
   const isHidden = props.attack <= 0 ? ' hidden ' : undefined;
   return html`
-    <div id="attack" class=${[classList, isHidden, props.additionalClasses].join(' ')} >
+    <div id="attack" className=${[classList, isHidden, props.additionalClasses].join(' ')} >
       ${props.attack}
     </div>
   `;

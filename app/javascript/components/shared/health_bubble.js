@@ -6,7 +6,7 @@ export default function Healthbubble(props) {
   if (props.health === null) return;
   const textColor = props.health < props.healthCap ? 'text-red-500' : 'text-white';
   return html`
-    <div id="health" class=${[classList, textColor, props.additionalClasses].join(' ')} >
+    <div id="health" className=${[classList, textColor, props.additionalClasses].join(' ')} >
     ${props.health}
     </div>
   `;
