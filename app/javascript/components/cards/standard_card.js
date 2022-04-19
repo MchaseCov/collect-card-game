@@ -20,7 +20,7 @@ const StandardCard = forwardRef((props, ref) => {
     <div className="absolute inset-x-0 h-24 text-xs text-center whitespace-normal bg-red-700 border-2 rounded pointer-events-none select-none bottom-2 border-slate-900">
     ${props.keywords.map((kw) => Keyword(kw))}
     </div>
-    <${Tribe} tribe=${props.tribe} />
+    <${Tribe} tribe=${props.cardConstant.tribe} />
     <${Art} />
     </div>
   `;
