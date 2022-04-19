@@ -47,7 +47,6 @@ const Game = forwardRef((props, ref) => {
         data-gameboard-animations-status-value=${gameInformationData.status}
         data-gameboard-animations-turn-value=${gameInformationData.turn_time}
         key="game-board">
-        >
   <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" className='fixed z-50 pointer-events-none select-none'></canvas>
   <${createOpponentPlayerInfo} key="opInfoRegion" ref=${opponentCardInHandReference} gameData=${gameData.opponent}/>
   <${createBattlefield} key="battlefieldRegion" ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield} lastPlayedCard=${gameData.lastPlayedCard}/>

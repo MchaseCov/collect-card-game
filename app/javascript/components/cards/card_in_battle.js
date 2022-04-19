@@ -17,11 +17,9 @@ const CardInBattle = forwardRef((props, ref) => {
       switch (status) {
         case 'attack_ready':
           thisCardElement.setAttribute('data-gameplay-drag-target', 'recievesPlayerInput friendlyActor')
-
           break;
         default:
           thisCardElement.setAttribute('data-gameplay-drag-target', 'recievesPlayerInput inactiveFriendlyActor')
-
       }
     }
   },[status]);

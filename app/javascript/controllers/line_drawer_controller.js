@@ -20,6 +20,7 @@ export default class extends Controller {
     this.stopDrawing();
     this.element.style.cursor = 'auto';
     element.style.cursor = "auto";
+    this.canvasTarget.removeAttribute('data-action')
   }
 
   disconnectOriginTarget() {

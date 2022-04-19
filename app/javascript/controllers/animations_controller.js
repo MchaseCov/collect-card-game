@@ -9,7 +9,6 @@ export default class extends Controller {
     const id = card.getBoundingClientRect().y > 0 ? 'fp' : 'op'
     const row = document.getElementById(`${id}-cards-battle`)
     const target = row.querySelector(`[data-board-id="${card.dataset.targetPosition || 0}"]`);
-
     this.animateCardFromHand(card, target)
     this.animateCardInHandGapFill(card)
   }
