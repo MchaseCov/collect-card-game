@@ -29,7 +29,7 @@
   { name: 'Loyal Wolf', tribe: 'Beast', cost: 2, attack: 2, health: 3 },
   { name: 'Beast Tamer', cost: 3, attack: 3, health: 2 }, # Battlecry: Give a friendly beast +2 health
   { name: 'Charging Hound', cost: 4, attack: 3, health: 3 }, # Battlecry: Can immediately attack
-  { name: 'Protective Lioness', cost: 5, attack: 5, health: 5 } # Deathrattle: Summon two 2/2 lion cubs.
+  { name: 'Protective Lioness', cost: 5, attack: 5, health: 5, tribe: 'Beast' } # Deathrattle: Summon two 2/2 lion cubs.
 ]
 
 @wizard_party_cards = [

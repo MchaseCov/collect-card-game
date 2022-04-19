@@ -19,9 +19,9 @@ module Broadcastable
       end
     end
 
-    def broadcast_basic_update
+    def broadcast_basic_update(last_played_card = nil)
       fetch_game_data
-      players.each { |player| broadcast_perspective_for(player) }
+      players.each { |player| broadcast_perspective_for(player, last_played_card) }
     end
 
     def broadcast_card_play_animations(card)
@@ -51,13 +51,15 @@ module Broadcastable
       }
 
       if card.in_battlefield?
-        battlefield_cards = card.player.cards.in_battlefield
-        left_cards = battlefield_cards.where('position < ?', card.position).pluck(:id)
-        right_cards = battlefield_cards.where('position > ?', card.position).pluck(:id)
-        left_targets = left_cards.map { |id| { id: id, dataset: { 'animationsTarget': 'shiftLeft' } } }
-        right_targets = right_cards.map { |id| { id: id, dataset: { 'animationsTarget': 'shiftRight' } } }
-        (left_targets + right_targets).each_with_index do |object, i|
-          from_hand_animation_data[:targets][:"target_#{i}"] = object
+        left_cards = card.player.cards.in_battlefield.where('position < ?', card.position)
+        right_cards = card.player.cards.in_battlefield.where('position > ?', card.position)
+        left_cards.pluck(:id).each do |id|
+          from_hand_animation_data[:targets][:"target_#{id}"] =
+            { id: id, dataset: { 'animationsTarget': 'shiftLeft' } }
+        end
+        right_cards.pluck(:id).each do |id|
+          from_hand_animation_data[:targets][:"target_#{id}"] =
+            { id: id, dataset: { 'animationsTarget': 'shiftRight' } }
         end
       end
 
@@ -105,9 +107,10 @@ module Broadcastable
     end
 
     # Broadcast game data in JSON format over websocket to re-render with React.
-    def broadcast_perspective_for(player)
+    def broadcast_perspective_for(player, last_played_card = nil)
       fetch_game_data unless @game_data.present?
       game_json = JSON.parse(curate_json_for_perspective(player.user_id, @game_data))
+      game_json['lastPlayedCard'] = last_played_card if last_played_card
       GameChannel.broadcast_to([self, player], {
                                  streamPurpose: 'basicUpdate',
                                  gameData: game_json

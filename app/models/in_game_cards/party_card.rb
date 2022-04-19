@@ -29,14 +29,24 @@ class PartyCard < Card
   # saved_change_to_location # => Array containing the data before and after the change.
   #                               Example: card.saved_change_to_status # =>['attacking', 'dead']
   after_update do
-    if saved_change_to_location? && saved_change_to_location == %w[hand battlefield]
-      battlecry&.trigger(self, current_target)
-      [taunt, aura, listener].compact.each { |keyword| keyword.trigger(self) }
-    end
+    # if saved_change_to_location? && saved_change_to_location == %w[hand battlefield]
+    #  battlecry&.trigger(self, current_target)
+    #  [taunt, aura, listener].compact.each { |keyword| keyword.trigger(self) }
+    # end
     if saved_change_to_status? && saved_change_to_status[1] == 'dead'
       deathrattle&.trigger(self) unless silenced?
       clean_buffs_and_effects
     end
+  end
+
+  ### PLANNING
+
+  def trigger_all_entry_keywords
+    return false unless keywords.present?
+
+    battlecry&.trigger(self, current_target)
+    [taunt, aura, listener].compact.each { |keyword| keyword.trigger(self) }
+    true
   end
 
   enum status: { unplayed: 0, discarded: 1, dead: 2, sleeping: 3, attack_ready: 4, second_attack_ready: 5 },
@@ -130,11 +140,11 @@ class PartyCard < Card
   # put_card_in_graveyard: "kills" a Card by setting its location to "graveyard" and status to "dead".
   # decrements the position of other cards on the board to fill the gap.
   def put_card_in_graveyard
-    player.shift_cards_left(position)
     transaction do
       in_graveyard!
       status_dead!
     end
+    player.shift_cards_left(position)
   end
 
   private

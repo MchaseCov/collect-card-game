@@ -54,8 +54,7 @@ class Player < ApplicationRecord
   def remove_aura_from_cards(aura)
     # This prevents duplicate auras from being deleted, but we have to manually send the callback too.
     cards.in_battlefield.each do |c|
-      c.active_buffs.find_by(buff_id: aura.id)&.destroy
-      c.method(:run_buff_removal_on_card).call(aura)
+      c.method(:run_buff_removal_on_card).call(aura) if c.active_buffs.find_by(buff_id: aura.id)&.destroy
     end
   end
 
