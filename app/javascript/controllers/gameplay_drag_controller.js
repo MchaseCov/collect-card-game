@@ -6,7 +6,13 @@ import SpellPlayHandler from '../spell_play_handler';
 
 // Connects to data-controller="gameplay-drag"
 export default class extends Controller {
-  static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'enemyActor', 'tauntingCard'];
+  static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'inactiveFriendlyActor', 'enemyActor', 'tauntingCard'];
+
+
+  inactiveFriendlyActorTargetConnected(element){
+    element.createHandler = undefined
+    this.removeDragFromElement(element)
+  }
 
   initializeValues(gameData) {
     this.playerCostValue = gameData.player.player_data.cost_current;
@@ -16,21 +22,21 @@ export default class extends Controller {
   };
 
   playsToBoardTargetConnected(element) {
+    this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
     if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) return this.removeDragFromElement(element);
-    else this.bindToNode(element, 'createHandler', this.createBoardPlayHandler);
   }
 
   friendlyActorTargetConnected(element) {
-    if (element.dataset.status !== 'attack_ready') return this.removeDragFromElement(element);
+    console.log("friendlyactor")
     this.bindToNode(element, 'createHandler', this.createDragBattleHandler);
+    element.dataset.status !== 'attack_ready' ? this.removeDragFromElement(element) : this.returnDragToElement(element)
   }
 
   spellCardTargetConnected(element) {
+    this.bindToNode(element, 'createHandler', this.createSpellPlayHandler);
     if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) return this.removeDragFromElement(element);
     if (this.takesPlayerInputTargets.includes(element)) {
       // Stuff about collecting spell targets and doing battlecry-esque things
-    } else {
-      this.bindToNode(element, 'createHandler', this.createSpellPlayHandler);
     }
   }
 

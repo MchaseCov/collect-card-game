@@ -13,22 +13,20 @@ const CardInBattle = forwardRef((props, ref) => {
 
   useEffect(() => {
     const thisCardElement = ref.current[props.id];
-    if (props.firstPerson && thisCardElement.dataset.status !== status) {
-      const newStatus = thisCardElement.dataset.status;
-      setStatus(newStatus);
-      switch (newStatus) {
+    if (props.firstPerson) {
+      switch (status) {
         case 'attack_ready':
-          thisCardElement.draggable = true;
-          thisCardElement.classList.add('ring');
-          thisCardElement.dataset.action.replace('#errorFeedback', '#dragStart');
+          thisCardElement.setAttribute('data-gameplay-drag-target', 'recievesPlayerInput friendlyActor')
+
           break;
         default:
-          thisCardElement.draggable = false;
-          thisCardElement.classList.remove('ring');
-          thisCardElement.dataset.action.replace('#dragStart', '#errorFeedback');
+          thisCardElement.setAttribute('data-gameplay-drag-target', 'recievesPlayerInput inactiveFriendlyActor')
+
       }
     }
-  });
+  },[status]);
+
+  if (props.status !== status) setStatus(props.status)
 
   return html`
     <div id=${props.id} ref=${(el) => ref.current[props.id] = el} className=${[classList, props.additionalClasses].join(' ')} ...${props.dataset}>

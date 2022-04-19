@@ -56,7 +56,7 @@ export default class extends Controller {
   resizeActiveCanvas() {
     this.clearCanvas();
     this.setCanvasSizeAndContext();
-    this.createLine(this.originTarget);
+    if(this.originTarget)this.createLine(this.originTarget);
   }
 
   updateLine(event) {
