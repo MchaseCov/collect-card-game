@@ -142,9 +142,9 @@ class PartyCard < Card
   def put_card_in_graveyard
     transaction do
       in_graveyard!
+      player.shift_cards_left(position)
       status_dead!
     end
-    player.shift_cards_left(position)
   end
 
   private

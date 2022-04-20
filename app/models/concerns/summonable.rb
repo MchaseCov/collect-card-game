@@ -17,7 +17,11 @@ module Summonable
     @deck = gamestate_deck
     left_direction = right_direction = card_data[:position]
     amount.times do |i|
-      generated_position = ((i.even? ? right_direction += 1 : left_direction -= 1))
+      generated_position = if in_graveyard?
+                             (right_direction += 1) - 1
+                           else
+                             (i.even? ? right_direction += 1 : left_direction -= 1)
+                           end
       generated_card = @deck.cards.new(card_data)
       generated_card.buffs << @buffs if @buffs
       generated_card.attributes = card_data if @buffs # "Undo" the buff callbacks
@@ -34,8 +38,11 @@ module Summonable
   # amount  -  The Integer amount of spaces to create
   def create_space_for_units(amount_to_summon)
     left_token_count = amount_to_summon / 2
-    player.shift_cards_right(position + 1, amount_to_summon)
-    increment_position(left_token_count)
+    position_to_shift_from = in_graveyard? ? position : position + 1
+
+    player.shift_cards_right(position_to_shift_from, amount_to_summon)
+
+    increment_position(left_token_count) unless in_graveyard?
   end
 
   def fetch_card_data(summon_type)

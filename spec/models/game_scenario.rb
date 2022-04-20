@@ -46,10 +46,7 @@ shared_context 'Shared Game Scenario' do
   end
 
   let(:game) do
-    game = Game.create!
-    game.send(:populate_players, queued_deck_user_one, queued_deck_user_two)
-    game.send(:populate_decks, queued_deck_user_one, queued_deck_user_two)
-    game
+    Game.form_game(queued_deck_user_one, queued_deck_user_two)
   end
 
   let(:buff) do
