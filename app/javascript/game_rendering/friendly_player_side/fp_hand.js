@@ -6,7 +6,8 @@ import StandardCard from '../../components/cards/standard_card';
 
 const containerClasslist = 'absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0';
 const cardInHandClassList = 'relative ring ring-lime-500 playing-card inline-block -ml-10 z-10 hover:z-20 hover:bottom-8 hover:scale-125';
-const cardInHandDataAttributes = (card) => {
+
+const partyCardAttributes = card => {
   const data = {
     'data-id': card.id,
     'data-resource': 'Cost',
@@ -23,7 +24,36 @@ const cardInHandDataAttributes = (card) => {
     data['data-gameplay-drag-target'] += ' takesPlayerInput';
   }
   return data;
-};
+}
+
+const spellCardAttributes = card => {
+  const data = {
+    'data-id': card.id,
+    'data-resource': 'Resource',
+    'data-cost': card.cost,
+    'data-gameplay-drag-target': 'spellCard',
+    'data-action': 'dragstart->gameplay-drag#dragStart dragend->gameplay-drag#dragEnd',
+    'data-gameplay-drag-type-param': 'spell',
+    'data-gameplay-drag-action-param': 'play_card',
+  };
+  const cast = card.keywords.find((c) => c.type === 'Cast');
+  if (cast?.player_choice) {
+    data['data-gameplay-drag-target-type-param'] = 'cast';
+    data['data-cast']= cast.id;
+    data['data-gameplay-drag-target'] += ' takesPlayerInput';
+  }
+  return data;
+}
+
+
+const cardInHandDataAttributes = (card) => {
+  switch (card.type) {
+    case 'PartyCard':
+      return partyCardAttributes(card)
+    case 'SpellCard':
+      return spellCardAttributes(card)
+}};
+
 
 const FriendlyPlayerHand  = forwardRef((props, ref) => {
   const {cards}= props

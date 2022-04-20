@@ -17,10 +17,6 @@
 class SpellCard < Card
   attr_accessor :current_target
 
-  after_update do |card|
-    card.cast_effect.trigger(self, current_target) if card.saved_change_to_status == %w[unplayed spent]
-  end
-
   enum status: { unplayed: 0, discarded: 1, spent: 2 }, _prefix: true
 
   has_one :player, through: :gamestate_deck
@@ -28,6 +24,11 @@ class SpellCard < Card
     def cast_effect
       where(type: 'Cast')
     end
+  end
+
+  def trigger_all_entry_keywords
+    cast_effect.trigger(self, current_target)
+    true
   end
 
   def cast_effect

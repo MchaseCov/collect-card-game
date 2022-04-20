@@ -74,6 +74,7 @@ module Cacheable
     personalization = { player => :player, opponent => :opponent }
     cached_data.keys.each { |k| cached_data[personalization[k]] = cached_data.delete(k) if personalization[k] }
     cached_data[:opponent][:cards][:in_hand] = cached_data[:opponent][:cards][:in_hand].pluck(:id)
+    cached_data[:player][:cards][:in_hand] = cached_data[:player][:cards][:in_hand].map(&:attributes)
     cached_data.to_json
   end
 end

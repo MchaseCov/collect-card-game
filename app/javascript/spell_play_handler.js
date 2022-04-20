@@ -1,7 +1,6 @@
 import GameplayHandler from './gameplay_handler';
 
 const targetDecorationAttributes = ['ring-sky-600', 'hide-dragging-card', 'hover:invisible'];
-const battlefield = document.querySelector('#battlefield'); // For specifity
 
 // Handler for spell cards, currently not accounting for target params as this can be added through inheritence or another handler
 export default class SpellPlayHandler extends GameplayHandler {
@@ -11,7 +10,9 @@ export default class SpellPlayHandler extends GameplayHandler {
     this.startGameDecoration();
   }
 
-  setElementClasslistPairs = () => [
+  setElementClasslistPairs = () => {
+  const battlefield = document.querySelector('#battlefield'); // For specifity
+  return [
     {
       elementList: [this.target.parentElement],
       classList: ['hover:bottom-0'],
@@ -26,6 +27,7 @@ export default class SpellPlayHandler extends GameplayHandler {
       classList: targetDecorationAttributes,
     },
   ];
+}
 
   startGameDecoration() {
     this.elementClasslistPairs = this.setElementClasslistPairs();
@@ -47,6 +49,7 @@ export default class SpellPlayHandler extends GameplayHandler {
   postParams = () => [];
 
   postPlayerAction(target) {
+    this.endGameDecoration()
     super.postPlayerAction({ target });
   }
 }

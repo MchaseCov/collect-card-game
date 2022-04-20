@@ -9,6 +9,7 @@ export default class extends Controller {
   static targets = ['playsToBoard', 'spellCard', 'takesPlayerInput', 'recievesPlayToBoard', 'recievesPlayerInput', 'friendlyActor', 'inactiveFriendlyActor', 'enemyActor', 'tauntingCard'];
 
 
+
   inactiveFriendlyActorTargetConnected(element){
     element.createHandler = undefined
     this.removeDragFromElement(element)
@@ -27,7 +28,6 @@ export default class extends Controller {
   }
 
   friendlyActorTargetConnected(element) {
-    console.log("friendlyactor")
     this.bindToNode(element, 'createHandler', this.createDragBattleHandler);
     element.dataset.status !== 'attack_ready' ? this.removeDragFromElement(element) : this.returnDragToElement(element)
   }
@@ -43,12 +43,13 @@ export default class extends Controller {
   async loadControllerFromData(gameData) {
     this.initializeValues(gameData)
     if (this.currentTurnValue !== this.playerTurnValue) {
-    this.playsToBoardTargets.concat(this.takesPlayerInputTargets).forEach((el) => {
+    this.playsToBoardTargets.concat(this.takesPlayerInputTargets).concat(this.spellCardTargets).forEach((el) => {
       this.removeDragFromElement(el);
     });
     return;
   }
   this.validatePartyCardsArePlayable();
+  this.validateSpellCardsArePlayable()
   await this.prepareBattlecryData();
   }
 
@@ -121,6 +122,13 @@ export default class extends Controller {
     const boardIsFull = (this.recievesPlayToBoardTargets?.length >= 8);
     this.playsToBoardTargets.forEach((element) => {
       if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) {this.removeDragFromElement(element);}
+      else if (element.draggable === false) {this.returnDragToElement(element)}
+    });
+  }
+
+  validateSpellCardsArePlayable(){
+    this.spellCardTargets.forEach((element) => {
+      if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) {this.removeDragFromElement(element);}
       else if (element.draggable === false) {this.returnDragToElement(element)}
     });
   }
