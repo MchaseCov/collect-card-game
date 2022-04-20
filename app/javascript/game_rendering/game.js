@@ -9,7 +9,7 @@ import endTurnButton from '../components/end_turn_button';
 
 const Game = forwardRef((props, ref) => {
   const { gameData } = props;
-  const { cardInBattleReference, friendlyCardInHandReference,  opponentCardInHandReference } = ref.current
+  const { cardInBattleReference, friendlyCardInHandReference,  opponentCardInHandReference, thisGameReference} = ref.current
   const gameInformationData = gameData.game
   const playerInformationData = gameData.player.player_data
   const playerCardData = gameData.player.cards
@@ -46,7 +46,9 @@ const Game = forwardRef((props, ref) => {
         data-game=${gameInformationData.id}
         data-gameboard-animations-status-value=${gameInformationData.status}
         data-gameboard-animations-turn-value=${gameInformationData.turn_time}
-        key="game-board">
+        key="game-board"
+        ref=${(el) => thisGameReference.current.gameBoardParent = el}
+        >
   <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" className='fixed z-50 pointer-events-none select-none'></canvas>
   <${createOpponentPlayerInfo} key="opInfoRegion" ref=${opponentCardInHandReference} gameData=${gameData.opponent}/>
   <${createBattlefield} key="battlefieldRegion" ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield} lastPlayedCard=${gameData.lastPlayedCard}/>

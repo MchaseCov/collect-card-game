@@ -90,7 +90,6 @@ export default class BoardPlayHandler extends GameplayHandler {
   postParams = (event) => [this.currentlyReplacedSpace.dataset.gameplayDragBoardTargetParam, event.target.dataset.id];
 
   postPlayerAction(position, target) {
-    this.endGameDecoration()
     super.postPlayerAction({ position, target });
   }
 }

@@ -23,12 +23,14 @@ export default function GameContainer(props) {
   const cardsInBattle = gameData.opponent.cards.in_battlefield.concat(gameData.player.cards.in_battlefield).map((c) => c.id);
   const cardInBattleReference = useRef(cardsInBattle.reduce((obj, id) => (obj[id] = undefined, obj), {}));
 
+  const thisGameReference = useRef({})
+
   // Object container to hold references together and forward them to children
-  const gameReferences = useRef({ cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference });
+  const gameReferences = useRef({ cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference });
 
   // REMINDER: OPPONENT CARD IN HAND REFERENCES
   const searchForElementInRefs = (id) => {
-    const listOfAllReferences = [cardInBattleReference.current, friendlyCardInHandReference.current, opponentCardInHandReference.current];
+    const listOfAllReferences = [cardInBattleReference.current, friendlyCardInHandReference.current, opponentCardInHandReference.current, thisGameReference.current];
 
     for (let i = 0; i < listOfAllReferences.length; i++) {
       if (listOfAllReferences[i][id]) return listOfAllReferences[i][id];

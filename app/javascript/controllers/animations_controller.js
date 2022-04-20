@@ -2,8 +2,22 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand'];
+  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift'];
 
+
+  fallbackForEndShiftTargetConnected(element){
+    const leftCards = [...document.getElementsByClassName('card-to-left')]
+    leftCards.forEach((el)=> {
+      el.classList.remove('card-to-left')
+      el.removeAttribute('data-animations-target')
+    });
+    const rightCards = [...document.getElementsByClassName('card-to-right')]
+    rightCards.forEach((el)=> {
+      el.classList.remove('card-to-right')
+    el.removeAttribute('data-animations-target')
+    })
+    element.removeAttribute('data-animations-target')
+  }
 
   fromHandTargetConnected(card){
     const id = card.getBoundingClientRect().y > 0 ? 'fp' : 'op'
@@ -22,7 +36,7 @@ export default class extends Controller {
 
   enterBattleTargetConnected(card){
     card.classList.add('last-played-card')
-    card.onanimationend = () => { card.removeAttribute('data-animations-target')}
+    card.onanimationend = () => { card.removeAttribute('data-animations-target');card.classList.remove('last-played-card')}
     const leftCards = [...document.getElementsByClassName('card-to-left')]
     leftCards.forEach((el)=> {
       el.classList.remove('card-to-left')

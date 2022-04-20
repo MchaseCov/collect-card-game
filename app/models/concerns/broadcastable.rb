@@ -26,7 +26,7 @@ module Broadcastable
 
     def broadcast_card_play_animations(card)
       broadcast_play_phase(card)
-      broadcast_board_entry_phase(card)
+      card.type == 'PartyCard' ? broadcast_board_entry_phase(card) : fallback_entry_phase(card)
     end
 
     private
@@ -71,6 +71,17 @@ module Broadcastable
     def broadcast_board_entry_phase(card)
       card_play_animation_data = { targets: {
         playedCard: { id: card.id, dataset: { 'animationsTarget': 'enterBattle' } }
+      } }
+
+      touch && fetch_game_data
+      players.each do |p|
+        broadcast_animations(p, card_play_animation_data, card)
+      end
+    end
+
+    def fallback_entry_phase(card)
+      card_play_animation_data = { targets: {
+        playedCard: { id: 'gameBoardParent', dataset: { 'animationsTarget': 'fallbackForEndShift' } }
       } }
 
       touch && fetch_game_data
