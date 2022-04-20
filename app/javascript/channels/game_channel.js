@@ -46,7 +46,7 @@ export default function connectToGameChannel(gameId, playerId) {
 
     async received(data) {
       await this.waitForOngoingAnimations();
-      console.log(data.gameData)
+      console.log(data)
       this.evaluateStreamPurpose(data);
     },
   });

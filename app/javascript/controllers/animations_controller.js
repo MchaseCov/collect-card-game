@@ -22,10 +22,18 @@ export default class extends Controller {
 
   enterBattleTargetConnected(card){
     card.classList.add('last-played-card')
+    card.onanimationend = () => { card.removeAttribute('data-animations-target')}
     const leftCards = [...document.getElementsByClassName('card-to-left')]
-    leftCards.forEach((el)=> el.classList.remove('card-to-left'));
+    leftCards.forEach((el)=> {
+      el.classList.remove('card-to-left')
+      el.removeAttribute('data-animations-target')
+
+    });
     const rightCards = [...document.getElementsByClassName('card-to-right')]
-    rightCards.forEach((el)=> el.classList.remove('card-to-right'))
+    rightCards.forEach((el)=> {
+      el.classList.remove('card-to-right')
+    el.removeAttribute('data-animations-target')
+    })
   }
 
   shiftLeftTargetConnected(card){
