@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import html from '../../components/htm_create_element';
+import html from '../htm_create_element';
 
 const cardInHandTooltipClassList = 'left-0 right-0 text-center tooltip -bottom-10';
 const cardInHandClassList = 'relative inline-block w-40 -mt-12 -ml-10 text-white border-2 border-black rounded h-60 max-h-60 bg-slate-700';
@@ -10,10 +10,10 @@ const hoverTooltip = (count) => {
   return html`<div className=${cardInHandTooltipClassList}>Your opponent has ${count} card${plural} in hand. </div>`;
 };
 
-const cardInHand = forwardRef((props,ref) => {return html`<div id=${props.id} className=${cardInHandClassList} ref=${(el) => { ref.current[props.id] = el}}/>`;})
+const cardInHand = forwardRef((props, ref) => { return html`<div id=${props.id} className=${cardInHandClassList} ref=${(el) => { ref.current[props.id] = el }}/>`; })
 
 const OpponentPlayerHand = forwardRef((props, ref) => {
- const {cards} = props
+  const { cards } = props
   return html`<div id='op-cards-hand'
         className="${containerClasslist}"
         data-animations-target="hand"

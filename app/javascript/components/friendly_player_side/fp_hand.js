@@ -1,8 +1,8 @@
-import html from 'components/htm_create_element';
+import html from '../htm_create_element';
 import { forwardRef } from 'react';
 
 
-import StandardCard from '../../components/cards/standard_card';
+import StandardCard from '../cards/standard_card';
 
 const containerClasslist = 'absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0';
 const cardInHandClassList = 'relative ring ring-lime-500 playing-card inline-block -ml-10 z-10 hover:z-20 hover:bottom-8 hover:scale-125';
@@ -20,7 +20,7 @@ const partyCardAttributes = card => {
   const battlecry = card.keywords.find((c) => c.type === 'Battlecry');
   if (battlecry?.player_choice) {
     data['data-gameplay-drag-target-type-param'] = 'battlecry';
-    data['data-battlecry']= battlecry.id;
+    data['data-battlecry'] = battlecry.id;
     data['data-gameplay-drag-target'] += ' takesPlayerInput';
   }
   return data;
@@ -39,7 +39,7 @@ const spellCardAttributes = card => {
   const cast = card.keywords.find((c) => c.type === 'Cast');
   if (cast?.player_choice) {
     data['data-gameplay-drag-target-type-param'] = 'cast';
-    data['data-cast']= cast.id;
+    data['data-cast'] = cast.id;
     data['data-gameplay-drag-target'] += ' takesPlayerInput';
   }
   return data;
@@ -52,11 +52,12 @@ const cardInHandDataAttributes = (card) => {
       return partyCardAttributes(card)
     case 'SpellCard':
       return spellCardAttributes(card)
-}};
+  }
+};
 
 
-const FriendlyPlayerHand  = forwardRef((props, ref) => {
-  const {cards}= props
+const FriendlyPlayerHand = forwardRef((props, ref) => {
+  const { cards } = props
   //const cardsInHand = cards.map((card) => StandardCard(card, cardInHandClassList, cardInHandDataAttributes(card)));
 
   return html`
@@ -74,7 +75,7 @@ const FriendlyPlayerHand  = forwardRef((props, ref) => {
                                                 ref=${ref}
                                                 draggable=${true}
                                               />`)}
-  </div>`; 
+  </div>`;
 });
 
 export default FriendlyPlayerHand

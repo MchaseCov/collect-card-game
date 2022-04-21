@@ -1,4 +1,4 @@
-import html from '../../components/htm_create_element';
+import html from '../htm_create_element';
 
 import createBattlefieldRow from './battlefield_row';
 import StandardCard from '../../components/cards/standard_card';
@@ -34,7 +34,7 @@ function opponentPlayerCardDataset(card) {
     'data-id': card.id,
     'data-status': card.status,
     'data-health-current': card.health,
-  'data-health-cap': card.health_cap,
+    'data-health-cap': card.health_cap,
     'data-type': 'party',
     'data-action': 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd',
   };
@@ -47,8 +47,8 @@ function opponentPlayerCardDataset(card) {
 
 const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500';
 
-const firstPersonSpecificData = {identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses, firstPerson: true }
-const opponentSpecificData = { identifier: 'op', cardDataset: opponentPlayerCardDataset}
+const firstPersonSpecificData = { identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses, firstPerson: true }
+const opponentSpecificData = { identifier: 'op', cardDataset: opponentPlayerCardDataset }
 
 const createBattlefield = forwardRef((props, ref) => {
   const opponentCards = props.opponentCards
@@ -57,7 +57,7 @@ const createBattlefield = forwardRef((props, ref) => {
   let lastPlayedCardElement = (() => {
     if (props.lastPlayedCard) {
       const card = props.lastPlayedCard
-      return html `<${StandardCard} id="animated-card"
+      return html`<${StandardCard} id="animated-card"
       cardConstant=${card.cardConstant}
       health=${card.health}
       attack=${card.attack}

@@ -1,4 +1,4 @@
-import html from '../../components/htm_create_element';
+import html from '../htm_create_element';
 
 export default function CreateBlankSpace(props) {
   if (props.playerSpecificData) { props.playerSpecificData['data-gameplay-drag-board-target-param'] = props.position; }

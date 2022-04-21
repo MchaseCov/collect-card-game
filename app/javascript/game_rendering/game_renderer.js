@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 
 import html from '../components/htm_create_element';
-import GameContainer from './game_container';
+import GameContainer from '../components/game/game_container';
 
 const gameContainer = document.getElementById('game-container');
 const gameRoot = createRoot(gameContainer);

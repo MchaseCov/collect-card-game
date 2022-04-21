@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import html from 'components/htm_create_element';
+import html from '../htm_create_element';
 import Game from './game';
 
 export default function GameContainer(props) {

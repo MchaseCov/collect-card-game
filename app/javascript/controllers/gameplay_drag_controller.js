@@ -1,8 +1,8 @@
 import { Controller } from '@hotwired/stimulus';
-import BoardPlayHandler from '../board_play_handler';
-import DragBattleHandler from '../drag_battle_handler';
-import TargetDataFetcher from '../target_data_fetcher';
-import SpellPlayHandler from '../spell_play_handler';
+import BoardPlayHandler from '../gameplay_drag_handlers/board_play_handler';
+import DragBattleHandler from '../gameplay_drag_handlers/drag_battle_handler';
+import TargetDataFetcher from '../gameplay_drag_handlers/target_data_fetcher';
+import SpellPlayHandler from '../gameplay_drag_handlers/spell_play_handler';
 
 // Connects to data-controller="gameplay-drag"
 export default class extends Controller {
@@ -10,7 +10,7 @@ export default class extends Controller {
 
 
 
-  inactiveFriendlyActorTargetConnected(element){
+  inactiveFriendlyActorTargetConnected(element) {
     element.createHandler = undefined
     this.removeDragFromElement(element)
   }
@@ -43,18 +43,18 @@ export default class extends Controller {
   async loadControllerFromData(gameData) {
     this.initializeValues(gameData)
     if (this.currentTurnValue !== this.playerTurnValue) {
-    this.playsToBoardTargets.concat(this.takesPlayerInputTargets).concat(this.spellCardTargets).forEach((el) => {
-      this.removeDragFromElement(el);
-    });
-    return;
-  }
-  this.validatePartyCardsArePlayable();
-  this.validateSpellCardsArePlayable()
-  await this.prepareBattlecryData();
+      this.playsToBoardTargets.concat(this.takesPlayerInputTargets).concat(this.spellCardTargets).forEach((el) => {
+        this.removeDragFromElement(el);
+      });
+      return;
+    }
+    this.validatePartyCardsArePlayable();
+    this.validateSpellCardsArePlayable()
+    await this.prepareBattlecryData();
   }
 
   initialize() {
-   document[this.identifier] = this
+    document[this.identifier] = this
   }
 
   dragStart(event) {
@@ -121,21 +121,21 @@ export default class extends Controller {
   validatePartyCardsArePlayable() {
     const boardIsFull = (this.recievesPlayToBoardTargets?.length >= 8);
     this.playsToBoardTargets.forEach((element) => {
-      if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) {this.removeDragFromElement(element);}
-      else if (element.draggable === false) {this.returnDragToElement(element)}
+      if (boardIsFull || +element.dataset.cost > +this[`player${element.dataset.resource}Value`]) { this.removeDragFromElement(element); }
+      else if (element.draggable === false) { this.returnDragToElement(element) }
     });
   }
 
-  validateSpellCardsArePlayable(){
+  validateSpellCardsArePlayable() {
     this.spellCardTargets.forEach((element) => {
-      if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) {this.removeDragFromElement(element);}
-      else if (element.draggable === false) {this.returnDragToElement(element)}
+      if (+element.dataset.cost > +this[`player${element.dataset.resource}Value`]) { this.removeDragFromElement(element); }
+      else if (element.draggable === false) { this.returnDragToElement(element) }
     });
   }
 
 
- returnDragToElement(element){
-    element.dataset.action = element.dataset.action.replace('#errorFeedback', '#dragStart');  
+  returnDragToElement(element) {
+    element.dataset.action = element.dataset.action.replace('#errorFeedback', '#dragStart');
     element.classList.add('ring');
     element.setAttribute('draggable', true);
   }
@@ -146,7 +146,7 @@ export default class extends Controller {
     element.classList.remove('ring');
     element.setAttribute('draggable', false);
   }
-  
+
 
   errorFeedback(event) {
     event.target.classList.add('shake');

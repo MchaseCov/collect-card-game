@@ -1,15 +1,15 @@
-import html from 'components/htm_create_element';
+import html from '../htm_create_element';
 import { forwardRef, useState, useEffect, useRef } from 'react';
 
-import createOpponentPlayerInfo from './opponent_player_side/op_info';
-import createFriendlyPlayerInfo from './friendly_player_side/fp_info';
-import createBattlefield from './battlefield/battlefield';
-import endTurnButton from '../components/end_turn_button';
+import createOpponentPlayerInfo from '../opponent_player_side/op_info';
+import createFriendlyPlayerInfo from '../friendly_player_side/fp_info';
+import createBattlefield from '../battlefield/battlefield';
+import endTurnButton from './end_turn_button';
 
 
 const Game = forwardRef((props, ref) => {
   const { gameData } = props;
-  const { cardInBattleReference, friendlyCardInHandReference,  opponentCardInHandReference, thisGameReference} = ref.current
+  const { cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference } = ref.current
   const gameInformationData = gameData.game
   const playerInformationData = gameData.player.player_data
   const playerCardData = gameData.player.cards
@@ -23,7 +23,7 @@ const Game = forwardRef((props, ref) => {
   const playersTurnOrder = playerInformationData.turn_order
   const isPlayersTurn = playersTurnOrder === gameCurrentTurn
 
-  useEffect(()=> {console.log(isPlayersTurn); turnButton.current.disabled = !isPlayersTurn})
+  useEffect(() => { console.log(isPlayersTurn); turnButton.current.disabled = !isPlayersTurn })
 
   return html`
 <aside id="sidebar" className="fixed right-0 z-50 w-1/12 h-full" key="game-sidebar">

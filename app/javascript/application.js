@@ -2,14 +2,12 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "channels"
-import turboStreamQueue from './turbo_stream_queuer'
 import connectToGameChannel from "./channels/game_channel"
 
 
 
-if(window.location.pathname.split('/')[1] === 'multiplayer_games' || window.location.pathname.split('/')[1] === 'singleplayer_games') {
-  if(game, player) {
+if (window.location.pathname.split('/')[1] === 'multiplayer_games' || window.location.pathname.split('/')[1] === 'singleplayer_games') {
+  if (game, player) {
     connectToGameChannel(game, player)
   }
-  document.addEventListener('turbo:before-stream-render', async (event) => {turboStreamQueue(event)});
-  };
+};

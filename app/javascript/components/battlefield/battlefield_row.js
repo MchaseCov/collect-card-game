@@ -1,4 +1,4 @@
-import html from '../../components/htm_create_element';
+import html from '../htm_create_element';
 
 import CardInBattle from '../../components/cards/card_in_battle';
 import CreateBlankSpace from './blank_space';

@@ -1,7 +1,7 @@
-import html from './htm_create_element';
+import html from '../htm_create_element';
 
-import Healthbubble from './shared/health_bubble';
-import AttackBubble from './shared/attack_bubble';
+import Healthbubble from './health_bubble';
+import AttackBubble from './attack_bubble';
 
 export default function PlayerPortrait(props, id, classList, dataset) {
   return html`<div id='${id}-player-info'
@@ -16,4 +16,4 @@ export default function PlayerPortrait(props, id, classList, dataset) {
                     <${Healthbubble} health=${props.health_current} healthCap=${props.health_cap} />
                     <${AttackBubble} attack=${props.attack}/>
               </div>`;
-            }
+}
