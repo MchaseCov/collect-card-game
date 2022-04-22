@@ -46,8 +46,8 @@ class Game < ApplicationRecord
 
   def begin_first_turn
     players.each(&:set_starting_hand)
-    ongoing!
     animate_end_of_mulligan
+    ongoing!
     start_of_turn_actions
   end
 

@@ -2,9 +2,14 @@ import { createRoot } from 'react-dom/client';
 
 import html from '../components/htm_create_element';
 import GameContainer from '../components/game/game_container';
+import mulliganContainer from '../components/game/mulligan_container';
 
 const gameContainer = document.getElementById('game-container');
-const gameRoot = createRoot(gameContainer);
+
+function createGameRoot() {
+  if (gameContainer) return createRoot(gameContainer);
+}
+const gameRoot = createGameRoot()
 
 export class GameRenderer {
   updateGameData(updatedGameData) {
@@ -12,9 +17,16 @@ export class GameRenderer {
   }
 
   renderGameWindow(animationData) {
-    const gameElement = html`<${GameContainer} gameData=${this.gameData} animationData=${animationData}/>`;
-    gameRoot.render(gameElement);
-    this.provideDataToDragController(this.gameData);
+    switch (this.gameData.game.status) {
+      case 'mulligan':
+        const mulliganElement = html`<${mulliganContainer} gameData=${this.gameData} animationData=${animationData} />`;
+        gameRoot.render(mulliganElement);
+        break;
+      default:
+        const gameElement = html`<${GameContainer} gameData=${this.gameData} animationData=${animationData} />`;
+        gameRoot.render(gameElement);
+        this.provideDataToDragController(this.gameData);
+    }
   }
 
   filterAndOrganizeData(updatedGameData) {

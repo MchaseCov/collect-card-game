@@ -47,7 +47,8 @@ module Broadcastable
           playedCard: { id: card.id,
                         dataset: { 'animationsTarget': 'fromHand',
                                    'targetPosition': (card.position ? card.position - 1 : 0) } }
-        }
+        },
+        animationTime: 0.6
       }
 
       if card.in_battlefield?
@@ -95,7 +96,8 @@ module Broadcastable
         targets: {
           target_one: { id: attacker.id, dataset: { 'animationsTarget': 'attacker' } },
           target_two: { id: defender.id, dataset: { 'animationsTarget': 'defender' } }
-        }
+        },
+        animationTime: 0.75
       }
       players.each do |p|
         broadcast_animations(p, battle_animation_data)
@@ -103,9 +105,16 @@ module Broadcastable
     end
 
     def animate_end_of_mulligan
-      return
-      broadcast_animations(player_one, 'end_mulligan', { count: player_two.cards.in_hand.size })
-      broadcast_animations(player_two, 'end_mulligan', { count: player_one.cards.in_hand.size })
+      end_mulligan_data = {
+        targets: {
+          gameBoard: { id: 'gameBoardParent', dataset: { 'animationsTarget': 'endMulliganPhase' } }
+        },
+        animationTime: 3
+      }
+
+      players.each do |p|
+        broadcast_animations(p, end_mulligan_data)
+      end
     end
 
     def initialize_broadcast_variables(player)

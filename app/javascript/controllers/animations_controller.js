@@ -2,24 +2,24 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift'];
+  static targets = ['attacker', 'defender', 'cardDeathAnimationValues', 'drawnCard', 'battlefield', 'player', 'hand', 'lastPlayed', 'mulliganEnding', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift', 'endMulliganPhase'];
 
 
-  fallbackForEndShiftTargetConnected(element){
+  fallbackForEndShiftTargetConnected(element) {
     const leftCards = [...document.getElementsByClassName('card-to-left')]
-    leftCards.forEach((el)=> {
+    leftCards.forEach((el) => {
       el.classList.remove('card-to-left')
       el.removeAttribute('data-animations-target')
     });
     const rightCards = [...document.getElementsByClassName('card-to-right')]
-    rightCards.forEach((el)=> {
+    rightCards.forEach((el) => {
       el.classList.remove('card-to-right')
-    el.removeAttribute('data-animations-target')
+      el.removeAttribute('data-animations-target')
     })
     element.removeAttribute('data-animations-target')
   }
 
-  fromHandTargetConnected(card){
+  fromHandTargetConnected(card) {
     const id = card.getBoundingClientRect().y > 0 ? 'fp' : 'op'
     const row = document.getElementById(`${id}-cards-battle`)
     const target = row.querySelector(`[data-board-id="${card.dataset.targetPosition || 0}"]`);
@@ -30,47 +30,47 @@ export default class extends Controller {
   animateCardInHandGapFill(card) {
     const cardSiblings = [...card.parentNode.children]
     const position = cardSiblings.indexOf(card)
-    cardSiblings.slice(position+1).forEach((card)=> card.classList.add(`card-to-left`))
-    cardSiblings.slice(0, position).forEach((card)=> card.classList.add(`card-to-right`))
+    cardSiblings.slice(position + 1).forEach((card) => card.classList.add(`card-to-left`))
+    cardSiblings.slice(0, position).forEach((card) => card.classList.add(`card-to-right`))
   }
 
-  enterBattleTargetConnected(card){
+  enterBattleTargetConnected(card) {
     card.classList.add('last-played-card')
-    card.onanimationend = () => { card.removeAttribute('data-animations-target');card.classList.remove('last-played-card')}
+    card.onanimationend = () => { card.removeAttribute('data-animations-target'); card.classList.remove('last-played-card') }
     const leftCards = [...document.getElementsByClassName('card-to-left')]
-    leftCards.forEach((el)=> {
+    leftCards.forEach((el) => {
       el.classList.remove('card-to-left')
       el.removeAttribute('data-animations-target')
 
     });
     const rightCards = [...document.getElementsByClassName('card-to-right')]
-    rightCards.forEach((el)=> {
+    rightCards.forEach((el) => {
       el.classList.remove('card-to-right')
-    el.removeAttribute('data-animations-target')
+      el.removeAttribute('data-animations-target')
     })
   }
 
-  shiftLeftTargetConnected(card){
+  shiftLeftTargetConnected(card) {
     card.classList.add(`card-to-left`);
   }
 
-  shiftRightTargetConnected(card){
-   card.classList.add('card-to-right')
+  shiftRightTargetConnected(card) {
+    card.classList.add('card-to-right')
   }
 
 
-  defenderTargetConnected(defender){
+  defenderTargetConnected(defender) {
     if (typeof this.attackerTarget === 'undefined') return
     this.animateBattle(this.attackerTarget, defender);
   }
 
-  drawnCardTargetConnected(card){
+  drawnCardTargetConnected(card) {
     this.drawCardToHand(card);
   }
 
   // CARD DRAW ANIMATION FUNCTION
 
-  drawCardToHand(card){
+  drawCardToHand(card) {
     const ytrans = (card.getBoundingClientRect().y > 0 ? -9 : 9)
     card.style.transform = `translate(33vw, ${ytrans}rem) rotateY(180deg)`;
     card.classList.add('last-drawn');
@@ -93,11 +93,26 @@ export default class extends Controller {
     element.remove()
   }
 
-  
+
   // ANIMATIONS FOR END OF MULLIGAN TRANSITION
-  mulliganEndingTargetConnected(element){
+  mulliganEndingTargetConnected(element) {
     this.animateEndOfMulligan(this.setMulliganAnimationData(element))
   }
+
+  endMulliganPhaseTargetConnected(element) {
+    const mulliganInfoBox = document.getElementById('mulligan-info-box')
+    const mulliganCardBox = document.getElementById('mulligan-cards')
+    console.log(mulliganInfoBox, mulliganCardBox)
+
+    mulliganInfoBox.classList.add('fade-out')
+    mulliganInfoBox.onanimationend = () => {
+      this.element.classList.remove('brightness-50')
+      this.element.animate([{ filter: 'brightness(0.5)' }, { filter: 'brightness(1)' }], 2000)
+      mulliganCardBox.classList.add("move-card-down")
+    }
+
+  }
+
 
   // BATTLE ANIMATION FUNCTIONS
 
@@ -112,31 +127,31 @@ export default class extends Controller {
       defender.removeAttribute('data-animations-target');
     }
   }
-  
-  async createDamageIndicators(attacker, defender){
-    const pairs = [{card: defender, damage: +attacker.querySelector('#attack').innerText}, {card: attacker, damage: +defender.querySelector('#attack').innerText}]
+
+  async createDamageIndicators(attacker, defender) {
+    const pairs = [{ card: defender, damage: +attacker.querySelector('#attack').innerText }, { card: attacker, damage: +defender.querySelector('#attack').innerText }]
     await new Promise((r) => setTimeout(r, 200)); // Not quite enough time to use an .onAnimatonEnd listener
-    pairs.forEach((pair)=> this.indicateDamageTaken(pair));
-    pairs.forEach((pair)=> this.updateHealthValues(pair));
+    pairs.forEach((pair) => this.indicateDamageTaken(pair));
+    pairs.forEach((pair) => this.updateHealthValues(pair));
   }
 
-  updateHealthValues(pair){
-    if(pair.damage <= 0) return;
+  updateHealthValues(pair) {
+    if (pair.damage <= 0) return;
     const original_hp = +pair.card.querySelector('#health').innerText
     const newHp = (original_hp - pair.damage)
     pair.card.querySelector('#health').innerText = newHp
-    if(newHp < original_hp) pair.card.querySelector('#health').classList.add('text-red-500')
-    if(newHp <= 0)this.dyingCards.push(pair.card)
+    if (newHp < original_hp) pair.card.querySelector('#health').classList.add('text-red-500')
+    if (newHp <= 0) this.dyingCards.push(pair.card)
   }
 
-  indicateDamageTaken(pair){
-    if(pair.damage <= 0) return;
+  indicateDamageTaken(pair) {
+    if (pair.damage <= 0) return;
     const indicator = document.createElement("div");
     indicator.className = "absolute flex items-center justify-center text-5xl text-white top-1/2 left-1/2 burst-8 shake-indicator"
     indicator.innerText = -pair.damage
     pair.card.appendChild(indicator)
     pair.card.classList.add('shake')
-    indicator.onanimationend = () => {indicator.remove(); pair.card.classList.remove('shake')}
+    indicator.onanimationend = () => { indicator.remove(); pair.card.classList.remove('shake') }
   }
 
   getActorFromObject(object) {
@@ -168,8 +183,8 @@ export default class extends Controller {
   translateToAndFrom(actor, translation, timing = 500) {
     actor.animate(
       [{ transform: 'translate(0, 0)', easing: 'ease-out' },
-        { transform: `translate(${~~(translation.x * 0.75)}px, ${~~(translation.y * 0.75)}px)` },
-        { transform: 'translate(0, 0)', easing: 'ease-in' }],
+      { transform: `translate(${~~(translation.x * 0.75)}px, ${~~(translation.y * 0.75)}px)` },
+      { transform: 'translate(0, 0)', easing: 'ease-in' }],
       timing,
     );
   }
@@ -185,7 +200,7 @@ export default class extends Controller {
   translateTo(actor, translation, timing = 500) {
     actor.animate(
       [{ transform: 'translate(0, 0)' },
-        { transform: `translate(${~~translation.x}px, ${~~translation.y}px)` }],
+      { transform: `translate(${~~translation.x}px, ${~~translation.y}px)` }],
       timing,
     );
   }
@@ -202,29 +217,29 @@ export default class extends Controller {
   // END OF MULLIGAN TRANSITION FUNCTIONS
 
   // SET ANIMATION DATA
-  setMulliganAnimationData(element){
+  setMulliganAnimationData(element) {
     const mulliganCardContainer = document.getElementById('mulligan-cards')
     return {
-      mulliganContainer:document.getElementById('mulliganRegion'), // Top level mulligan container
+      mulliganContainer: document.getElementById('mulliganRegion'), // Top level mulligan container
       mulliganCardContainer: mulliganCardContainer, // Top level mulligan container
       mulliganCards: [...mulliganCardContainer.children], // Array of displayed card elements
       hand: document.getElementById('fp-cards-hand'), // Friendly player hand
-      opponentHand:  document.getElementById('op-cards-hand'), // Opponent player hand
+      opponentHand: document.getElementById('op-cards-hand'), // Opponent player hand
       opponentCardCount: parseInt(element.dataset.opponentCardCount) // Amount of cards that opponent has in hand after mulligan phase ends.
     };
   }
 
   // CREATE OPP CARDS, CHANGE MULLIGAN CARD PARENTS, TRANSLATE THEM DOWN
-  animateEndOfMulligan(data){
+  animateEndOfMulligan(data) {
     this.createOpponentCardsInHand(data.opponentHand, data.opponentCardCount)
-    data.mulliganCards.forEach((card) => {this.moveParentFromMulliganToHand(data.hand, card)})
+    data.mulliganCards.forEach((card) => { this.moveParentFromMulliganToHand(data.hand, card) })
     this.animateBrightnessAndCardTranslate(data.mulliganContainer, data.mulliganCards)
 
   }
 
   // CREATE CARDS IN OPPONENTS HAND EQUAL TO AMOUNT THEY KEPT IN MULLIGAN
-  createOpponentCardsInHand(opponentHand, opponentCardCount){
-    for(let i = 0; i < opponentCardCount; i++){
+  createOpponentCardsInHand(opponentHand, opponentCardCount) {
+    for (let i = 0; i < opponentCardCount; i++) {
       const opponentCard = document.createElement('template')
       opponentCard.innerHTML = '<div class="w-40 h-60 max-h-60 relative text-white border-2 border-black rounded bg-slate-700 inline-block -ml-10 -mt-12"></div>'
       opponentHand.appendChild(opponentCard.content.firstChild)
@@ -233,23 +248,24 @@ export default class extends Controller {
 
   // CHANGE PARENT OF CARDS IN MULLIGAN WINDOW TO PLAYER HAND CONTAINER, TRANSLATE UPWARDS TO KEEP RELATIVELY IN PLACE
   // We break them out of the parent because we want to fade the parent's opacity away
-  moveParentFromMulliganToHand(hand, card){
+  moveParentFromMulliganToHand(hand, card) {
     hand.appendChild(card)
     card.style.transform = "translate(0, -50vh)";
     card.classList.add('inline-block', 'mx-1')
   }
-    // Change each card's parent, translate them back up to 'not move', add appropriate classes
-    // Fade out mulligan container then slide cards down while brightening board
-  animateBrightnessAndCardTranslate(mulliganContainer, mulliganCards){
+  // Change each card's parent, translate them back up to 'not move', add appropriate classes
+  // Fade out mulligan container then slide cards down while brightening board
+  animateBrightnessAndCardTranslate(mulliganContainer, mulliganCards) {
     mulliganContainer.classList.add('fade-out');
-      mulliganContainer.onanimationend = () => {
-        this.element.classList.remove('brightness-50')
-        this.element.animate(
-          [{filter: 'brightness(0.5)'}, {filter: 'brightness(1)'}], 2000
-        )
-        mulliganCards.forEach((e) => {
+    mulliganContainer.onanimationend = () => {
+      this.element.classList.remove('brightness-50')
+      this.element.animate(
+        [{ filter: 'brightness(0.5)' }, { filter: 'brightness(1)' }], 2000
+      )
+      mulliganCards.forEach((e) => {
         e.classList.add("move-card-down")
-      })}
+      })
+    }
   }
 
 }

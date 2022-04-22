@@ -197,8 +197,8 @@
 }
 
 @keyframes move-cards-down {
-  from { transform: translate(0px, -50vh); }
-  to { transform: translate(0, 0); }
+  from { transform: translate(0px, 0); }
+  to { transform: translate(0, 50vh); }
 }
 
 .hide-dragging-card {

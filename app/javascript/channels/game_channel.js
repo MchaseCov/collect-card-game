@@ -1,13 +1,11 @@
 import consumer from 'channels/consumer';
 import { GameRenderer } from '../game_rendering/game_renderer';
 
-let ongoingAnimations = 0;
-const delayMulti = 1;
-
 export default function connectToGameChannel(gameId, playerId) {
   consumer.subscriptions.create({ channel: 'GameChannel', game: gameId, player: playerId }, {
 
     connected() {
+      this.secondCounter = 0
       this.gameRenderer = new GameRenderer();
     },
 
@@ -21,10 +19,11 @@ export default function connectToGameChannel(gameId, playerId) {
     },
 
     async beginNewAnimation(animationData) {
-      ongoingAnimations++;
+      this.secondCounter += animationData.animationTime || 1
       this.gameRenderer.renderGameWindow(animationData);
-      await new Promise((r) => setTimeout(r, (1000)));
-      ongoingAnimations--;
+      await new Promise((r) => setTimeout(r, (1000 * animationData.animationTime || 1)));
+      this.secondCounter -= animationData.animationTime || 1
+
     },
 
     evaluateStreamPurpose(data) {
@@ -40,8 +39,8 @@ export default function connectToGameChannel(gameId, playerId) {
     },
 
     async waitForOngoingAnimations() {
-      const seconds = (ongoingAnimations * delayMulti);
-      await new Promise((r) => setTimeout(r, (1000 * seconds)));
+      console.log('waiting for', this.secondCounter)
+      await new Promise((r) => setTimeout(r, (1000 * this.secondCounter)));
     },
 
     async received(data) {

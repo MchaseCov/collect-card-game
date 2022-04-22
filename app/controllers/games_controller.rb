@@ -21,6 +21,7 @@ class GamesController < ApplicationController
 
     @player.draw_mulligan_cards if params[:mulligan] # When player requests a new hand
     @player.status_default!
+    @game.touch
     @game.players.in_mulligan? ? @game.broadcast_basic_update : @game.begin_first_turn
   end
 

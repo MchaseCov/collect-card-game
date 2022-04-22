@@ -1,15 +1,15 @@
 import consumer from "channels/consumer"
-if (window.location.pathname.split('/')[1] === 'home') { 
+if (window.location.pathname.split('/')[1] === 'home') {
 
-consumer.subscriptions.create("QueueChannel", {
-  connected() {
-  },
+  consumer.subscriptions.create("QueueChannel", {
+    connected() {
+    },
 
-  disconnected() {
-  },
+    disconnected() {
+    },
 
-  received(data) {
-    if(data.game_formed) window.location.href = data.game_url
-  },
-});
+    received(data) {
+      if (data.game_formed) window.location.href = data.game_url
+    },
+  });
 }

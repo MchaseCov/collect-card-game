@@ -1,11 +1,11 @@
-<div id="mulliganRegion" class="absolute z-50 flex flex-col items-start p-4 text-center transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-72" data-gameboard-animations-target="mulliganRegion">
+<div >
   <div>
     <% if first_person_player.status_mulligan?%>
       <h2>You are going <%=first_person_player.turn_order ? "first" : "second"%></h2>
       <h3>You can choose to keep this starting hand, or to replace it once before starting</h3>
       <div class="flex flex-row justify-center mt-3 gap-x-5">
-        <%= button_to "Keep cards", submit_mulligan_game_path(game), class:"bg-green-500 rounded text-white px-5 py-2 my-2" %>
-        <%= button_to "Redo cards", submit_mulligan_game_path(game, mulligan: true), class:"bg-blue-500 rounded text-white px-5 py-2 my-2"%>
+        <%= button_to "", submit_mulligan_game_path(game), class:"bg-green-500 rounded text-white px-5 py-2 my-2" %>
+        <%= button_to "", submit_mulligan_game_path(game, mulligan: true), class:""%>
       </div>
     <% else %>
       <h2> The opposing player is currently mulliganing, the game will start shortly</h2>
