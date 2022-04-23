@@ -11,16 +11,17 @@ import Tribe from '../shared/tribe';
 
 const classList = 'w-40 text-white border-2 border-black rounded h-60 ';
 const StandardCard = forwardRef((props, ref) => {
+  const classColor = `bg-${props.cardConstant.archetypeColor}-700`
   return html`
-    <div id=${props.id} className=${classList + props.additionalClasses } draggable=${props.draggable || false} ...${props.dataset} ref=${(el) => { if(ref) ref.current[props.id] = el}} >
+    <div id=${props.id} className=${classList + props.additionalClasses} draggable=${props.draggable || false} ...${props.dataset} ref=${(el) => { if(ref) ref.current[props.id] = el}} >
     <${CostBubble} cost=${props.cost}/>
-    <${NameBubble} name=${props.cardConstant.name}/>
+    <${NameBubble} name=${props.cardConstant.name} classColor=${classColor}/>
     <${Healthbubble} health=${props.health} healthCap=${props.health_cap} additionalClasses="w-10 h-10 text-3xl -bottom-2" />
     <${AttackBubble} attack=${props.attack} additionalClasses=" w-10 h-10 text-3xl -bottom-2" />
-    <div className="absolute inset-x-0 h-24 text-xs text-center whitespace-normal bg-red-700 border-2 rounded pointer-events-none select-none bottom-2 border-slate-900">
+    <div className="absolute inset-x-0 h-24 text-xs text-center whitespace-normal border-2 rounded pointer-events-none select-none bottom-2 border-slate-900 ${classColor}">
     ${props.keywords.map((kw) => Keyword(kw))}
     </div>
-    <${Tribe} tribe=${props.cardConstant.tribe} />
+    <${Tribe} tribe=${props.cardConstant.tribe} classColor=${classColor} />
     <${Art} />
     </div>
   `;

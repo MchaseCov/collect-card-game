@@ -5,6 +5,7 @@ import GameContainer from '../components/game/game_container';
 import mulliganContainer from '../components/game/mulligan_container';
 import { cardConstantIndexedDb } from '../indexeddb/card_constants';
 import { keywordIndexedDb } from '../indexeddb/keywords';
+import { archetypeIndexedDb } from '../indexeddb/archetypes';
 
 const gameContainer = document.getElementById('game-container');
 
@@ -49,6 +50,13 @@ export class GameRenderer {
     return await keywordDb.itemsInRange(...range, 'card_constant_id');
   }
 
+  async assignArchetypeColorsToConstants() {
+    const archDb = new archetypeIndexedDb()
+    await archDb.initialize();
+    const arches = await archDb.allItems()
+    this.cardConstants.map((cc) => cc.archetypeColor = arches.find((a) => a.id === cc.archetype_id).color)
+  }
+
   async filterKeywordsAndConstants(updatedGameData) {
     const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield];
     this.cardKeywords = updatedGameData.card_keywords;
@@ -56,6 +64,7 @@ export class GameRenderer {
     const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
     this.cardConstants = await this.fetchConstantsFromIndexDb(range);
     this.cardKeywords =  await this.fetchKeywordsFromIndexDb(range);
+    await this.assignArchetypeColorsToConstants()
     cardsSetsToMatch.filter((item) => item).forEach((cardSet) => cardSet.forEach(((card) => this.matchKeywordsAndConstantsToCard(card))));
     if (updatedGameData.lastPlayedCard) this.matchKeywordsAndConstantsToCard(updatedGameData.lastPlayedCard);
     return updatedGameData;

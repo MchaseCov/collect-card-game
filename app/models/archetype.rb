@@ -13,6 +13,8 @@ class Archetype < ApplicationRecord
   validates_uniqueness_of :name
   validates :resource_type, inclusion: { in: %w[mana energy hybrid] }
 
+  enum color: { slate: 0, sky: 1, emerald: 2, red: 3 }
+
   def resource_name
     resource_type == 'hybrid' ? 'Mana and Energy' : resource_type.titleize
   end

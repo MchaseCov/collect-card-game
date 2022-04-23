@@ -1,5 +1,5 @@
 import html from 'components/htm_create_element';
 
-const classList = 'text-center text-xs absolute bottom-0 inset-x-0 bg-red-700 select-none pointer-events-none h-4';
+const classList = (color) => `text-center text-xs absolute bottom-0 inset-x-0 select-none pointer-events-none h-4 ${color}`;
 
-export default (props) => html`<div className=${classList}>${props.tribe}</div>`;
+export default (props) => html`<div className=${classList(props.classColor)}>${props.tribe}</div>`;
