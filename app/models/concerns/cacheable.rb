@@ -12,16 +12,13 @@ module Cacheable
     def return_standard_data
       p1 = player_one.reload
       p2 = player_two.reload
-      card_constants = CardConstant.joins(:cards).where(cards: { gamestate_deck_id: gamestate_decks.pluck(:id) }).uniq
-      card_keywords = Keyword.joins(:card_constant).where(card_constant: { id: card_constants.pluck(:id) }).uniq
       { game: self,
         player_one: {
           player_data: p1,
           uid: p1.user_id,
           cards: {
-            in_hand: p1.cards.in_hand.includes(:keywords, card_constant: [:archetype]).order(updated_at: :asc).to_a,
-            in_battlefield: p1.party_cards.in_battlefield.includes(:keywords,
-                                                                   card_constant: [:archetype]).order(:position).to_a,
+            in_hand: p1.cards.in_hand.order(updated_at: :asc).to_a,
+            in_battlefield: p1.party_cards.in_battlefield.order(:position).to_a,
             in_deck: p1.cards.in_deck.count
           }
         },
@@ -29,28 +26,22 @@ module Cacheable
           player_data: p2,
           uid: p2.user_id,
           cards: {
-            in_hand: p2.cards.in_hand.includes(:keywords, card_constant: [:archetype]).order(updated_at: :asc).to_a,
-            in_battlefield: p2.party_cards.in_battlefield.includes(:keywords,
-                                                                   card_constant: [:archetype]).order(:position).to_a,
+            in_hand: p2.cards.in_hand.order(updated_at: :asc).to_a,
+            in_battlefield: p2.party_cards.in_battlefield.order(:position).to_a,
             in_deck: p2.cards.in_deck.count
           }
-        },
-        # card_constant_data: card_constants.map(&:attributes),
-        card_keywords: card_keywords.map(&:attributes) }
+        } }
     end
 
     def return_mulligan_data
       p1 = player_one.reload
       p2 = player_two.reload
-      card_constants = CardConstant.joins(:cards).where(cards: { gamestate_deck_id: gamestate_decks.pluck(:id) }).uniq
-      card_keywords = Keyword.joins(:card_constant).where(card_constant: { id: card_constants.pluck(:id) }).uniq
       { game: self,
         player_one: {
           player_data: p1,
           uid: p1.user_id,
           cards: {
-            in_hand: p1.cards.in_mulligan.includes(:keywords,
-                                                   card_constant: [:archetype]).order(updated_at: :asc).to_a,
+            in_hand: p1.cards.in_mulligan.order(updated_at: :asc).to_a,
             in_deck: p1.cards.in_deck.count
 
           }
@@ -59,14 +50,11 @@ module Cacheable
           player_data: p2,
           uid: p2.user_id,
           cards: {
-            in_hand: p2.cards.in_mulligan.includes(:keywords,
-                                                   card_constant: [:archetype]).order(updated_at: :asc).to_a,
+            in_hand: p2.cards.in_mulligan.order(updated_at: :asc).to_a,
             in_deck: p2.cards.in_deck.count
 
           }
-        },
-        card_constant_data: card_constants.map(&:attributes),
-        card_keywords: card_keywords.map(&:attributes) }
+        } }
     end
 
     def curate_cache_for_perspective(uid, cached_data)

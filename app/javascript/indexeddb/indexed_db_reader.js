@@ -3,8 +3,6 @@ export class indexedDbReader {
   async initialize() {
     try {
       this.indexedDb = await this.openDatabase();
-      console.log("parent init",this.indexedDb)
-      console.log(this)
     } catch (exception) { console.error(exception); } finally { return this.indexedDb; }
   }
 
@@ -27,10 +25,11 @@ export class indexedDbReader {
     });
   }
 
-  itemsInRange(id1, id2, database) {
+  itemsInRange(id1, id2, database, index) {
     const a = [];
     return new Promise((resolve, reject) => {
-      const objectStore = this.indexedDb.transaction(database).objectStore(database);
+      let objectStore = this.indexedDb.transaction(database).objectStore(database);
+      if (index) objectStore = objectStore.index(index);
       const keyRange = IDBKeyRange.bound(id1, id2);
       objectStore.openCursor(keyRange).onsuccess = (event) => {
         const cursor = event.target.result;
@@ -42,18 +41,12 @@ export class indexedDbReader {
     });
   }
 
-  allItems() {
-    const a = [];
+  allItems(database) {
     return new Promise((resolve, reject) => {
-      const objectStore = this.indexedDb.transaction('cardConstants').objectStore('cardConstants');
-      objectStore.getAll().onsuccess = (event) => {
-        const cursor = event.target.result;
-        if (cursor) {
-          a.push(cursor.value);
-          cursor.continue();
-        } else resolve(a);
-      };
-    });
+      const objectStore = this.indexedDb.transaction(database).objectStore(database);
+      objectStore.getAll().onsuccess = (event) => resolve(event.target.result)  
+      }
+    );
   }
 
   async requestRequiredData(route) {

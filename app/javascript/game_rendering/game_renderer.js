@@ -4,6 +4,7 @@ import html from '../components/htm_create_element';
 import GameContainer from '../components/game/game_container';
 import mulliganContainer from '../components/game/mulligan_container';
 import { cardConstantIndexedDb } from '../indexeddb/card_constants';
+import { keywordIndexedDb } from '../indexeddb/keywords';
 
 const gameContainer = document.getElementById('game-container');
 
@@ -36,17 +37,25 @@ export class GameRenderer {
     return filteredData;
   }
 
-  async fetchConstantsFromIndexDb(cardsSetsToMatch) {
-    const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
+  async fetchConstantsFromIndexDb(range) {
     const cardConstantDb = new cardConstantIndexedDb();
     await cardConstantDb.initialize();
     return await cardConstantDb.itemsInRange(...range);
   }
 
+  async fetchKeywordsFromIndexDb(range) {
+    const keywordDb = new keywordIndexedDb();
+    await keywordDb.initialize();
+    return await keywordDb.itemsInRange(...range, 'card_constant_id');
+  }
+
   async filterKeywordsAndConstants(updatedGameData) {
     const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield];
     this.cardKeywords = updatedGameData.card_keywords;
-    this.cardConstants = await this.fetchConstantsFromIndexDb(cardsSetsToMatch);
+
+    const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
+    this.cardConstants = await this.fetchConstantsFromIndexDb(range);
+    this.cardKeywords =  await this.fetchKeywordsFromIndexDb(range);
     cardsSetsToMatch.filter((item) => item).forEach((cardSet) => cardSet.forEach(((card) => this.matchKeywordsAndConstantsToCard(card))));
     if (updatedGameData.lastPlayedCard) this.matchKeywordsAndConstantsToCard(updatedGameData.lastPlayedCard);
     return updatedGameData;

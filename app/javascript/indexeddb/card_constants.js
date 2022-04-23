@@ -7,9 +7,9 @@ export class cardConstantIndexedDb extends indexedDbReader {
 
   itemById = async id => await super.itemById(id, 'cardConstants')
 
-  itemsInRange = async (id1, id2) => await super.itemsInRange(id1, id2, 'cardConstants')
+  itemsInRange = async (id1, id2, index) => await super.itemsInRange(id1, id2, 'cardConstants', index)
 
-  allItems = async () => await super.allItems()
+  allItems = async () => await super.allItems('cardConstants')
 
   requestRequiredData = async() => await super.requestRequiredData('/card_constants')
 

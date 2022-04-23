@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   post '/queue/leave', to: 'game_queue#leave'
 
   resources :card_constants, only: [:index]
+  resources :keywords, only: [:index]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
