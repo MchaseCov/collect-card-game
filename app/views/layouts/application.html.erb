@@ -9,8 +9,8 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body>
-    <main class="mx-auto h-screen px-5 flex min-h-screen">
+  <body class="overflow-hidden">
+    <main class="flex h-screen min-h-screen px-5 mx-auto">
       <%= yield %>
     </main>
   </body>

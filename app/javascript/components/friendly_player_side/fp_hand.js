@@ -73,6 +73,7 @@ const FriendlyPlayerHand = forwardRef((props, ref) => {
                                                 keywords=${card.keywords}
                                                 cost=${card.cost}
                                                 ref=${ref}
+                                                type=${card.type}
                                                 draggable=${true}
                                               />`)}
   </div>`;

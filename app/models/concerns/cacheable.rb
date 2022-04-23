@@ -18,7 +18,7 @@ module Cacheable
           uid: p1.user_id,
           cards: {
             in_hand: p1.cards.in_hand.order(updated_at: :asc).to_a,
-            in_battlefield: p1.party_cards.in_battlefield.order(:position).to_a,
+            in_battlefield: p1.party_cards.in_battlefield.order(:position).map(&:attributes),
             in_deck: p1.cards.in_deck.count
           }
         },
@@ -27,7 +27,7 @@ module Cacheable
           uid: p2.user_id,
           cards: {
             in_hand: p2.cards.in_hand.order(updated_at: :asc).to_a,
-            in_battlefield: p2.party_cards.in_battlefield.order(:position).to_a,
+            in_battlefield: p2.party_cards.in_battlefield.order(:position).map(&:attributes),
             in_deck: p2.cards.in_deck.count
           }
         } }

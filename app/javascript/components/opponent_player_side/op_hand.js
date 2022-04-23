@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import html from '../htm_create_element';
 
 const cardInHandTooltipClassList = 'left-0 right-0 text-center tooltip -bottom-10';
-const cardInHandClassList = 'relative inline-block w-40 -mt-12 -ml-10 text-white border-2 border-black rounded h-60 max-h-60 bg-slate-700';
+const cardInHandClassList = 'relative inline-block w-40 -mt-12 -ml-10 text-white border-2 border-black rounded h-48 max-h-60 bg-slate-700';
 const containerClasslist = 'absolute flex-1 w-full ml-auto text-center has-tooltip shrink flex-nowrap whitespace-nowrap -top-16';
 
 const hoverTooltip = (count) => {

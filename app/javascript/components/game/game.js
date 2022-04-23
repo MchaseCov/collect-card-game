@@ -12,6 +12,7 @@ const Game = forwardRef((props, ref) => {
   const { cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference } = ref.current
   const gameInformationData = gameData.game
   const playerInformationData = gameData.player.player_data
+  const opponentInformationData = gameData.opponent.player_data
   const playerCardData = gameData.player.cards
   const opponentCardData = gameData.opponent.cards
 
@@ -26,11 +27,15 @@ const Game = forwardRef((props, ref) => {
   useEffect(() => { console.log(isPlayersTurn); turnButton.current.disabled = !isPlayersTurn })
 
   return html`
-<aside id="sidebar" className="fixed right-0 z-50 w-1/12 h-full" key="game-sidebar">
-  <section id="op-deck" className="absolute flex flex-row gap-x-3 top-5">
+<aside id="sidebar" className="fixed z-50 w-1/12 h-full right-5" key="game-sidebar">
+  <section id="op-deck" className="absolute flex flex-row gap-x-3">
+    <div>
+    <div className="relative min-w-max">Gold: ${opponentInformationData.cost_current} / ${opponentInformationData.cost_cap}</div>
+    <div className="min-w-max">Resource: ${opponentInformationData.resource_current} / ${opponentInformationData.resource_cap}</div>
     <div className="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
       In Deck: ${opponentCardData.in_deck}
     </div>
+  </div>
   </section>
 <${endTurnButton} key="turnButton" gameCurrentTurn=${gameCurrentTurn} ref=${turnButton} gameId=${gameInformationData.id} disabled=${!isPlayersTurn}/>
   <section id="fp-deck" className="absolute flex flex-row flex-col gap-x-3 flex-nowrap bottom-5">
@@ -38,6 +43,7 @@ const Game = forwardRef((props, ref) => {
       In Deck: ${playerCardData.in_deck}
     </div>
     <div className="min-w-max">Gold: ${playerInformationData.cost_current} / ${playerInformationData.cost_cap}</div>
+    <div className="min-w-max">Resource: ${playerInformationData.resource_current} / ${playerInformationData.resource_cap}</div>
   </section>
 </aside>
 <article id="main-game-board"
