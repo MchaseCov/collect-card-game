@@ -35,7 +35,7 @@ module Cacheable
             in_deck: p2.cards.in_deck.count
           }
         },
-        card_constant_data: card_constants.map(&:attributes),
+        # card_constant_data: card_constants.map(&:attributes),
         card_keywords: card_keywords.map(&:attributes) }
     end
 

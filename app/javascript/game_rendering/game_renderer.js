@@ -3,20 +3,21 @@ import { createRoot } from 'react-dom/client';
 import html from '../components/htm_create_element';
 import GameContainer from '../components/game/game_container';
 import mulliganContainer from '../components/game/mulligan_container';
+import { cardConstantIndexedDb } from '../indexeddb/card_constants';
 
 const gameContainer = document.getElementById('game-container');
 
 function createGameRoot() {
   if (gameContainer) return createRoot(gameContainer);
 }
-const gameRoot = createGameRoot()
+const gameRoot = createGameRoot();
 
 export class GameRenderer {
-  updateGameData(updatedGameData) {
-    this.gameData = this.filterAndOrganizeData(updatedGameData);
+  async updateGameData(updatedGameData) {
+    this.gameData = await this.filterAndOrganizeData(updatedGameData);
   }
 
-  renderGameWindow(animationData) {
+  async renderGameWindow(animationData) {
     switch (this.gameData.game.status) {
       case 'mulligan':
         const mulliganElement = html`<${mulliganContainer} gameData=${this.gameData} animationData=${animationData} />`;
@@ -29,16 +30,23 @@ export class GameRenderer {
     }
   }
 
-  filterAndOrganizeData(updatedGameData) {
-    let filteredData = this.filterKeywordsAndConstants(updatedGameData);
+  async filterAndOrganizeData(updatedGameData) {
+    let filteredData = await this.filterKeywordsAndConstants(updatedGameData);
     filteredData = this.purgeExtraData(updatedGameData);
     return filteredData;
   }
 
-  filterKeywordsAndConstants(updatedGameData) {
-    this.cardConstants = updatedGameData.card_constant_data;
-    this.cardKeywords = updatedGameData.card_keywords;
+  async fetchConstantsFromIndexDb(cardsSetsToMatch) {
+    const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
+    const cardConstantDb = new cardConstantIndexedDb();
+    await cardConstantDb.initialize();
+    return await cardConstantDb.itemsInRange(...range);
+  }
+
+  async filterKeywordsAndConstants(updatedGameData) {
     const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield];
+    this.cardKeywords = updatedGameData.card_keywords;
+    this.cardConstants = await this.fetchConstantsFromIndexDb(cardsSetsToMatch);
     cardsSetsToMatch.filter((item) => item).forEach((cardSet) => cardSet.forEach(((card) => this.matchKeywordsAndConstantsToCard(card))));
     if (updatedGameData.lastPlayedCard) this.matchKeywordsAndConstantsToCard(updatedGameData.lastPlayedCard);
     return updatedGameData;
@@ -57,6 +65,13 @@ export class GameRenderer {
 
   provideDataToDragController(gameData) {
     if (typeof document['gameplay-drag'] !== 'undefined') document['gameplay-drag'].loadControllerFromData(gameData);
-    else setTimeout(this.provideDataToDragController, 250, gameData);
+    setTimeout(this.provideDataToDragController, 250, gameData);
   }
+
+  findMinAndMaxCardConstantId = (cardsSetsToMatch) => {
+    const cardsToCompare = cardsSetsToMatch.flat();
+    const smallest = cardsToCompare.flat().reduce((res, obj) => ((obj.card_constant_id < res.card_constant_id) ? obj : res));
+    const largest = cardsToCompare.flat().reduce((res, obj) => ((obj.card_constant_id > res.card_constant_id) ? obj : res));
+    return ([smallest.card_constant_id, largest.card_constant_id]);
+  };
 }

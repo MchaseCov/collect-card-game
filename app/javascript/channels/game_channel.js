@@ -13,7 +13,7 @@ export default function connectToGameChannel(gameId, playerId) {
     },
 
     async updateGameWithNewData(gameData) {
-      this.gameRenderer.updateGameData(gameData);
+      await this.gameRenderer.updateGameData(gameData);
       await this.waitForOngoingAnimations();
       this.gameRenderer.renderGameWindow();
     },
@@ -26,20 +26,20 @@ export default function connectToGameChannel(gameId, playerId) {
 
     },
 
-    evaluateStreamPurpose(data) {
+    async evaluateStreamPurpose(data) {
       switch (data.streamPurpose) {
         case 'basicUpdate':
-          this.updateGameWithNewData(data.gameData);
+          await this.updateGameWithNewData(data.gameData);
           break;
         case 'animation':
-          if (data.gameData) this.gameRenderer.updateGameData(data.gameData);
+          if (data.gameData) await this.gameRenderer.updateGameData(data.gameData);
           this.beginNewAnimation(data.animationData);
           break;
       }
     },
 
     async waitForOngoingAnimations() {
-      console.log('waiting for', this.secondCounter)
+      console.log('waiting for', this.secondCounter);
       await new Promise((r) => setTimeout(r, (1000 * this.secondCounter)));
     },
 

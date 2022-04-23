@@ -4,8 +4,6 @@ import "controllers"
 import "channels"
 import connectToGameChannel from "./channels/game_channel"
 
-
-
 if (window.location.pathname.split('/')[1] === 'multiplayer_games' || window.location.pathname.split('/')[1] === 'singleplayer_games') {
   if (game, player) {
     connectToGameChannel(game, player)

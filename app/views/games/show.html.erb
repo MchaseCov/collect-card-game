@@ -1,14 +1,7 @@
-<%= turbo_stream_from @game, @first_person_player%>
 <script id="game-data">
   const temporaryImagePath = "<%= asset_path('cardplaceholder.webp') %>";
   const player = <%= @first_person_player.id %>
   const game = <%= @game.id %>
 </script>
 <div id="game-container" class="absolute w-full h-full my-auto bg-white" data-controller="animations">
-  <article id="main-game-board"
-class="flex flex-col h-full flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
-data-controller="gameplay-drag line-drawer style-cards gameboard-animations">
-  </article>
-</div>
-<div id="game-animations-container" class="hidden">
 </div>
