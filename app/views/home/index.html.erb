@@ -6,7 +6,7 @@
   this is a temporary button i promise
   <%= button_to "new game", multiplayer_games_path(deck_one_id: 1, deck_two_id: 2)%>
   <br>
-  <%= link_to @game%>
+  <%= link_to "most recent MP game", @game, {data: {turbo: false}}%>
   <br>
   single player thing
   <%= button_to "new game SINGLEPLAYER", singleplayer_games_path(deck_one_id: 1)%>

@@ -46,7 +46,7 @@ const MulliganPopUp = forwardRef((props, ref) => {
       ${props.playerData.cards.in_hand.map((card) => html`
       <${StandardCard} id=${card.id} key=${card.id} cardConstant=${card.cardConstant} health=${card.health}
         attack=${card.attack} health_cap=${card.health_cap} additionalClasses="relative z-50" keywords=${card.keywords}
-        cost=${card.cost} ref=${ref} draggable=${false} />`)}
+        cost=${card.cost} ref=${ref} draggable=${false} type=${card.type} />`)}
     </section>
   </div>`;
 });

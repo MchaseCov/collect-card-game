@@ -51,10 +51,10 @@ export class GameRenderer {
   }
 
   async assignArchetypeColorsToConstants() {
-    const archDb = new archetypeIndexedDb()
+    const archDb = new archetypeIndexedDb();
     await archDb.initialize();
-    const arches = await archDb.allItems()
-    this.cardConstants.map((cc) => cc.archetypeColor = arches.find((a) => a.id === cc.archetype_id).color)
+    const arches = await archDb.allItems();
+    this.cardConstants.map((cc) => cc.archetypeColor = arches.find((a) => a.id === cc.archetype_id).color);
   }
 
   async filterKeywordsAndConstants(updatedGameData) {
@@ -63,8 +63,8 @@ export class GameRenderer {
 
     const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
     this.cardConstants = await this.fetchConstantsFromIndexDb(range);
-    this.cardKeywords =  await this.fetchKeywordsFromIndexDb(range);
-    await this.assignArchetypeColorsToConstants()
+    this.cardKeywords = await this.fetchKeywordsFromIndexDb(range);
+    await this.assignArchetypeColorsToConstants();
     cardsSetsToMatch.filter((item) => item).forEach((cardSet) => cardSet.forEach(((card) => this.matchKeywordsAndConstantsToCard(card))));
     if (updatedGameData.lastPlayedCard) this.matchKeywordsAndConstantsToCard(updatedGameData.lastPlayedCard);
     return updatedGameData;
@@ -87,9 +87,9 @@ export class GameRenderer {
   }
 
   findMinAndMaxCardConstantId = (cardsSetsToMatch) => {
-    const cardsToCompare = cardsSetsToMatch.flat();
-    const smallest = cardsToCompare.flat().reduce((res, obj) => ((obj.card_constant_id < res.card_constant_id) ? obj : res));
-    const largest = cardsToCompare.flat().reduce((res, obj) => ((obj.card_constant_id > res.card_constant_id) ? obj : res));
+    const cardsToCompare = cardsSetsToMatch.flat().filter(Boolean);
+    const smallest = cardsToCompare.reduce((res, obj) => ((obj.card_constant_id < res.card_constant_id) ? obj : res));
+    const largest = cardsToCompare.reduce((res, obj) => ((obj.card_constant_id > res.card_constant_id) ? obj : res));
     return ([smallest.card_constant_id, largest.card_constant_id]);
   };
 }
