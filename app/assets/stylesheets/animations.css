@@ -1,0 +1,100 @@
+/* Quick transitions */
+.board-animatable {
+  transition: transform 0.15s linear;
+  transform: translate(0px, 0);
+  will-change: transform;
+}
+
+/* Shake! */
+.shake{
+  animation: shake 0.5s;
+}
+
+/* Shake for attack indicators, includes a fade */
+.shake-indicator{
+  animation: shakeIndicator 0.75s;
+}
+
+/* Dying card wiggle/fade */
+.dying-card{
+  transition: width 0.5s;
+  opacity: 0;
+  animation: card-death 0.5s;
+  animation-fill-mode: forwards;
+}
+
+/*  Translate and scale last-played card*/
+#animated-card{
+  animation: played-card-animation 5.0s;
+  animation-fill-mode: forwards;
+}
+
+/* FP hand hover to show cards */
+#fp-cards-hand{
+  transition: bottom 0.3s ease-in;
+}
+
+/* Last drawn card */
+.last-drawn{
+  z-index: 50;
+  transform: rotate3d(0, 1, 0, 90deg);
+  transform: rotate3d(1, 0, 0, 20deg);
+  transform: rotateY(180deg);
+  transform-style: preserve-3d;
+  animation: drawn-card 1s;
+  animation-fill-mode: forwards;
+}
+
+.last-drawn:after {
+  backface-visibility: hidden;
+  z-index: 20;
+  transform: rotateY(180deg);
+  content: '';
+  right: 0px;
+  bottom: 0px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #334155;
+}
+
+
+.card-to-left{
+  animation: shift-cards-left 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.card-to-right{
+  animation: shift-cards-right 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.card-from-hand{
+  animation: card-from-hand 0.5s;
+  animation-fill-mode: forwards;
+  transition: transform 0.4s linear;
+  transform: translate(0px, 0);
+  will-change: transform;
+}
+
+.last-played-card{
+  opacity: 0;
+  transform: scale(0.25);
+  animation: card-fade-in 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.move-card-down{
+  animation: move-cards-down 2s;
+  animation-fill-mode: forwards;
+}
+
+.fade-out{
+  animation: card-from-hand 1s;
+  animation-fill-mode: forwards;
+}
+
+.hide-dragging-card {
+  transition: 0.01s;
+  transform: translateX(-9999px);
+}

@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.burst-8 {
+  z-index: 50;
+  background: orange;
+  width: 5rem;
+  height: 5rem;
+  transform: rotate(20deg) translate(-50%, -50%);
+}
+.burst-8:before {
+  z-index: -10;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5rem;
+  width: 5rem;
+  background: orange;
+  transform: rotate(135deg) ;
+}
+
+
+.tooltip {
+  @apply absolute hidden;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply z-50 block;
+}
