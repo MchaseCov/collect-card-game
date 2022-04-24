@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 import StandardCard from '../cards/standard_card';
 
 const containerClasslist = 'absolute w-full ml-auto text-center whitespace-nowrap -bottom-32 hover:bottom-0';
-const cardInHandClassList = 'relative ring ring-lime-500 playing-card inline-block -ml-10 z-10 hover:z-20 hover:bottom-8 hover:scale-125';
+const cardInHandClassList = 'relative ring ring-glow-green playing-card inline-block -ml-10 z-10 hover:z-20 hover:bottom-8 hover:scale-125';
 
 const partyCardAttributes = card => {
   const data = {

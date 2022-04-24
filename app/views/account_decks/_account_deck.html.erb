@@ -1,5 +1,5 @@
-<div class="relative border-2 has-tooltip border-slate-900">
-  <section class="absolute mt-4 text-white border-2 rounded tooltip -left-56 border-slate-900 bg-slate-700">
+<div class="relative border-2 has-tooltip border-blackish">
+  <section class="absolute mt-4 text-white border-2 rounded tooltip -left-56 border-blackish bg-card-blue">
     <p>Starting Health: <%=account_deck.race.health_modifier + 30 %></p>
     <p>Starting Gold: <%=account_deck.race.cost_modifier + 1 %></p>
     <p>Starting <%=account_deck.archetype.resource_name%>: <%=account_deck.race.health_modifier + 1 %></p>
@@ -12,10 +12,10 @@
 </div>
 <div class="relative">
   <%account_deck.cards.includes(card_constant: %i[archetype keywords]).order(:cost, :id).uniq.each do |card|%>
-    <%= button_to remove_card_account_deck_path(id: account_deck&.id, card_id: card.id), class:'w-full border-2 border-slate-900 flex h-max items-center has-tooltip' do %>
+    <%= button_to remove_card_account_deck_path(id: account_deck&.id, card_id: card.id), class:'w-full border-2 border-blackish flex h-max items-center has-tooltip' do %>
       <section class="absolute tooltip -left-48">
         <%= render card, cached: true %>
-        <div class="w-40 mt-4 text-white border-2 rounded border-slate-900 bg-slate-700">
+        <div class="w-40 mt-4 text-white border-2 rounded border-blackish bg-card-blue">
           Click a card in your deck to remove it.
         </div>
       </section>

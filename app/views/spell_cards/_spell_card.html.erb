@@ -1,15 +1,15 @@
 <%= content_tag :div,
                 id: locals[:id],
                data: (spell_card.decorate.new(spell_card).method(locals[:decorator_data_method]).call if locals[:decorator_data_method]),
-                class: 'w-40 text-white border-2 border-black rounded h-60 ' + locals[:class],
+                class: 'w-40 text-white border-2 border-blackish rounded h-60 ' + locals[:class],
                 draggable: locals[:draggable] do %>
-  <div class="absolute z-10 w-10 h-10 text-3xl text-center text-white border-2 rounded-full pointer-events-none select-none border-slate-900 bg-<%=spell_card.archetype.resource_color%>-500 -top-2 -left-2">
+  <div class="absolute z-10 w-10 h-10 text-3xl text-center text-white border-2 rounded-full pointer-events-none select-none border-blackish bg-<%=spell_card.archetype.resource_color%>-500 -top-2 -left-2">
     <%=spell_card.cost%>
   </div>
-  <div class="text-right text-md absolute top-0 inset-x-0 inset-x-0 border-2 rounded border-slate-900 bg-<%=spell_card.archetype.color%>-700 select-none pointer-events-none">
+  <div class="text-right text-md absolute top-0 inset-x-0 inset-x-0 border-2 rounded border-blackish bg-<%=spell_card.archetype.color%>-700 select-none pointer-events-none">
     <%=spell_card.parent.name%>
   </div>
-  <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-slate-900 bg-<%=spell_card.archetype.color%>-700 h-24 whitespace-normal">
+  <div class="text-center text-xs absolute bottom-2 inset-x-0 border-2 rounded border-blackish bg-<%=spell_card.archetype.color%>-700 h-24 whitespace-normal">
     <%spell_card.keywords.each do |k|%>
       <p class="break-normal"><strong>On Cast</strong>: <%=k.body_text%></p>
     <% end %>  </div>

@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import FriendlyPlayerHand from './fp_hand';
 import PlayerPortrait from '../shared/player_portrait';
 
-const playerClasslist = 'absolute left-0 right-0 w-36 h-44 mx-auto bg-blue-200 rounded-t-full top-0';
+const playerClasslist = 'absolute left-0 right-0 mx-auto bg-blue-200 rounded-t-full top-0';
 
 const createFriendlyPlayerInfo = forwardRef((props, ref) => {
   const playerGameData = props.gameData

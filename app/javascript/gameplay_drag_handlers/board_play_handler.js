@@ -53,7 +53,7 @@ export default class BoardPlayHandler extends GameplayHandler {
     this.previewCard = element.cloneNode(true);
     this.previewCard.innerHTML = this.target.innerHTML;
     this.previewCard.classList = `${this.target.classList} opacity-50`;
-    this.previewCard.classList.remove('-ml-10', 'hide-dragging-card', 'hover:invisible', 'hover:z-10', 'hover:bottom-8', 'hover:scale-125', 'ring-lime-500');
+    this.previewCard.classList.remove('-ml-10', 'hide-dragging-card', 'hover:invisible', 'hover:z-10', 'hover:bottom-8', 'hover:scale-125', 'ring-glow-green');
     this.previewCard.dataset.action = this.previewCard.dataset.action.replace('dragenter->gameplay-drag#boardspaceDragEnter', '');
   }
 

@@ -21,12 +21,3 @@
   background: orange;
   transform: rotate(135deg) ;
 }
-
-
-.tooltip {
-  @apply absolute hidden;
-}
-
-.has-tooltip:hover .tooltip {
-  @apply z-50 block;
-}

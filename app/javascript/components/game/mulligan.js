@@ -16,12 +16,12 @@ const Mulligan = forwardRef((props, ref) => {
   return html`
 <aside id="sidebar" className="fixed right-0 z-50 w-1/12 h-full" key="game-sidebar">
   <section id="op-deck" className="absolute flex flex-row gap-x-3 top-5">
-    <div className="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
+    <div className="relative w-40 text-center text-white border-2 border-blackish rounded h-60 bg-card-blue">
       In Deck: ${opponentCardData.in_deck}
     </div>
   </section>
   <section id="fp-deck" className="absolute flex flex-row flex-col gap-x-3 flex-nowrap bottom-5">
-    <div className="relative w-40 text-center text-white border-2 border-black rounded h-60 bg-slate-700">
+    <div className="relative w-40 text-center text-white border-2 border-blackish rounded h-60 bg-card-blue">
       In Deck: ${playerCardData.in_deck}
     </div>
     <div className="min-w-max">Gold: ${playerInformationData.cost_current} / ${playerInformationData.cost_cap}</div>

@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.tooltip {
+  @apply absolute transition-opacity opacity-0;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply z-50 block opacity-100;
+}

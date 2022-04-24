@@ -45,7 +45,7 @@ function opponentPlayerCardDataset(card) {
   return data;
 }
 
-const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-lime-500';
+const firstPersonCardClasses = 'hover:ring-offset-2 hover:ring-offset-lime-300 board-animatable z-40 ring ring-glow-green';
 
 const firstPersonSpecificData = { identifier: 'fp', boardSpaceData: initialFriendlyBoardSpaceElement, cardDataset: friendlyPlayerCardDataset, cardClasses: firstPersonCardClasses, firstPerson: true }
 const opponentSpecificData = { identifier: 'op', cardDataset: opponentPlayerCardDataset }
