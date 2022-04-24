@@ -35,10 +35,6 @@ class SpellCard < Card
     keywords.cast_effect.first
   end
 
-  def decorate
-    SpellCardDecorator
-  end
-
   private
 
   def required_currency

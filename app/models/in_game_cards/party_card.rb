@@ -99,12 +99,6 @@ class PartyCard < Card
     end
   end
 
-  # decorate: For use in view partials to assign specified classes and HTML data attributes.
-  # Class is located in '../../decorators/'
-  def decorate
-    PartyCardGamestateDecorator
-  end
-
   # silence: Mark a card as silenced and remove all of its personal buffs, auras, and observers.
   # the silenced attribute will disable Deathrattle callbacks when true.
   # AUra buffs that originate from another card on the board will not be silenced, as the aura is still being output.
