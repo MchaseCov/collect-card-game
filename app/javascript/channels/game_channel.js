@@ -33,7 +33,7 @@ export default function connectToGameChannel(gameId, playerId) {
           break;
         case 'animation':
           if (data.gameData) await this.gameRenderer.updateGameData(data.gameData);
-          this.beginNewAnimation(data.animationData);
+          await this.beginNewAnimation(data.animationData);
           break;
       }
     },
