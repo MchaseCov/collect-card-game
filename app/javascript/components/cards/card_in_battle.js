@@ -6,7 +6,7 @@ import AttackBubble from '../shared/attack_bubble';
 import Art from '../shared/art';
 import StandardCard from './standard_card';
 
-const classList = 'relative text-white border-2 border-blackish rounded-full w-36 h-52 mx-2.5 card-on-board has-tooltip transition-shadow hover:shadow-lg hover:shadow-white/70';
+const classList = 'relative text-white border-2 border-blackish rounded-full w-32 h-46 max-h-full flex-initial mx-2.5 card-on-board has-tooltip transition-shadow hover:shadow-lg hover:shadow-white/70 bg-card-blue';
 const tooltipClassList = 'tooltip top-0 -left-44 z-50 pointer-events-none select-none'
 const CardInBattle = forwardRef((props, ref) => {
   const [status, setStatus] = useState(props.status);

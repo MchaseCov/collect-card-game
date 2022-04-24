@@ -24,7 +24,7 @@ const Game = forwardRef((props, ref) => {
   const playersTurnOrder = playerInformationData.turn_order
   const isPlayersTurn = playersTurnOrder === gameCurrentTurn
 
-  useEffect(() => { console.log(isPlayersTurn); turnButton.current.disabled = !isPlayersTurn })
+  useEffect(() => { turnButton.current.disabled = !isPlayersTurn })
 
   return html`
 <aside id="sidebar" className="fixed z-50 w-1/12 h-full right-5" key="game-sidebar">
@@ -53,7 +53,7 @@ const Game = forwardRef((props, ref) => {
   </section>
 </aside>
 <article id="main-game-board"
-        className="flex flex-col h-full flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
+        className="flex flex-col content-between justify-between h-full items-between flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
         data-controller="gameplay-drag line-drawer style-cards gameboard-animations"
         data-game=${gameInformationData.id}
         data-gameboard-animations-status-value=${gameInformationData.status}

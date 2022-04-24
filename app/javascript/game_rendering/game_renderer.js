@@ -58,9 +58,8 @@ export class GameRenderer {
   }
 
   async filterKeywordsAndConstants(updatedGameData) {
-    const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield];
-    this.cardKeywords = updatedGameData.card_keywords;
-
+    const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield, [updatedGameData.lastPlayedCard]];
+    
     const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
     this.cardConstants = await this.fetchConstantsFromIndexDb(range);
     this.cardKeywords = await this.fetchKeywordsFromIndexDb(range);
@@ -71,6 +70,7 @@ export class GameRenderer {
   }
 
   matchKeywordsAndConstantsToCard(card) {
+    if(!card) return
     card.cardConstant = this.cardConstants.find((c) => c.id === card.card_constant_id);
     card.keywords = this.cardKeywords.filter((c) => c.card_constant_id === card.card_constant_id);
   }
