@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import html from "../../htm_create_element";
 
 import endTurnButton from './../end_turn_button';
+import Deck from "./deck";
 
 const Sidebar = forwardRef((props, ref) => {
   
@@ -11,21 +12,17 @@ const Sidebar = forwardRef((props, ref) => {
   const coins = amount => [...Array(amount)].map((_,i) =>html`<i key=${i} className="pt-2 pl-2 text-xl fas fa-circle text-amber-400"></i>`)
   const resource = amount => [...Array(amount)].map((_,i) =>html`<i  key=${i} className="pb-2 pl-2 text-lg fas fa-star text-sky-400"></i>`)
 
-  const decktest = () => {
-    return html`
-    <div class="deck">
-    <div class="deck-face deck-front"></div>
-    <div class="deck-face deck-left"></div>
-    <div class="deck-face deck-top"></div>
-    </div>
-    `
-  }
-
 return html`
-<aside id="sidebar" className="fixed z-50 w-1/12 h-full right-5 game-perspective-3d" key="game-sidebar">
-<div className="absolute top-12 -left-[10vw] preserve-3d" >
-  ${decktest()}
+<aside id="sidebar" className="absolute z-50 w-1/12 h-full right-5 game-perspective-3d" key="game-sidebar">
+  <div id="decks-container" className="relative h-full">
+    <div className="absolute top-0 preserve-3d" >
+      <${Deck} cardsInDeck=${opponentCardData.in_deck}/>
+    </div>
+    <div className="absolute bottom-0 preserve-3d" >
+      <${Deck} cardsInDeck=${playerCardData.in_deck}/>
+    </div>
   </div>
+
   <section id="op-deck" className="absolute flex flex-row gap-x-3">
     <div>
     <div className="relative min-w-max">Gold: ${opponentInformationData.cost_current} / ${opponentInformationData.cost_cap}</div>
@@ -39,9 +36,6 @@ return html`
   </div>
   </section>
 <${endTurnButton} key="turnButton" gameCurrentTurn=${gameCurrentTurn} ref=${ref} gameId=${gameInformationData.id} />
-<div className="absolute -left-[10vw] bottom-96 preserve-3d" >
-  ${decktest()}
-</div>
 <section id="fp-deck" className="absolute flex flex-row flex-col gap-x-3 flex-nowrap bottom-5">
   <div className="relative text-center has-tooltip">
     <div className="bottom-0 px-3 py-1 mx-auto text-center bg-white right-40 tooltip w-max rounded-xl">
