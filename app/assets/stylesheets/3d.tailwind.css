@@ -19,7 +19,9 @@
 }
 
 #fp-cards-hand:hover{
-  transform: translateY(0%)
+  transform: translateY(0%);
+  transition: transform 0.5s ease;
+
 }
 .deck-face{
   position: absolute;

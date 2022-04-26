@@ -31,7 +31,7 @@ const Game = forwardRef((props, ref) => {
   <div id="inner-game-container" className="absolute bottom-0 w-full max-w-[1920px] h-[123.5vh] mx-auto right-0 left-0 my-auto children-in-game-perspective">
   <${Sidebar} ref=${turnButton} gameInformationData=${gameInformationData} opponentInformationData=${opponentInformationData} playerInformationData=${playerInformationData} opponentCardData=${opponentCardData} playerCardData=${playerCardData} gameCurrentTurn=${gameCurrentTurn}/>
   <article id="main-game-board"
-  className="flex flex-col content-between justify-between w-full h-full max-h-[1600px] mx-auto items-between flex-nowrap gap-y-6 xl:gap-y-2 overflow-clip bg-light-brown    game-perspective-3d"
+  className="flex flex-col content-between justify-between w-full h-full max-h-[1600px] mx-auto items-between flex-nowrap gap-y-6 xl:gap-y-2 overflow-clip bg-light-brown game-perspective-3d"
   data-controller="gameplay-drag style-cards gameboard-animations"
   data-game=${gameInformationData.id}
   data-gameboard-animations-status-value=${gameInformationData.status}
