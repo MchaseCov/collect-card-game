@@ -1,0 +1,56 @@
+.game-perspective-3d {
+  transform: rotatex(35deg);
+  transform-style: preserve-3d;
+}
+
+.children-in-game-perspective {
+  perspective: 93.75rem;
+}
+
+.preserve-3d{
+  transform-style: preserve-3d;
+}
+
+#fp-cards-hand{
+  position:fixed;
+  bottom:0;
+  transform: translateY(50%);
+  transition: transform 0.5s ease;
+}
+
+#fp-cards-hand:hover{
+  transform: translateY(0%)
+}
+
+
+.deck-face{
+  position: absolute;
+  background-color: #49475B;
+  border: 2px solid black;
+}
+
+.deck{
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 93.75rem;
+}
+
+.deck-front  {
+  width: 180px;
+  height: 70px;
+  transform: rotateX(-90deg) translateZ(215px);
+  background-image: linear-gradient(0deg, #49475b 41.67%, #000000 41.67%, #000000 50%, #49475b 50%, #49475b 91.67%, #000000 91.67%, #000000 100%);
+  background-size: 16.00px 16.00px;  
+}
+.deck-left   {
+  width: 70px;
+  height: 250px;
+  transform: rotateY(-90deg)  translateZ(35px); 
+  background-image: linear-gradient(90deg, #49475b 41.67%, #000000 41.67%, #000000 50%, #49475b 50%, #49475b 91.67%, #000000 91.67%, #000000 100%);
+  background-size: 16.00px 16.00px; 
+}
+.deck-top    {
+  width: 180px;
+  height: 250px;
+  transform: rotateY(0deg) translateZ(35px) ;
+}

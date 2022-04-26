@@ -27,22 +27,22 @@ const Game = forwardRef((props, ref) => {
   useEffect(() => { turnButton.current.disabled = !isPlayersTurn })
 
   return html`
+<canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" className='fixed z-50 pointer-events-none select-none'></canvas>
 <${Sidebar} ref=${turnButton} gameInformationData=${gameInformationData} opponentInformationData=${opponentInformationData} playerInformationData=${playerInformationData} opponentCardData=${opponentCardData} playerCardData=${playerCardData} gameCurrentTurn=${gameCurrentTurn}/>
 <article id="main-game-board"
-        className="flex flex-col content-between justify-between h-full items-between flex-nowrap gap-y-6 overflow-clip xl:gap-y-2"
-        data-controller="gameplay-drag line-drawer style-cards gameboard-animations"
+        className="flex flex-col content-between justify-between h-full items-between flex-nowrap gap-y-6 xl:gap-y-2 game-perspective-3d overflow-clip bg-light-brown"
+        data-controller="gameplay-drag style-cards gameboard-animations"
         data-game=${gameInformationData.id}
         data-gameboard-animations-status-value=${gameInformationData.status}
         data-gameboard-animations-turn-value=${gameInformationData.turn_time}
         key="game-board"
         ref=${(el) => thisGameReference.current.gameBoardParent = el}
         >
-  <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" className='fixed z-50 pointer-events-none select-none'></canvas>
   <${createOpponentPlayerInfo} key="opInfoRegion" ref=${opponentCardInHandReference} gameData=${gameData.opponent}/>
   <${createBattlefield} key="battlefieldRegion" ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield} lastPlayedCard=${gameData.lastPlayedCard}/>
   <${createFriendlyPlayerInfo} key="fpInfoRegion" ref=${friendlyCardInHandReference} gameData=${gameData.player}/>
 </article>
-  `;
+`;
 })
 
 export default Game

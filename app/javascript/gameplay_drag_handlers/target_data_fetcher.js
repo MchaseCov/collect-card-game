@@ -1,17 +1,18 @@
 export default class TargetDataFetcher {
-  constructor(targettingElements, targetType, parentElement) {
+  constructor(targettingElements, targetType, parentElement, gameUpdatedTime) {
     this.targettingElements = targettingElements;
     this.targetType = targetType;
     this.parentElement = parentElement;
     this.uniqueTargetEffectIds = [];
     this.dataWithTarget = {};
+    this.gameUpdatedTime = gameUpdatedTime
   }
 
   async updateLocalStorageForTargets() {
     this.targettingElements.forEach((e) => !this.uniqueTargetEffectIds.includes(e.dataset[this.targetType]) && this.uniqueTargetEffectIds.push(e.dataset[this.targetType]));
     await Promise.all(this.uniqueTargetEffectIds.map((id) => this.requestTargets(id)));
     localStorage.setItem(`${this.targetType}Data`, JSON.stringify(this.dataWithTarget)); // Stores target data in localstorage to reduce request spam
-    localStorage.setItem(`${this.targetType}DataTimestamp`, +new Date(this.parentElement.dataset.updated)); // Timestamp for comparison
+    localStorage.setItem(`${this.targetType}DataAge`, `${this.gameUpdatedTime}`); // Timestamp for comparison
   }
 
   async requestTargets(id) {

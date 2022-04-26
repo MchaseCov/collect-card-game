@@ -9,7 +9,7 @@ const playerClasslist = 'relative left-0 right-0 mx-auto bg-blue-200 rounded-t-f
 const createFriendlyPlayerInfo = forwardRef((props, ref) => {
   const playerGameData = props.gameData
   return html`
-  <section id='fp-info' className="relative bottom-0 w-full h-1/3">
+  <section id='fp-info' className="relative bottom-0 w-full h-1/4">
   ${PlayerPortrait(playerGameData.player_data, 'fp', playerClasslist)}
   <${FriendlyPlayerHand} ref=${ref} cards=${playerGameData.cards.in_hand}/>
   

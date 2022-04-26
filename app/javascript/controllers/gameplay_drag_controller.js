@@ -20,6 +20,7 @@ export default class extends Controller {
     this.playerResourceValue = gameData.player.player_data.resource_current;
     this.currentTurnValue = gameData.game.turn;
     this.playerTurnValue = gameData.player.player_data.turn_order;
+    this.gameUpdatedTime = gameData.game.updated_at
   };
 
   playsToBoardTargetConnected(element) {
@@ -106,14 +107,14 @@ export default class extends Controller {
     this.handler.cancelPlayerInputPhase();
   }
 
-  async prepareBattlecryData() {
-    const localStorageValid = (+localStorage.getItem('battlecryDataTimestamp') === +new Date(this.element.dataset.updated));
+  async prepareBattlecryData() {    
+    const localStorageValid = (localStorage.battlecryDataAge === this.gameUpdatedTime);
     const playableBattlecryTakesInput = this.playsToBoardTargets.filter((e) => this.takesPlayerInputTargets.includes(e));
     if (!localStorageValid) {
-      this.battlecryDataFetcher = new TargetDataFetcher(playableBattlecryTakesInput, 'battlecry', this.element);
+      this.battlecryDataFetcher = new TargetDataFetcher(playableBattlecryTakesInput, 'battlecry', this.element, this.gameUpdatedTime);
       await this.battlecryDataFetcher.updateLocalStorageForTargets();
     }
-    this.battlecryTargetData = JSON.parse(localStorage.getItem('battlecryData'));
+    this.battlecryTargetData = JSON.parse(localStorage.battlecryData);
     playableBattlecryTakesInput.forEach((el) => el.dataset.targets = this.battlecryTargetData[el.dataset.battlecry]);
   }
 

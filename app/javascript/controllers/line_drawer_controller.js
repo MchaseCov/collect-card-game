@@ -1,10 +1,12 @@
 import { Controller } from '@hotwired/stimulus';
 
+
 // Connects to data-controller="line-drawer"
 export default class extends Controller {
   static targets = ['origin', 'canvas'];
-
+  
   originTargetConnected(element) {
+    this.gameEle = document.getElementById('main-game-board')
     this.canvasTarget.setAttribute('data-action', 'resize@window->line-drawer#resizeActiveCanvas');
     this.setCanvasSizeAndContext();
     this.styleCursors();
@@ -13,12 +15,12 @@ export default class extends Controller {
 
   styleCursors() {
     this.originTarget.style.cursor = "url('/cancelAction.webp') 20 20, pointer";
-    this.element.style.cursor = "url('/reticle.webp') 10 15, crosshair";
+    this.gameEle.style.cursor = "url('/reticle.webp') 10 15, crosshair";
   }
 
   originTargetDisconnected(element) {
     this.stopDrawing();
-    this.element.style.cursor = 'auto';
+    this.gameEle.style.cursor = 'auto';
     element.style.cursor = "auto";
     this.canvasTarget.removeAttribute('data-action')
   }
@@ -32,7 +34,7 @@ export default class extends Controller {
   }
 
   stopDrawing() {
-    this.element.removeAttribute('data-action');
+    this.gameEle.removeAttribute('data-action');
     this.clearCanvas();
   }
 
@@ -45,7 +47,12 @@ export default class extends Controller {
     const context = this.canvasTarget.getContext('2d');
     context.lineWidth = 8;
     context.strokeStyle = 'red';
-    context.setLineDash([20, 5]);
+    context.shadowOffsetX = 4;
+    context.shadowOffsetY = 10;
+    context.shadowBlur    = 12;
+    context.shadowColor   = "#78350f";
+    context.lineCap = 'round';
+    context.setLineDash([20, 15]);
     return context;
   }
 
@@ -89,6 +96,6 @@ export default class extends Controller {
     const centerY = top + height / 2;
     this.startPosition = { x: centerX, y: centerY };
     this.lineCoordinates = { x: 0, y: 0 };
-    this.element.dataset.action += " mousemove->line-drawer#updateLine"
+    this.gameEle.dataset.action += " mousemove->line-drawer#updateLine"
   }
 }
