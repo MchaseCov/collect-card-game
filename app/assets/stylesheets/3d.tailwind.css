@@ -50,3 +50,12 @@
   background-image: linear-gradient(90deg, #49475b 41.67%, #000000 41.67%, #000000 50%, #49475b 50%, #49475b 91.67%, #000000 91.67%, #000000 100%);
   background-size: 16.00px 16.00px; 
 }
+.deck-bottom{
+  height: 250px;
+  width: 180px;
+}
+.deck-empty{
+  position: absolute;
+  background-color: red;
+  border: 3px solid black;
+}

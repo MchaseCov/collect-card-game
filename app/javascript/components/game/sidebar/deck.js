@@ -2,6 +2,13 @@ import html from "../../htm_create_element";
 
 
 const Deck = (props) => {
+  if(props.cardsInDeck <= 0 ){
+    return html`
+  <div className="deck" >
+  <div className="deck-bottom deck-empty" ></div>
+  </div>
+`
+  } else {
   const deckMaxHeight = 70
   const deckProportionalHeight = (props.cardsInDeck / 30 )
   let deckHeight = Math.round(deckMaxHeight * deckProportionalHeight)
@@ -35,8 +42,11 @@ const Deck = (props) => {
   <div className="deck-face deck-front" style=${deckFrontStyle}  ></div>
   <div className="deck-face deck-left"  style=${deckLeftStyle}  ></div>
   <div className="deck-face deck-top"   style=${deckTopStyle}  ></div>
+  <div className="deck-face deck-bottom" ></div>
   </div>
   `
+
+}
 }
 
 export default Deck

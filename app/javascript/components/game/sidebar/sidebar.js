@@ -13,12 +13,12 @@ const Sidebar = forwardRef((props, ref) => {
   const resource = amount => [...Array(amount)].map((_,i) =>html`<i  key=${i} className="pb-2 pl-2 text-lg fas fa-star text-sky-400"></i>`)
 
 return html`
-<aside id="sidebar" className="absolute z-50 w-1/12 h-full right-5 game-perspective-3d" key="game-sidebar">
-  <div id="decks-container" className="relative h-full">
-    <div className="absolute top-0 preserve-3d" >
+<aside id="sidebar" className="absolute z-50 w-1/12 h-full right-5 -top-8 game-perspective-3d" key="game-sidebar">
+  <div id="decks-container" className="absolute top-0 bottom-0 flex flex-col justify-between my-auto h-[700px]">
+    <div className="preserve-3d" >
       <${Deck} cardsInDeck=${opponentCardData.in_deck}/>
     </div>
-    <div className="absolute bottom-0 preserve-3d" >
+    <div className="preserve-3d" >
       <${Deck} cardsInDeck=${playerCardData.in_deck}/>
     </div>
   </div>
