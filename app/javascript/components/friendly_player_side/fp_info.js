@@ -4,13 +4,31 @@ import { forwardRef } from 'react';
 import FriendlyPlayerHand from './fp_hand';
 import PlayerPortrait from '../shared/player_portrait';
 
+const coins = amount => [...Array(amount)].map((_,i) =>html`<i key=${i} className="pt-2 pl-2 mb-1 text-xl fas fa-circle text-amber-400"></i>`)
+const resource = amount => [...Array(amount)].map((_,i) =>html`<i  key=${i} className="pb-2 pl-2 mt-1 text-lg fas fa-star text-sky-400"></i>`)
+
+
 const playerClasslist = 'relative left-0 right-0 mx-auto bg-blue-200 rounded-t-full top-0';
 
 const createFriendlyPlayerInfo = forwardRef((props, ref) => {
   const playerGameData = props.gameData
   return html`
   <section id='fp-info' className="relative bottom-0 w-full h-1/4">
-  ${PlayerPortrait(playerGameData.player_data, 'fp', playerClasslist)}
+    <div key="fp-cc" className="absolute h-8 mx-auto bg-gray-400 rounded-xl right-1/2 w-80 has-tooltip">
+        ${coins(playerGameData.player_data.cost_current)}
+        <div className="left-0 z-30 mx-auto text-xl text-center bg-white w-80 top-8 tooltip w-max rounded-xl">
+      You have ${playerGameData.player_data.cost_current} coins remaining to spend this turn. Every turn your
+      coins replenish to the cap, up to 10.
+      </div>
+    </div>  
+    <div key="fp-rc" className="absolute h-8 mx-auto text-right bg-gray-400 rounded-xl left-1/2 w-80 has-tooltip">
+      ${resource(playerGameData.player_data.resource_current)}
+      <div className="left-0 z-30 mx-auto text-xl text-center bg-white w-80 top-8 tooltip w-max rounded-xl">
+      You have ${playerGameData.player_data.resource_current} resource points to spend this turn. Every turn your
+      resource points replenish by 1, up to 10.
+      </div>
+    </div>
+    ${PlayerPortrait(playerGameData.player_data, 'fp', playerClasslist)}
   <${FriendlyPlayerHand} ref=${ref} cards=${playerGameData.cards.in_hand}/>
   
   </section>

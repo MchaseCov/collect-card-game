@@ -38,7 +38,10 @@ const Deck = (props) => {
 
 
   return html`
-  <div className="deck" >
+  <div className="deck has-tooltip" >
+  <div className="top-0 bottom-0 px-3 py-1 mx-auto my-auto text-center bg-white -left-60 tooltip w-max h-max rounded-xl">
+      Cards remaining in deck: ${props.cardsInDeck}
+</div>
   <div className="deck-face deck-front" style=${deckFrontStyle}  ></div>
   <div className="deck-face deck-left"  style=${deckLeftStyle}  ></div>
   <div className="deck-face deck-top"   style=${deckTopStyle}  ></div>
