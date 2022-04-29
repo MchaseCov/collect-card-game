@@ -8,7 +8,7 @@ const coins = amount => [...Array(amount)].map((_,i) =>html`<i key=${i} classNam
 const resource = amount => [...Array(amount)].map((_,i) =>html`<i  key=${i} className="pb-2 pl-2 mt-1 text-lg fas fa-star text-sky-400"></i>`)
 
 
-const playerClasslist = 'absolute bottom-0 left-0 right-0 mx-auto bg-red-200 rounded-t-full enemy-card';
+const playerClasslist = 'absolute bottom-0 left-0 right-0 mx-auto rounded-t-full enemy-card';
 const opponentDataset = { 'data-type': "player", 'data-gameplay-drag-target': 'recievesPlayerInput enemyActor', 'data-action': 'drop->gameplay-drag#drop dragenter->gameplay-drag#dragEnter dragover->gameplay-drag#dragOver dragend->gameplay-drag#dragEnd' };
 
 const createOpponentPlayerInfo = forwardRef((props, ref) => {

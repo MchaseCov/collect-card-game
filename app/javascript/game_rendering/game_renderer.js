@@ -6,6 +6,7 @@ import mulliganContainer from '../components/game/mulligan_container';
 import { cardConstantIndexedDb } from '../indexeddb/card_constants';
 import { keywordIndexedDb } from '../indexeddb/keywords';
 import { archetypeIndexedDb } from '../indexeddb/archetypes';
+import { raceIndexedDb } from '../indexeddb/races';
 
 const gameContainer = document.getElementById('game-container');
 
@@ -26,6 +27,7 @@ export class GameRenderer {
         gameRoot.render(mulliganElement);
         break;
       default:
+        console.log(this.gameData)
         const gameElement = html`<${GameContainer} gameData=${this.gameData} animationData=${animationData} />`;
         gameRoot.render(gameElement);
         this.provideDataToDragController(this.gameData);
@@ -34,8 +36,16 @@ export class GameRenderer {
 
   async filterAndOrganizeData(updatedGameData) {
     let filteredData = await this.filterKeywordsAndConstants(updatedGameData);
-    filteredData = this.purgeExtraData(updatedGameData);
+    await this.assignRaces(filteredData);
     return filteredData;
+  }
+
+  async assignRaces(updatedGameData) {
+    const raceDb = new raceIndexedDb();
+    await raceDb.initialize();
+    [updatedGameData.player, updatedGameData.opponent].forEach(async(player)=> {
+    player.player_data.race = await raceDb.itemById(player.player_data.race_id);
+  })
   }
 
   async fetchConstantsFromIndexDb(range) {
@@ -50,10 +60,12 @@ export class GameRenderer {
     return await keywordDb.itemsInRange(...range, 'card_constant_id');
   }
 
-  async assignArchetypeColorsToConstants() {
+  async assignArchetypeColorsToConstants(updatedGameData) {
     const archDb = new archetypeIndexedDb();
     await archDb.initialize();
     const arches = await archDb.allItems();
+    [updatedGameData.player.player_data, updatedGameData.opponent.player_data].forEach((player)=> player.archetype = arches.find((a) => a.id === player.archetype_id))
+
     this.cardConstants.map((cc) => cc.archetypeColor = arches.find((a) => a.id === cc.archetype_id).color);
   }
 
@@ -63,7 +75,7 @@ export class GameRenderer {
     const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
     this.cardConstants = await this.fetchConstantsFromIndexDb(range);
     this.cardKeywords = await this.fetchKeywordsFromIndexDb(range);
-    await this.assignArchetypeColorsToConstants();
+    await this.assignArchetypeColorsToConstants(updatedGameData);
     cardsSetsToMatch.filter((item) => item).forEach((cardSet) => cardSet.forEach(((card) => this.matchKeywordsAndConstantsToCard(card))));
     if (updatedGameData.lastPlayedCard) this.matchKeywordsAndConstantsToCard(updatedGameData.lastPlayedCard);
     return updatedGameData;
@@ -75,11 +87,6 @@ export class GameRenderer {
     card.keywords = this.cardKeywords.filter((c) => c.card_constant_id === card.card_constant_id);
   }
 
-  purgeExtraData(updatedGameData) {
-    delete updatedGameData.card_keywords;
-    delete updatedGameData.card_constant_data;
-    return updatedGameData;
-  }
 
   provideDataToDragController(gameData) {
     if (typeof document['gameplay-drag'] !== 'undefined') document['gameplay-drag'].loadControllerFromData(gameData);

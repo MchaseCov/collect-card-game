@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   resources :card_constants, only: [:index]
   resources :keywords, only: [:index]
   resources :archetypes, only: [:index]
+  resources :races, only: [:index]
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
