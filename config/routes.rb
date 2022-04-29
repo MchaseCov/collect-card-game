@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       %i[party spell].each { |type| post "play_card/#{type}", to: "games#play_#{type}" }
       %i[party player].each { |target| post "combat/#{target}", to: "games##{target}_combat" }
       post 'end_turn'
+      post 'end_turn_on_timer'
     end
   end
   resources :multiplayer_games

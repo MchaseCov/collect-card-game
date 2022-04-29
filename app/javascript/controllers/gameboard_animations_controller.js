@@ -14,22 +14,6 @@ export default class extends Controller {
     }
   }
 
-  connect(){
-  const turnTime = Date.parse(this.turnValue)
-  this.turnCount = setInterval(function() {
-    if ((Date.now()-turnTime)>= 120000){
-      clearInterval(this.turnCount);
-    } else {
-    }
-  
-  }, 1000);
-}
-
-  disconnect(){
-    clearInterval(this.turnCount)
-  }
-
-
   mulliganRegionTargetConnected(element){
     this.element.parentElement.parentElement.appendChild(element)
   }

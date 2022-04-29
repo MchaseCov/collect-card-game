@@ -5,6 +5,7 @@ import createOpponentPlayerInfo from '../opponent_player_side/op_info';
 import createFriendlyPlayerInfo from '../friendly_player_side/fp_info';
 import createBattlefield from '../battlefield/battlefield';
 import Sidebar from './sidebar/sidebar';
+import turnTimer from '../battlefield/turn_timer';
 
 
 const Game = forwardRef((props, ref) => {
@@ -46,5 +47,6 @@ const Game = forwardRef((props, ref) => {
 </div>
 `;
 })
+//  <${turnTimer} turnTime=${props.turnTime} key=${props.turnTime} turnTime=${gameInformationData.turn_time} gameId=${gameInformationData.id} isPlayersTurn=${isPlayersTurn }/>
 
 export default Game

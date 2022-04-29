@@ -49,6 +49,10 @@ class GamesController < ApplicationController
     @game.end_turn if @game.ongoing?
   end
 
+  def end_turn_on_timer
+    @game.end_turn if (118.seconds.ago >= @game.turn_time) && @game.ongoing?
+  end
+
   def party_combat
     attacking_card = @player.party_cards.in_battlefield.is_attacking.find(params[:card])
     defending_card = @game.opposing_player_of(@player).party_cards.in_battlefield.find(params[:target])
