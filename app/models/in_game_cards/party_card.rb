@@ -219,10 +219,10 @@ class PartyCard < Card
   end
 
   def begin_taunt
-    update(taunt: true)
+    update(taunting: true)
   end
 
   def end_taunt
-    update(taunt: false)
+    update(taunting: false)
   end
 end
