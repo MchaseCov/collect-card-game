@@ -34,7 +34,9 @@ class Player < ApplicationRecord
   # ALIAS AND SCOPES ===========================================================
   validates_presence_of :cost_cap, :cost_current, :resource_cap, :resource_current, :status
   validates_numericality_of :cost_cap, :resource_cap, :cost_current
+  validates :resource_cap, numericality: { less_than_or_equal_to: 10 }
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
+  validates :cost_cap, numericality: { less_than_or_equal_to: 10 }
 
   alias_attribute :health, :health_current
   # ASSOCIATIONS ===========================================================
@@ -130,7 +132,8 @@ class Player < ApplicationRecord
     increment!(:cost_cap) if cost_cap < 10
     increment!(:resource_cap) if resource_cap < 10
     # Interesting idea: What if resource does not replenish with turn and just goes up by X?
-    update(cost_current: cost_cap, resource_current: resource_current + 1)
+    update(cost_current: cost_cap)
+    increment(:resource_current)
   end
 
   def recount_deck_size

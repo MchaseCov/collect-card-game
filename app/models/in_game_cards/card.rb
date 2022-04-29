@@ -39,10 +39,14 @@ class Card < ApplicationRecord
   delegate :archetype, :name, :tribe, to: :card_constant
 
   def increment_cost(amount = 1)
+    return if cost == 10
+
     decrement!(:cost, amount)
   end
 
   def decrement_cost(amount = 1)
+    return if cost.zero?
+
     decrement!(:cost, amount)
   end
 end
