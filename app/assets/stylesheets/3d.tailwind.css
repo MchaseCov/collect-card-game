@@ -1,6 +1,7 @@
 .game-perspective-3d {
-  transform: rotatex(35deg);
+  transform: rotatex(35deg) translateZ(0);
   transform-style: preserve-3d;
+  transform-origin: 50%  53%;
 }
 
 .children-in-game-perspective {
@@ -47,17 +48,59 @@
 .deck-front  {
   background-image: linear-gradient(0deg, #49475b 41.67%, #000000 41.67%, #000000 50%, #49475b 50%, #49475b 91.67%, #000000 91.67%, #000000 100%);
   background-size: 16.00px 16.00px;  
+  z-index: 20;
 }
 .deck-left   {
   background-image: linear-gradient(90deg, #49475b 41.67%, #000000 41.67%, #000000 50%, #49475b 50%, #49475b 91.67%, #000000 91.67%, #000000 100%);
   background-size: 16.00px 16.00px; 
+  z-index: 15;
 }
 .deck-bottom{
   height: 250px;
   width: 180px;
+  z-index: 0;
+  filter: drop-shadow(35px 15px 4px rgba(20, 8, 14, 0.4));
+
 }
 .deck-empty{
   position: absolute;
   background-color: red;
   border: 3px solid black;
+}
+.deck-top{
+  z-index: 25;
+}
+
+.card-tooltip {
+  z-index: 100;
+    transform: translatez(60px);
+    transform-style: preserve-3d;
+    transform-origin: 50%  53%;
+    filter: drop-shadow(25px 30px 4px rgba(20, 8, 14, 0.4));
+}
+
+.card-in-battle{ 
+  filter: drop-shadow(3px 5px 1px rgba(20, 8, 14, 0.4));
+}
+
+.stat-bubble{
+  filter: drop-shadow(3px 3px 2px rgba(20, 8, 14, 0.4));
+
+}
+
+.portrait{
+  filter: drop-shadow(2px 2px 2px rgba(20, 8, 14, 0.4));
+}
+
+.card-in-hand{
+  filter: drop-shadow(25px 30px 4px rgba(20, 8, 14, 0.4));
+
+}
+#op-cards-hand{
+    filter: drop-shadow(3px 3px 2px rgba(20, 8, 14, 0.4));
+}
+
+.resource-bar{
+  filter: drop-shadow(4px 5px 2px rgba(20, 8, 14, 0.4));
+
 }

@@ -14,16 +14,16 @@ const createFriendlyPlayerInfo = forwardRef((props, ref) => {
   const playerGameData = props.gameData
   return html`
   <section id='fp-info' className="relative bottom-0 w-full h-1/4">
-    <div key="fp-cc" className="absolute h-8 mx-auto bg-gray-400 rounded-xl right-1/2 w-80 has-tooltip">
+    <div key="fp-cc" className="absolute h-8 mx-auto bg-gray-400 resource-bar rounded-xl right-1/2 w-80 has-tooltip">
         ${coins(playerGameData.player_data.cost_current)}
-        <div className="left-0 z-30 mx-auto text-xl text-center bg-white w-80 top-8 tooltip w-max rounded-xl">
+        <div className="z-50 mx-auto text-xl text-center bg-white -left-20 w-80 top-8 tooltip w-max rounded-xl">
       You have ${playerGameData.player_data.cost_current} coins remaining to spend this turn. Every turn your
       coins replenish to the cap, up to 10.
       </div>
     </div>  
-    <div key="fp-rc" className="absolute h-8 mx-auto text-right bg-gray-400 rounded-xl left-1/2 w-80 has-tooltip">
+    <div key="fp-rc" className="absolute h-8 mx-auto text-right bg-gray-400 resource-bar rounded-xl left-1/2 w-80 has-tooltip">
       ${resource(playerGameData.player_data.resource_current)}
-      <div className="left-0 z-30 mx-auto text-xl text-center bg-white w-80 top-8 tooltip w-max rounded-xl">
+      <div className="z-50 mx-auto text-xl text-center bg-white -right-20 w-80 top-8 tooltip w-max rounded-xl">
       You have ${playerGameData.player_data.resource_current} resource points to spend this turn. Every turn your
       resource points replenish by 1, up to 10.
       </div>

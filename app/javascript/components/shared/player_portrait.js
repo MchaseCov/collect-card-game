@@ -6,7 +6,7 @@ import AttackBubble from './attack_bubble';
 export default function PlayerPortrait(props, id, classList, dataset) {
   return html`<div id='${id}-player-info'
                   key=${id}
-                  className="${classList} border-2 border-blackish transition-shadow hover:shadow-lg hover:shadow-white/70 w-36 h-44 2xl:w-40 2xl:h-48"
+                  className="${classList} portrait border-2 border-blackish transition-shadow hover:shadow-lg hover:shadow-white/70 w-36 h-44 2xl:w-40 2xl:h-48"
                   data-status="${props.status}"
                   data-id="${props.id}"
                   data-player-id="${props.id}"

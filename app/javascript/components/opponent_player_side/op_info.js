@@ -14,10 +14,10 @@ const opponentDataset = { 'data-type': "player", 'data-gameplay-drag-target': 'r
 const createOpponentPlayerInfo = forwardRef((props, ref) => {
   return html`
   <section id='op-info' className="relative w-full h-1/4">
-  <div key="op-cc" className="absolute h-8 mx-auto bg-gray-400 bottom-1/2 rounded-xl right-1/2 w-80 has-tooltip">
+  <div key="op-cc" className="absolute h-8 mx-auto bg-gray-400 resource-bar bottom-1/2 rounded-xl right-1/2 w-80 has-tooltip">
         ${coins(props.gameData.player_data.cost_current)}
     </div>  
-    <div key="op-rc" className="absolute h-8 mx-auto text-right bg-gray-400 bottom-1/2 rounded-xl left-1/2 w-80 has-tooltip">
+    <div key="op-rc" className="absolute h-8 mx-auto text-right bg-gray-400 resource-bar bottom-1/2 rounded-xl left-1/2 w-80 has-tooltip">
       ${resource(props.gameData.player_data.resource_current)}
     </div>
   ${PlayerPortrait(props.gameData.player_data, 'op', playerClasslist, opponentDataset)}

@@ -8,7 +8,7 @@ import { forwardRef } from 'react';
 const createBattlefieldRow = forwardRef((props, ref) => {
   const cards = props.cards
   const playerSpecificData = props.playerSpecificData
-  return html`<div id="${playerSpecificData.identifier}-cards-battle" className="flex flex-row items-center justify-center flex-auto w-full h-full border border-black border-t-1">
+  return html`<div id="${playerSpecificData.identifier}-cards-battle" className="flex flex-row items-center justify-center flex-auto w-full h-full border border-black border-t-1 preserve-3d">
                 <${CreateBlankSpace} position=0 key=0 playerSpecificData=${playerSpecificData.boardSpaceData}/>
                 ${cards.map((card) => html`<${CardInBattle}id=${card.id}
                                                             key=${card.id}

@@ -73,7 +73,7 @@ const createBattlefield = forwardRef((props, ref) => {
   })();
 
   return html`
-  <section id="battlefield" className="grid items-stretch flex-1 max-h-[50%] w-full grid-cols-1 grid-rows-2 gap-0 mx-auto border-t-2 border-b-2 rounded-2xl">
+  <section id="battlefield" className="grid  preserve-3d z-10 items-stretch flex-1 max-h-[50%] w-full grid-cols-1 grid-rows-2 gap-0 mx-auto border-t-2 border-b-2 rounded-2xl">
     ${lastPlayedCardElement}
     <${createBattlefieldRow} key="OpBattlefield" ref=${ref} cards=${opponentCards} playerSpecificData=${opponentSpecificData}/>
     <${createBattlefieldRow} key="FpBattlefield" ref=${ref} cards=${friendlyCards} playerSpecificData=${firstPersonSpecificData}/>
