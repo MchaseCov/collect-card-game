@@ -41,10 +41,11 @@ const turnTimer = props => {
  }
 
  const turnTimerStyle = {
-  width: `${100 - turnTimerRatio}%`,
+  'direction': 'rtl',
+  'background': '#DC9B7B'
 };
 
-return html`<div className="absolute top-0 bottom-0 right-0 h-2 my-auto bg-rose-600" style=${turnTimerStyle}/>`
+return html`<meter id="turnTime" className="absolute top-0 bottom-0 right-0 z-10 w-full h-4 my-auto turn-meter bg-light-brown" min="0" optimum="80" max="100" low="33" high="66" style=${turnTimerStyle} value="${100-turnTimerRatio}"> ${turnTimerRatio} </meter>`
 }
 
 export default turnTimer

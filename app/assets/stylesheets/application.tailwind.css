@@ -9,3 +9,8 @@
 .has-tooltip:hover .tooltip {
   @apply z-50 block opacity-100;
 }
+
+.turn-meter::-webkit-meter-bar {
+  background: transparent;
+  border: none;
+}
