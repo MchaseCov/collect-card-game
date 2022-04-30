@@ -95,8 +95,9 @@ export default class extends Controller {
   }
 
   drawCardToHand(card) {
-    const ytrans = (card.getBoundingClientRect().y > 0 ? -9 : 9);
-    card.style.transform = `translate(33vw, ${ytrans}rem) rotateY(180deg)`;
+    const deck = (card.getBoundingClientRect().y > 0 ? document.getElementById('fp-deck') : document.getElementById('op-deck')).firstChild;
+    const translation = this.findDifferenceInPositions(card, deck);
+    card.style.transform = `translate(${translation.x + (card.getBoundingClientRect().width*.25)}px, ${translation.y}px)  rotateY(-180deg) ` ;
     card.classList.add('last-drawn');
     card.onanimationend = () => {
       card.style.removeProperty('transform');

@@ -4,8 +4,8 @@ import { forwardRef } from 'react';
 
 import StandardCard from '../cards/standard_card';
 
-const containerClasslist = 'w-full ml-auto text-center whitespace-nowrap z-20';
-const cardInHandClassList = 'relative ring ring-glow-green playing-card inline-block -ml-10 z-10 card-in-hand hover:z-20 hover:bottom-8 hover:scale-125';
+const containerClasslist = 'w-full ml-auto text-center whitespace-nowrap z-20 preserve-3d children-in-game-perspective';
+const cardInHandClassList = 'relative ring ring-glow-green playing-card preserve-3d inline-block -ml-10 z-10 card-in-hand hover:z-20 hover:bottom-8 hover:scale-125';
 
 const partyCardAttributes = card => {
   const data = {

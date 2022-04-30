@@ -37,25 +37,26 @@
 /* Last drawn card */
 .last-drawn{
   z-index: 50;
-  transform: rotate3d(0, 1, 0, 90deg);
-  transform: rotate3d(1, 0, 0, 20deg);
-  transform: rotateY(180deg);
+  transform: translateZ(10px);
   transform-style: preserve-3d;
   animation: drawn-card 1s;
   animation-fill-mode: forwards;
+  filter: none;
 }
-
 .last-drawn:after {
+  transform-style: preserve-3d;
   backface-visibility: hidden;
-  z-index: 20;
   transform: rotateY(180deg);
+  z-index: 50;
   content: '';
   right: 0px;
   bottom: 0px;
   position: absolute;
   top: 0px;
   left: 0px;
-  background: #334155;
+  background: #49475B;
+  filter: drop-shadow(30px 5px 4px rgba(20, 8, 14, 0.4));
+
 }
 
 
