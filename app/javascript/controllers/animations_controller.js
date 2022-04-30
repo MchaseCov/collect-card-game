@@ -49,12 +49,10 @@ export default class extends Controller {
     attacker.classList.add('z-50', 'board-animatable');
     this.translateToAndFrom(attacker, translation);
     this.createDamageIndicators(attacker, defender);
-    attacker.onanimationend = () => {
-      this.dyingCards.forEach((card) => this.killCard(card));
-      attacker.classList.remove('z-50', 'board-animatable');
-      attacker.removeAttribute('data-animations-target');
-      defender.removeAttribute('data-animations-target');
-    };
+    attacker.classList.remove('z-50', 'board-animatable');
+    attacker.removeAttribute('data-animations-target');
+    defender.removeAttribute('data-animations-target');
+    this.dyingCards.forEach((card) => this.killCard(card));
   }
 
   async createDamageIndicators(attacker, defender) {

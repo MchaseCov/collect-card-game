@@ -23,14 +23,21 @@ export default function GameContainer(props) {
   const cardsInBattle = gameData.opponent.cards.in_battlefield?.concat(gameData.player.cards.in_battlefield)?.map((c) => c.id);
   const cardInBattleReference = useRef(cardsInBattle?.reduce((obj, id) => (obj[id] = undefined, obj), {}));
 
-  const thisGameReference = useRef({})
+  // References for players
+  const players = [gameData.opponent.player_data.id, gameData.player.player_data.id];
+  const playersReference = useRef(players.reduce((obj, id) => (obj[id] = undefined, obj), {}));
+
+  // Reference for game itself
+  const thisGameReference = useRef({});
 
   // Object container to hold references together and forward them to children
-  const gameReferences = useRef({ cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference });
+  const gameReferences = useRef({
+    cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference, playersReference,
+  });
 
   // REMINDER: OPPONENT CARD IN HAND REFERENCES
   const searchForElementInRefs = (id) => {
-    const listOfAllReferences = [cardInBattleReference.current, friendlyCardInHandReference.current, opponentCardInHandReference.current, thisGameReference.current];
+    const listOfAllReferences = [cardInBattleReference.current, friendlyCardInHandReference.current, opponentCardInHandReference.current, playersReference.current, thisGameReference.current];
 
     for (let i = 0; i < listOfAllReferences.length; i++) {
       if (listOfAllReferences[i][id]) return listOfAllReferences[i][id];

@@ -27,7 +27,6 @@ export class GameRenderer {
         gameRoot.render(mulliganElement);
         break;
       default:
-        console.log(this.gameData)
         const gameElement = html`<${GameContainer} gameData=${this.gameData} animationData=${animationData} />`;
         gameRoot.render(gameElement);
         this.provideDataToDragController(this.gameData);
@@ -36,16 +35,17 @@ export class GameRenderer {
 
   async filterAndOrganizeData(updatedGameData) {
     let filteredData = await this.filterKeywordsAndConstants(updatedGameData);
-    await this.assignRaces(filteredData);
+    filteredData = await this.assignRaces(filteredData);
     return filteredData;
   }
 
   async assignRaces(updatedGameData) {
     const raceDb = new raceIndexedDb();
     await raceDb.initialize();
-    [updatedGameData.player, updatedGameData.opponent].forEach(async(player)=> {
-    player.player_data.race = await raceDb.itemById(player.player_data.race_id);
-  })
+    [updatedGameData.player, updatedGameData.opponent].forEach(async (player) => {
+      player.player_data.race = await raceDb.itemById(player.player_data.race_id);
+    });
+    return updatedGameData;
   }
 
   async fetchConstantsFromIndexDb(range) {
@@ -64,14 +64,14 @@ export class GameRenderer {
     const archDb = new archetypeIndexedDb();
     await archDb.initialize();
     const arches = await archDb.allItems();
-    [updatedGameData.player.player_data, updatedGameData.opponent.player_data].forEach((player)=> player.archetype = arches.find((a) => a.id === player.archetype_id))
+    [updatedGameData.player.player_data, updatedGameData.opponent.player_data].forEach((player) => player.archetype = arches.find((a) => a.id === player.archetype_id));
 
     this.cardConstants.map((cc) => cc.archetypeColor = arches.find((a) => a.id === cc.archetype_id).color);
   }
 
   async filterKeywordsAndConstants(updatedGameData) {
     const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield, [updatedGameData.lastPlayedCard]];
-    
+
     const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
     this.cardConstants = await this.fetchConstantsFromIndexDb(range);
     this.cardKeywords = await this.fetchKeywordsFromIndexDb(range);
@@ -82,11 +82,10 @@ export class GameRenderer {
   }
 
   matchKeywordsAndConstantsToCard(card) {
-    if(!card) return
+    if (!card) return;
     card.cardConstant = this.cardConstants.find((c) => c.id === card.card_constant_id);
     card.keywords = this.cardKeywords.filter((c) => c.card_constant_id === card.card_constant_id);
   }
-
 
   provideDataToDragController(gameData) {
     if (typeof document['gameplay-drag'] !== 'undefined') document['gameplay-drag'].loadControllerFromData(gameData);
