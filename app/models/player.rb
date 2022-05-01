@@ -132,9 +132,8 @@ class Player < ApplicationRecord
   def increment_player_resources
     increment!(:cost_cap) if cost_cap < 10
     increment!(:resource_cap) if resource_cap < 10
-    # Interesting idea: What if resource does not replenish with turn and just goes up by X?
     update(cost_current: cost_cap)
-    increment(:resource_current)
+    increment!(:resource_current) unless resource_current == resource_cap
   end
 
   def recount_deck_size
