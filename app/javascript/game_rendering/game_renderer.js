@@ -70,7 +70,7 @@ export class GameRenderer {
   }
 
   async filterKeywordsAndConstants(updatedGameData) {
-    const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield, [updatedGameData.lastPlayedCard]];
+    const cardsSetsToMatch = [updatedGameData.player.cards.in_hand, updatedGameData.player.cards.in_battlefield, updatedGameData.opponent.cards.in_battlefield, [updatedGameData.lastPlayedCard], [updatedGameData.player.cards.undrawnCard], [updatedGameData.opponent.cards.undrawnCard]];
 
     const range = this.findMinAndMaxCardConstantId(cardsSetsToMatch);
     this.cardConstants = await this.fetchConstantsFromIndexDb(range);

@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'defender', 'drawnCard', 'player', 'hand', 'lastPlayed', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift', 'endMulliganPhase'];
+  static targets = ['attacker', 'defender', 'drawnCard', 'player', 'hand', 'lastPlayed', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift', 'endMulliganPhase', 'overdrawnCard'];
 
   // Generic translation functions.
 
@@ -97,7 +97,7 @@ export default class extends Controller {
   drawCardToHand(card) {
     const deck = (card.getBoundingClientRect().y > 0 ? document.getElementById('fp-deck') : document.getElementById('op-deck')).firstChild;
     const translation = this.findDifferenceInPositions(card, deck);
-    card.style.transform = `translate(${translation.x + (card.getBoundingClientRect().width*.25)}px, ${translation.y}px)  rotateY(-180deg) ` ;
+    card.style.transform = `translate(${translation.x + (card.getBoundingClientRect().width * 0.25)}px, ${translation.y}px)  rotateY(-180deg) `;
     card.classList.add('last-drawn');
     card.onanimationend = () => {
       card.style.removeProperty('transform');
@@ -194,5 +194,13 @@ export default class extends Controller {
       this.element.animate([{ filter: 'brightness(0.5)' }, { filter: 'brightness(1)' }], 2000);
       mulliganCardBox.classList.add('move-card-down');
     };
+  }
+
+  // Animations for overdrawing a card with a full hand
+
+  overdrawnCardTargetConnected(card) {
+    card.classList.remove('hidden');
+    card.style.transform = 'rotateY(180deg)';
+    card.classList.add('overdrawn');
   }
 }

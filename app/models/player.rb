@@ -117,7 +117,8 @@ class Player < ApplicationRecord
       topdeck = cards.includes(:card_constant, :gamestate_deck,
                                :active_listeners).in_deck.sample
       if cards.in_hand.size >= 10
-        topdeck.in_discard!
+        topdeck.in_overdraw!
+        game.broadcast_card_overdraw_animations(topdeck)
       else
         topdeck.in_hand!
         game.broadcast_card_draw_animations(topdeck)

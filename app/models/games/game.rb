@@ -60,6 +60,7 @@ class Game < ApplicationRecord
       current_player.put_cards_to_sleep
       update(turn: !turn) and reload.current_player
       start_of_turn_actions
+      players.each { |p| p.cards.in_overdraw.each(&:in_discard!) }
     end
   end
 

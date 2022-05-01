@@ -19,7 +19,8 @@ module Cacheable
           cards: {
             in_hand: p1.cards.in_hand.order(updated_at: :asc).to_a,
             in_battlefield: p1.party_cards.in_battlefield.order(:position).map(&:attributes),
-            in_deck: p1.cards.in_deck.count
+            in_deck: p1.cards.in_deck.count,
+            undrawnCard: p1.cards.in_overdraw.order(:updated_at).map(&:attributes).last
           }
         },
         player_two: {
@@ -28,7 +29,8 @@ module Cacheable
           cards: {
             in_hand: p2.cards.in_hand.order(updated_at: :asc).to_a,
             in_battlefield: p2.party_cards.in_battlefield.order(:position).map(&:attributes),
-            in_deck: p2.cards.in_deck.count
+            in_deck: p2.cards.in_deck.count,
+            undrawnCard: p2.cards.in_overdraw.order(:updated_at).map(&:attributes).last
           }
         } }
     end

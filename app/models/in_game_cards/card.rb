@@ -24,7 +24,7 @@ class Card < ApplicationRecord
   validates :type, inclusion: { in: %w[PartyCard SpellCard] }
   validates :cost, numericality: { in: 0..10 }
 
-  enum location: { deck: 0, hand: 1, mulligan: 2, battlefield: 3, graveyard: 4, discard: 5 }, _prefix: :in
+  enum location: { deck: 0, hand: 1, mulligan: 2, battlefield: 3, graveyard: 4, discard: 5, overdraw: 6 }, _prefix: :in
 
   belongs_to :card_constant
   belongs_to :gamestate_deck

@@ -1,17 +1,21 @@
-  
-<section id='fp-info' className="relative bottom-0 w-full h-1/4">
-  <div key="fp-cc" className="absolute h-8 mx-auto bg-gray-400 resource-bar rounded-xl right-1/2 w-80 has-tooltip">
-    ${coins(playerGameData.player_data.cost_current)}
-    <div className="z-50 mx-auto text-xl text-center bg-white w-80 -left-20 top-8 tooltip rounded-xl">
-      You have ${playerGameData.player_data.cost_current} coins remaining to spend this turn. Every turn your
-      coins replenish to the cap, up to 10.
-    </div>
+<h2>Log in</h2>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
   </div>
-  <div key="fp-rc" className="absolute h-8 mx-auto text-right bg-gray-400 resource-bar rounded-xl left-1/2 w-80 has-tooltip">
-    ${resource(playerGameData.player_data.resource_current)}
-    <div className="z-50 mx-auto text-xl text-center bg-white -right-20 w-80 top-8 tooltip rounded-xl">
-      You have ${playerGameData.player_data.resource_current} resource points to spend this turn. Every turn your
-      resource points replenish by 1, up to 10.
-    </div>
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.password_field :password, autocomplete: "current-password" %>
   </div>
-</section>
+  <% if devise_mapping.rememberable? %>
+    <div class="field">
+      <%= f.check_box :remember_me %>
+      <%= f.label :remember_me %>
+    </div>
+  <% end %>
+  <div class="actions">
+    <%= f.submit "Log in" %>
+  </div>
+<% end %>
+<%= render "devise/shared/links" %>

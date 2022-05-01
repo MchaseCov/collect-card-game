@@ -29,6 +29,24 @@ module Broadcastable
       card.type == 'PartyCard' ? broadcast_board_entry_phase(card) : fallback_entry_phase(card)
     end
 
+    def broadcast_card_overdraw_animations(card)
+      overdraw_animation_data = {
+        targets: {
+          target_one: {
+            id: card.id,
+            dataset: {
+              'animationsTarget': 'overdrawnCard'
+            }
+          }
+        },
+        animationTime: 1
+      }
+      touch && fetch_game_data
+      players.each do |p|
+        broadcast_animations(p, overdraw_animation_data)
+      end
+    end
+
     private
 
     def fetch_game_data

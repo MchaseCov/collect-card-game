@@ -30,14 +30,17 @@ export default function GameContainer(props) {
   // Reference for game itself
   const thisGameReference = useRef({});
 
+  // Reference for undrawn cards, burn or fatigue.
+  const undrawnCardReference = useRef({});
+
   // Object container to hold references together and forward them to children
   const gameReferences = useRef({
-    cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference, playersReference,
+    cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference, playersReference, undrawnCardReference,
   });
 
   // REMINDER: OPPONENT CARD IN HAND REFERENCES
   const searchForElementInRefs = (id) => {
-    const listOfAllReferences = [cardInBattleReference.current, friendlyCardInHandReference.current, opponentCardInHandReference.current, playersReference.current, thisGameReference.current];
+    const listOfAllReferences = [cardInBattleReference.current, friendlyCardInHandReference.current, opponentCardInHandReference.current, playersReference.current, thisGameReference.current, undrawnCardReference.current];
 
     for (let i = 0; i < listOfAllReferences.length; i++) {
       if (listOfAllReferences[i][id]) return listOfAllReferences[i][id];

@@ -60,6 +60,43 @@
 }
 
 
+.overdrawn{
+  z-index: 50;
+  transform-style: preserve-3d;
+  animation: overdrawn 3s;
+  animation-fill-mode: forwards;
+  filter: none
+}
+.overdrawn:before{
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: rotateY(0deg);
+  content: 'Hand Full - Card Discarded';
+  left: 0;
+  bottom: -50px;
+  z-index: 100;
+  text-align: center;
+  border-radius: 15%;
+  position: absolute;
+  background: white;
+  color: black;
+}
+
+.overdrawn:after {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  z-index: 50;
+  content: '';
+  right: 0px;
+  bottom: 0px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #49475B;
+  filter: drop-shadow(30px 5px 4px rgba(20, 8, 14, 0.4));
+
+}
 .card-to-left{
   animation: shift-cards-left 0.5s;
   animation-fill-mode: forwards;

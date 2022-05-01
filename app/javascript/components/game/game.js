@@ -11,8 +11,9 @@ import Sidebar from './sidebar/sidebar';
 const Game = forwardRef((props, ref) => {
   const { gameData } = props;
   const {
-    cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference, playersReference,
+    cardInBattleReference, friendlyCardInHandReference, opponentCardInHandReference, thisGameReference, playersReference, undrawnCardReference,
   } = ref.current;
+  const turnButton = useRef(null);
   const gameInformationData = gameData.game;
   const playerInformationData = gameData.player.player_data;
   const opponentInformationData = gameData.opponent.player_data;
@@ -21,10 +22,9 @@ const Game = forwardRef((props, ref) => {
 
   const friendlyPlayerRefs = { friendlyCardInHandReference, playersReference };
   const opponentPlayerRefs = { opponentCardInHandReference, playersReference };
+  const sidebarRefs = { turnButton, undrawnCardReference };
 
   // Disable button when it is not the current player's turn
-  const turnButton = useRef(null);
-
   const [gameCurrentTurn, setTurn] = useState(gameInformationData.turn);
   if (gameCurrentTurn !== gameInformationData.turn) setTurn(gameInformationData.turn);
   const playersTurnOrder = playerInformationData.turn_order;
@@ -35,7 +35,7 @@ const Game = forwardRef((props, ref) => {
   return html`
   <canvas id="drawContainer" data-line-drawer-target="canvas" width="0" height="0" className='fixed bottom-0 left-0 right-0 z-50 mx-auto pointer-events-none select-none'></canvas>
   <div id="inner-game-container" className="absolute bottom-0 w-full max-w-[1920px] h-[123.5vh] mx-auto right-0 left-0 my-auto children-in-game-perspective">
-  <${Sidebar} ref=${turnButton} gameInformationData=${gameInformationData} opponentInformationData=${opponentInformationData} playerInformationData=${playerInformationData} opponentCardData=${opponentCardData} playerCardData=${playerCardData} gameCurrentTurn=${gameCurrentTurn}/>
+  <${Sidebar} ref=${sidebarRefs} gameInformationData=${gameInformationData} opponentInformationData=${opponentInformationData} playerInformationData=${playerInformationData} opponentCardData=${opponentCardData} playerCardData=${playerCardData} gameCurrentTurn=${gameCurrentTurn}/>
   <article id="main-game-board"
   className="flex flex-col content-between justify-between w-full h-full max-h-[1600px] mx-auto items-between flex-nowrap gap-y-6 xl:gap-y-2 overflow-clip bg-light-brown game-perspective-3d"
   data-controller="gameplay-drag style-cards gameboard-animations"
