@@ -10,7 +10,8 @@ class AccountDecksController < ApplicationController
 
   def new
     @races = Race.all
-    @archetypes = Archetype.where.not(name: 'Neutral').all
+    # Barbarians are only disabled because their cards effects are not ready!
+    @archetypes = Archetype.where.not(name: 'Neutral').where.not(name: 'Token').where.not(name: 'Barbarian').all
     @account_deck = current_user.account_decks.build
   end
 
