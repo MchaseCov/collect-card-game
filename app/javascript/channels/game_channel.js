@@ -39,13 +39,11 @@ export default function connectToGameChannel(gameId, playerId) {
     },
 
     async waitForOngoingAnimations() {
-      console.log('waiting for', this.secondCounter);
       await new Promise((r) => setTimeout(r, (1000 * this.secondCounter)));
     },
 
     async received(data) {
       await this.waitForOngoingAnimations();
-      console.log(data)
       this.evaluateStreamPurpose(data);
     },
   });
