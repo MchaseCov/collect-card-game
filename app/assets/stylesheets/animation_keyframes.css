@@ -88,3 +88,9 @@
   99% {  opacity: 0; transform: translate(-10vw, 0) rotateY(0deg) rotateX(-15deg) ;   }
   100% {  opacity: 0; transform: translate(100vw, 100vh) rotateY(0deg);   }
 }
+
+@keyframes deck-glow {
+  0%{ box-shadow: 0 0 10px -10px red;}
+  30% { box-shadow: 0 0 10px 10px red;}
+  100%{ box-shadow: 0 0 10px -10px red;}
+}

@@ -47,6 +47,25 @@ module Broadcastable
       end
     end
 
+    def broadcast_fatigue_draw_animations(player, damage_taken)
+      fatigue_animation_data = {
+        targets: {
+          target_one: {
+            id: player.id,
+            dataset: {
+              'animationsTarget': 'fatiguingPlayer',
+              'damageTaken': damage_taken
+            }
+          }
+        },
+        animationTime: 1
+      }
+      touch && fetch_game_data
+      players.each do |p|
+        broadcast_animations(p, fatigue_animation_data)
+      end
+    end
+
     private
 
     def fetch_game_data

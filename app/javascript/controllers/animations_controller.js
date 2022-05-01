@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="animations"
 export default class extends Controller {
-  static targets = ['attacker', 'defender', 'drawnCard', 'player', 'hand', 'lastPlayed', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift', 'endMulliganPhase', 'overdrawnCard'];
+  static targets = ['attacker', 'defender', 'drawnCard', 'lastPlayed', 'enterBattle', 'shiftLeft', 'shiftRight', 'fromHand', 'fallbackForEndShift', 'endMulliganPhase', 'overdrawnCard', 'fatiguingPlayer'];
 
   // Generic translation functions.
 
@@ -202,5 +202,17 @@ export default class extends Controller {
     card.classList.remove('hidden');
     card.style.transform = 'rotateY(180deg)';
     card.classList.add('overdrawn');
+  }
+
+  // Animations for a player taking fatigue damage from an empty deck
+  fatiguingPlayerTargetConnected(player){
+    const deck = document.getElementById(`${player.id.charAt(0)}p-deck`).firstChild
+    deck.classList.add('deck-glow')
+    this.indicateDamageTaken({card: player, damage: +player.dataset.damageTaken})
+    player.removeAttribute('data-animations-target');
+    player.removeAttribute('data-damage-taken')
+    deck.onanimationend = () => {
+      deck.classList.remove('deck-glow')
+    }
   }
 }

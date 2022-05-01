@@ -16,7 +16,6 @@ const OpponentPlayerHand = forwardRef((props, ref) => {
   const { cards } = props
   return html`<div id='op-cards-hand'
         className="${containerClasslist}"
-        data-animations-target="hand"
         >
         ${hoverTooltip(cards.length)}
         ${cards.map((card) => html`<${cardInHand} id=${card} ref=${ref} key=${card}/>`)}

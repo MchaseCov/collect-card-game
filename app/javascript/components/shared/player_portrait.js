@@ -16,8 +16,6 @@ const PlayerPortrait = forwardRef((props, ref) => {
                   data-status="${playerData.status}"
                   data-id="${playerData.id}"
                   data-player-id="${playerData.id}"
-                  data-animations-target="player"
-                  data-style-cards-target="player"
                   ...${dataSet}>
                   <div className="z-50 mx-auto text-xl text-center bg-white left-40 tooltip w-80 top-8 rounded-xl">
       Health Remaining: ${playerData.health_current} / ${playerData.health_cap} <br/>

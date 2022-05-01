@@ -3,10 +3,31 @@ import html from '../../htm_create_element';
 import StandardCard from '../../cards/standard_card';
 
 const Deck = forwardRef((props, ref) => {
+
+  const cardFromDeck = (() => {
+    if (props.cardFromDeck) {
+      const card = props.cardFromDeck;
+      return html`<${StandardCard} 
+      ref=${ref}
+      id=${card.id}
+      cardConstant=${card.cardConstant}
+      health=${card.health}
+      attack=${card.attack}
+      health_cap=${card.health_cap}
+      additionalClasses="hidden"
+      keywords=${card.keywords}
+      cost=${card.cost}
+      type=${card.type}
+      key=${card.id}
+     />`;
+    }
+  });
+
   if (props.cardsInDeck <= 0) {
     return html`
   <div className="deck" >
   <div className="deck-bottom deck-empty" ></div>
+  ${cardFromDeck()}
   </div>
 `;
   }
@@ -35,24 +56,7 @@ const Deck = forwardRef((props, ref) => {
     transform: `rotateY(0deg) translateZ(${halfHeight}px)`,
   };
 
-  const cardFromDeck = (() => {
-    if (props.cardFromDeck) {
-      const card = props.cardFromDeck;
-      return html`<${StandardCard} 
-      ref=${ref}
-      id=${card.id}
-      cardConstant=${card.cardConstant}
-      health=${card.health}
-      attack=${card.attack}
-      health_cap=${card.health_cap}
-      additionalClasses="hidden"
-      keywords=${card.keywords}
-      cost=${card.cost}
-      type=${card.type}
-      key=${card.id}
-     />`;
-    }
-  });
+
 
   return html`
   <div className="deck has-tooltip" >

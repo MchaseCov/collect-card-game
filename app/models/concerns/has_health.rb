@@ -52,8 +52,10 @@ module HasHealth
     private
 
     def take_empty_deck_fatigue
+      current_health = health_current
       update_column(:health_current, (health_current / 2))
-
+      damage_taken = (current_health - health_current)
+      game.broadcast_fatigue_draw_animations(self, damage_taken)
       die if health <= 0
     end
   end

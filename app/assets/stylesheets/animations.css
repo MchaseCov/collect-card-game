@@ -136,3 +136,7 @@
   transition: 0.01s;
   transform: translateX(-9999px);
 }
+
+.deck-glow{
+  animation: deck-glow 1.5s;
+}
