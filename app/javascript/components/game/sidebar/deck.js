@@ -25,7 +25,10 @@ const Deck = forwardRef((props, ref) => {
 
   if (props.cardsInDeck <= 0) {
     return html`
-  <div className="deck" >
+  <div className="deck has-tooltip" >
+  <div className="top-0 bottom-0 px-3 py-1 mx-auto my-auto text-center bg-white -left-60 tooltip w-60 h-max rounded-xl">
+      No cards remaining! Instead of drawing a card, the player of this deck will take damage equal to half of their current health!!
+  </div>
   <div className="deck-bottom deck-empty" ></div>
   ${cardFromDeck()}
   </div>
