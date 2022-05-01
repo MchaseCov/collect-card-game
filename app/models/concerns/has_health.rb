@@ -52,7 +52,8 @@ module HasHealth
     private
 
     def take_empty_deck_fatigue
-      update(health_current: (health_current / 2))
+      update_column(:health_current, (health_current / 2))
+
       die if health <= 0
     end
   end
