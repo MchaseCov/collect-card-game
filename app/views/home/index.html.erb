@@ -1,19 +1,18 @@
-<div>
-  <h1 class="text-4xl font-bold"> Welcome To Card Game Page</h1>
-  <p>Placeholder need new game, view cards, make deck, friends, etc</p>
-  <%= link_to  "View My Decks", account_decks_path %>
-  <br>
-  this is a temporary button i promise
-  <%= button_to "new game", multiplayer_games_path(deck_one_id: 1, deck_two_id: 2)%>
-  <br>
-  <%= link_to "most recent MP game", @game, {data: {turbo: false}}%>
-  <br>
-  single player thing
-  <%= button_to "new game SINGLEPLAYER", singleplayer_games_path(deck_one_id: 1)%>
-  <br>
-  ok now for some queue stuff:
-  <%= button_to "DEV VIEW IT", queue_view_path%>
-  <%= button_to "Queue deck one", queue_join_path(deck_id: 1)%>
-  <%= button_to "Queue deck two", queue_join_path(deck_id: 2)%>
+<div class="mt-2 ml-12">
+  <h1 class="text-4xl font-bold">Card Game Demo Website!</h1>
+  <h2 class="mt-6 text-2xl font-bold">Play:</h2>
+  <div class="flex flex-col">
+    Queue one of your decks, make sure it has 30 cards!
+    You will be put into a game when another player queues a deck.
+    <%= form_with url: "/queue/join", method: :post, id:"queue-form" do |f| %>
+      <%= f.collection_select :deck_id, @decks.order(:name),:id, :name, include_blank: false %>
+      <%= f.submit "Queue this deck!", class: "bg-card-blue text-white px-2 py-3 rounded-xl", id:"queue-button" %>
+    <% end %>
+    <%= link_to "My most recent game", @game, {data: {turbo: false}, class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"}%>
+  </div>
+  <h3 class="mt-6 text-2xl font-bold">My account:</h3>
+  <div class="flex flex-col">
+    <%= link_to  "View My Decks", account_decks_path, {class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"} %>
+    <%= link_to "Sign out", destroy_user_session_path, {data:{turbo_method: :delete}, class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"} %>
+  </div>
 </div>
-<%= link_to "Sign out", destroy_user_session_path, data:{turbo_method: :delete} %>

@@ -14,10 +14,12 @@ class GameQueueController < ApplicationController
     return unless params[:deck_id] && queued_deck_is_playable
 
     add_player_to_queue
+    ActionCable.server.broadcast("queue_#{current_user.id}", { "in_queue": true })
   end
 
   def leave
     remove_user_from_queue
+    ActionCable.server.broadcast("queue_#{current_user.id}", { "exit_queue": true })
   end
 
   private
