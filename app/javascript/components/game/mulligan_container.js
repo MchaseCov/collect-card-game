@@ -22,12 +22,16 @@ export default function MulliganContainer(props) {
 
   const thisGameReference = useRef({})
 
+  // References for players
+  const players = [gameData.opponent.player_data.id, gameData.player.player_data.id];
+  const playersReference = useRef(players.reduce((obj, id) => (obj[id] = undefined, obj), {}));
+
   // Object container to hold references together and forward them to children
-  const gameReferences = useRef({ friendlyCardInMulliganReference, opponentCardInHandReference, thisGameReference });
+  const gameReferences = useRef({ friendlyCardInMulliganReference, opponentCardInHandReference, thisGameReference,  playersReference });
 
   // REMINDER: OPPONENT CARD IN HAND REFERENCES
   const searchForElementInRefs = (id) => {
-    const listOfAllReferences = [friendlyCardInMulliganReference.current, opponentCardInHandReference.current, thisGameReference.current];
+    const listOfAllReferences = [friendlyCardInMulliganReference.current, opponentCardInHandReference.current, thisGameReference.current, playersReference.current];
 
     for (let i = 0; i < listOfAllReferences.length; i++) {
       if (listOfAllReferences[i][id]) return listOfAllReferences[i][id];
