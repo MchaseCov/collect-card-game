@@ -1,42 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe Archetype, type: :model do
-  subject do
-    described_class.new(name: 'Barbarian',
-                        description: 'A fierce warrior with a rage for battle',
-                        resource_type: 'energy')
+  subject { FactoryBot.build :archetype }
+
+  context 'Archetype creation' do
+    it { is_expected.to be_valid }
   end
 
-  it 'is valid with valid attributes' do
-    expect(subject).to be_valid
+  context 'validations' do
+    context 'presence' do
+      it { should validate_presence_of(:name) }
+      it { should validate_presence_of(:description) }
+      it { should validate_presence_of(:resource_type) }
+      it { should validate_presence_of(:color) }
+    end
+
+    context 'inclusion' do
+      it { should validate_inclusion_of(:resource_type).in_array(%w[mana energy hybrid]) }
+    end
   end
-  it 'is not valid without a name' do
-    subject.name = nil
-    expect(subject).to_not be_valid
+
+  describe '#resource_color' do
+    it 'returns sky when resource_type is mana' do
+      subject.resource_type = 'mana'
+      expect(subject.resource_color).to eql('sky')
+    end
+    it 'returns energy when resource_type is energy' do
+      subject.resource_type = 'energy'
+      expect(subject.resource_color).to eq('rose')
+    end
+    it 'returns violet when resource_type is hybrid' do
+      subject.resource_type = 'hybrid'
+      expect(subject.resource_color).to eq('violet')
+    end
   end
-  it 'is not valid without a description' do
-    subject.description = nil
-    expect(subject).to_not be_valid
-  end
-  it 'is not valid without a resource type' do
-    subject.resource_type = nil
-    expect(subject).to_not be_valid
-  end
-  it 'can have a resource of mana' do
-    subject.resource_type = 'mana'
-    expect(subject).to be_valid
-  end
-  it 'can have a resource of energy' do
-    subject.resource_type = 'energy'
-    expect(subject).to be_valid
-  end
-  it 'can have a resource of hybrid' do
-    subject.resource_type = 'hybrid'
-    expect(subject).to be_valid
-  end
-  it 'cannot have other resource type names' do
-    subject.resource_type = 'magic'
-    expect(subject).to_not be_valid
-  end
-  it { should validate_uniqueness_of(:name) }
 end

@@ -9,7 +9,7 @@
 # color                   :string
 #
 class Archetype < ApplicationRecord
-  validates_presence_of :name, :description, :resource_type
+  validates_presence_of :name, :description, :resource_type, :color
   validates_uniqueness_of :name
   validates :resource_type, inclusion: { in: %w[mana energy hybrid] }
 

@@ -7,4 +7,5 @@ class User < ApplicationRecord
   has_many :account_decks
   has_many :players
   has_many :games, through: :players
+  validates_uniqueness_of :email
 end

@@ -13,9 +13,8 @@
 class CardConstant < ApplicationRecord
   validates_presence_of :name
   validates_uniqueness_of :name
-  validates :summoner_id, presence: true, uniqueness: true, allow_blank: true, if: -> { archetype.name == 'Token' }
-
   belongs_to :archetype
+  validates :summoner_id, presence: true, uniqueness: true, if: -> { archetype&.name == 'Token' }
   has_many :keywords, class_name: :Keyword,
                       foreign_key: :card_constant_id,
                       inverse_of: :card_constant,

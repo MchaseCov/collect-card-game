@@ -23,6 +23,9 @@ class PartyCard < Card
   include Summonable
   attr_accessor :current_target, :chosen_position
 
+  validates :health_cap, :attack, numericality: { greater_than_or_equal_to: 0 }
+  validates :health, numericality: { less_than_or_equal_to: :health_cap }
+
   # Callbacks: Evaluate PartyCard column changes after a save is committed to the database.
   #
   # saved_change_to_attrubute? #=> True if 'attribute' has been changed.

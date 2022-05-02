@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Card, type: :model do
+  subject { FactoryBot.create(:card, type: 'PartyCard') } # Type is arbitrary for these tests
+
+  context 'Card creation' do
+    it { is_expected.to be_valid }
+  end
+
   describe 'Associations' do
     it { should belong_to(:card_constant) }
     it { should belong_to(:gamestate_deck) }
@@ -14,12 +20,5 @@ RSpec.describe Card, type: :model do
   end
   describe 'Validation Numericality' do
     it { should validate_numericality_of(:cost) }
-  end
-
-  describe 'Value Cap Numericality' do
-    it 'Cannot have health higher than the cap' do
-      subject.health_cap = 25
-      should validate_numericality_of(:health).is_less_than_or_equal_to(subject.health_cap)
-    end
   end
 end
