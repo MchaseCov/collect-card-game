@@ -7,6 +7,7 @@ import createOpponentPlayerInfo from '../opponent_player_side/op_info';
 import createFriendlyPlayerInfo from '../friendly_player_side/fp_info';
 import createBattlefield from '../battlefield/battlefield';
 import Sidebar from './sidebar/sidebar';
+import turnTimer from '../battlefield/turn_timer';
 
 const Game = forwardRef((props, ref) => {
   const { gameData } = props;
@@ -45,6 +46,8 @@ const Game = forwardRef((props, ref) => {
   key="game-board"
   ref=${(el) => thisGameReference.current.gameBoardParent = el}
   >
+  <${turnTimer} turnTime=${props.turnTime} key=${props.turnTime} turnTime=${gameInformationData.turn_time} gameId=${gameInformationData.id} isPlayersTurn=${isPlayersTurn }/>
+
   <${createOpponentPlayerInfo} key="opInfoRegion" ref=${opponentPlayerRefs} gameData=${gameData.opponent}/>
   <${createBattlefield} key="battlefieldRegion" ref=${cardInBattleReference} friendlyCards=${playerCardData.in_battlefield} opponentCards=${opponentCardData.in_battlefield} lastPlayedCard=${gameData.lastPlayedCard}/>
   <${createFriendlyPlayerInfo} key="fpInfoRegion" ref=${friendlyPlayerRefs} gameData=${gameData.player}/>
@@ -52,6 +55,4 @@ const Game = forwardRef((props, ref) => {
 </div>
 `;
 });
-//    <${turnTimer} turnTime=${props.turnTime} key=${props.turnTime} turnTime=${gameInformationData.turn_time} gameId=${gameInformationData.id} isPlayersTurn=${isPlayersTurn }/>
-
 export default Game;
