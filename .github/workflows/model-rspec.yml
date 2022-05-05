@@ -2,10 +2,10 @@ name: Card Game Model RSpec Tests
 on:
   push:
     paths:
-      - "app/models/**"
+      - "app/**"
   pull_request:
     paths:
-      - "app/models/**"
+      - "app/**"
 jobs:
   build:
     name: CI
