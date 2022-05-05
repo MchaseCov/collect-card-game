@@ -38,13 +38,13 @@ class PartyCard < Card
     # end
     if saved_change_to_status? && saved_change_to_status[1] == 'dead'
       deathrattle&.trigger(self) unless silenced?
-      clean_buffs_and_effects
+      remove_buffs_and_effects
     end
   end
 
   ### PLANNING
 
-  def trigger_all_entry_keywords
+  def trigger_keywords_related_to_card_entry
     return false unless keywords.present?
 
     battlecry&.trigger(self, current_target)
@@ -87,7 +87,7 @@ class PartyCard < Card
       status_sleeping!
       update(position: position)
       in_battlefield!
-      recieve_valid_auras if player.active_auras.any?
+      apply_present_auras if player.active_auras.any?
     end
   end
 
@@ -97,7 +97,7 @@ class PartyCard < Card
     transaction do
       status_unplayed!
       in_hand!
-      clean_buffs_and_effects
+      remove_buffs_and_effects
       player.shift_cards_left(position)
     end
   end
@@ -146,27 +146,27 @@ class PartyCard < Card
 
   private
 
-  # PRIVATE run_buff_method_on_card: Private method called by buffs association callbacks.
+  # PRIVATE activate_buff: Private method called by buffs association callbacks.
   # Sends the target_method of an associated buff onto the Card.
   #
   # buff  -  The Buff object that invoked the callback when added to the Card.
   #
   # Example
   #      A Buff with the target_method: 'increase_health_cap' will call 'increase_health_cap' on the associated Card.
-  def run_buff_method_on_card(buff)
+  def activate_buff(buff)
     return unless buff.target_method
 
     buff.modifier ? send(buff.target_method, buff.modifier) : send(buff.target_method)
   end
 
-  # PRIVATE run_buff_removal_on_card: Private method called by buffs association callbacks.
+  # PRIVATE deactivate_buff: Private method called by buffs association callbacks.
   # Sends the removal_method: of an associated buff onto the Card.
   #
   # buff  -  The Buff object that invoked the callback when removed from the Card.
   #
   # Example
   #      A Buff with the removal_method: 'decrease_health_cap' will call 'decrease_health_cap' on the associated Card.
-  def run_buff_removal_on_card(buff)
+  def deactivate_buff(buff)
     return unless buff.removal_method
 
     buff.modifier ? send(buff.removal_method, buff.modifier) : send(buff.removal_method)
@@ -183,19 +183,19 @@ class PartyCard < Card
   end
 
   # PRIVATE remove_all_buffs: destroy all associated buffs
-  # Written this way to ensure the run_buff_removal_on_card(buff) callback is called
+  # Written this way to ensure the deactivate_buff(buff) callback is called
   def remove_all_buffs
     active_buffs.each { |ab| buffs.destroy(ab.buff) }
   end
 
-  # PRIVATE clean_buffs_and_effects: all-in-one method for removing all listeners, auras, and buffs.
-  def clean_buffs_and_effects
+  # PRIVATE remove_buffs_and_effects: all-in-one method for removing all listeners, auras, and buffs.
+  def remove_buffs_and_effects
     deactivate_listener
     stop_aura
     remove_all_buffs
   end
 
-  def spend_currency_method
+  def respective_player_currency_spender
     player.method(:spend_coins_on_card)
   end
 
@@ -214,10 +214,9 @@ class PartyCard < Card
 
   def die
     put_card_in_graveyard
-    game.add_dead_card(id)
   end
 
-  def recieve_valid_auras
+  def apply_present_auras
     player.active_auras.each { |aa| buffs << aa.buff if id.in? aa.keywords.first.find_target_options(self)[:ids] }
   end
 

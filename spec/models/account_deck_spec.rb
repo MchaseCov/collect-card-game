@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative 'game_scenario'
 
 RSpec.describe AccountDeck, type: :model do
   subject { FactoryBot.create(:account_deck) }

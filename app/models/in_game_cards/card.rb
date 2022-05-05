@@ -31,8 +31,8 @@ class Card < ApplicationRecord
   has_one :player, through: :gamestate_deck
   has_one :game, through: :gamestate_deck
   has_many :active_buffs, as: :buffable, dependent: :destroy
-  has_many :buffs, through: :active_buffs, after_add: :run_buff_method_on_card,
-                   after_remove: :run_buff_removal_on_card
+  has_many :buffs, through: :active_buffs, after_add: :activate_buff,
+                   after_remove: :deactivate_buff
   has_many :active_listener_cards, dependent: :destroy
   has_many :active_listeners, through: :active_listener_cards
   alias_attribute :parent, :card_constant

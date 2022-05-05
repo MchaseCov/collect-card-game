@@ -128,7 +128,7 @@ module Broadcastable
       end
     end
 
-    def broadcast_battle_animations(attacker, defender, _dead_cards = nil)
+    def broadcast_battle_animations(attacker, defender)
       battle_animation_data = {
         targets: {
           target_one: { id: attacker.id, dataset: { 'animationsTarget': 'attacker' } },

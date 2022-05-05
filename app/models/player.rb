@@ -1,4 +1,3 @@
-#=======================================|PLAYER TABLE SCHEMA|=======================================
 #
 # table name: players
 #
@@ -33,9 +32,12 @@ class Player < ApplicationRecord
 
   # ALIAS AND SCOPES ===========================================================
   validates_presence_of :cost_cap, :cost_current, :resource_cap, :resource_current, :status
-  validates_numericality_of :cost_cap, :resource_cap, :cost_current
+  validates_numericality_of :cost_cap, :resource_cap, :cost_current, :health_cap
+  validates :health_current, numericality: { less_than_or_equal_to: :health_cap }
   validates :resource_cap, numericality: { less_than_or_equal_to: 10 }
   validates :resource_current, numericality: { less_than_or_equal_to: :resource_cap }
+  validates :attack, numericality: { greater_than_or_equal_to: 0 }
+
   validates :cost_cap, numericality: { less_than_or_equal_to: 10 }
 
   alias_attribute :health, :health_current
@@ -56,7 +58,7 @@ class Player < ApplicationRecord
   def remove_aura_from_cards(aura)
     # This prevents duplicate auras from being deleted, but we have to manually send the callback too.
     cards.in_battlefield.each do |c|
-      c.method(:run_buff_removal_on_card).call(aura) if c.active_buffs.find_by(buff_id: aura.id)&.destroy
+      c.method(:deactivate_buff).call(aura) if c.active_buffs.find_by(buff_id: aura.id)&.destroy
     end
   end
 

@@ -3,13 +3,9 @@ module Createable
 
   included do
     # CALLBACKS ===========================================================
-    # Builds a empty player object and assigns turn order for both players
-    after_create_commit do
-      @player_one = players.build(turn_order: true)
-      @player_two = players.build(turn_order: false)
-    end
-
     def begin_game(queued_deck_one, queued_deck_two)
+      @player_one = player_one || players.build(turn_order: true)
+      @player_two = player_two || players.build(turn_order: false)
       @queued_deck_one = queued_deck_one
       @queued_deck_two = queued_deck_two
       populate_players

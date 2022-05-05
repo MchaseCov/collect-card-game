@@ -77,7 +77,7 @@ class Game < ApplicationRecord
       if card.playable?
         last_played_card = card.enter_play
         broadcast_card_play_animations(last_played_card)
-        touch && broadcast_basic_update(last_played_card) if card.trigger_all_entry_keywords
+        touch && broadcast_basic_update(last_played_card) if card.trigger_keywords_related_to_card_entry
       end
     end
   end
@@ -89,11 +89,6 @@ class Game < ApplicationRecord
   # THEN updates health attributes of cards in battle and broadcasts to both players
   def conduct_attack(attacker, defender)
     transaction { conduct_battle(attacker, defender) if attacker.can_attack?(defender) }
-  end
-
-  def add_dead_card(id)
-    @dead_cards ||= []
-    @dead_cards << id
   end
 
   # METHODS (PRIVATE) ==================================================================
@@ -110,7 +105,7 @@ class Game < ApplicationRecord
   # Update health of cards in battle
   def conduct_battle(attacker, defender)
     attacker.attack_enemy(defender)
-    broadcast_battle_animations(attacker, defender, @dead_cards)
+    broadcast_battle_animations(attacker, defender)
     touch
     broadcast_basic_update
   end

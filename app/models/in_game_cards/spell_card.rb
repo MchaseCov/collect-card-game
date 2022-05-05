@@ -26,7 +26,7 @@ class SpellCard < Card
     end
   end
 
-  def trigger_all_entry_keywords
+  def trigger_keywords_related_to_card_entry
     cast_effect.trigger(self, current_target)
     true
   end
@@ -45,7 +45,7 @@ class SpellCard < Card
     []
   end
 
-  def spend_currency_method
+  def respective_player_currency_spender
     player.method(:spend_resource_on_card)
   end
 

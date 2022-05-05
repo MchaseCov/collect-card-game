@@ -1,6 +1,4 @@
 class SingleplayerGame < Game
-  # HUGE NOT TO SELF: YOURE PROBABLY DOING A DEATH IN STIMULUS AND THEN STREAMING A DEATH BUT ALSO AN UPDATE BETWEEN THE DEATHS THAT MAKES THE CARD ALIVE AGIAN ITS WEIRD
-
   include SingleplayerAi
 
   alias_attribute :human_player, :player_one

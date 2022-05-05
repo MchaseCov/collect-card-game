@@ -9,7 +9,7 @@ module Playable
     def playable?
       return false unless can_be_played
 
-      spend_currency_method.call(self)
+      respective_player_currency_spender.call(self)
     end
 
     def enter_play
