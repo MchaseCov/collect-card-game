@@ -2,6 +2,12 @@
 
 <h3 align="center">A Collectable Card Game Demo v0.1</h3>
 
+<p align="center">
+  <a href="https://github.com/MchaseCov/collect-card-game/actions/workflows/model-rspec.yml">
+  <img src="https://github.com/MchaseCov/collect-card-game/actions/workflows/model-rspec.yml/badge.svg">
+  </a>
+</p>
+
   <p align="center">
     A personal project to create the strategic gameplay of a collectable card game in a Rails application!
     <br />
