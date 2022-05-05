@@ -8,34 +8,47 @@ on:
       - "app/**"
   workflow_dispatch:
 jobs:
-  build:
-    name: CI
+  test-models-with-rspec:
     runs-on: ubuntu-latest
-    env:
-      app-dir: ./'app
     services:
       postgres:
-        image: postgres
-      env:
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_HOST: localhost
-        RAILS_ENV: test
+        image: postgres:11
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
         image: redis
+
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: bundle exec rake
+
       - name: Install PostgreSQL
         run: sudo apt-get -yqq install libpq-dev
 
+      - name: Run bundle install
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+
       - name: Setup Database
-        working-directory: ${{env.app-dir}}
-        run: bin/rails db:create db:schema:load db:seed
-      - name: Build and test with rspec
-        working-directory: ${{env.app-dir}}
-        run: bundle exec rspec spec:models
+        run: |
+          cp config/database.yml.github-actions config/database.yml
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+
+      - name: Run RSpec
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        run: bundle exec rake spec:models
