@@ -75,9 +75,9 @@ class Game < ApplicationRecord
   def play_card(card)
     transaction do
       if card.playable?
-        last_played_card = card.enter_play
-        broadcast_card_play_animations(last_played_card)
-        touch && broadcast_basic_update(last_played_card) if card.trigger_keywords_related_to_card_entry
+        card.enter_play
+        broadcast_card_play_animations(card)
+        touch && broadcast_basic_update(card) if card.trigger_keywords_related_to_card_entry
       end
     end
   end

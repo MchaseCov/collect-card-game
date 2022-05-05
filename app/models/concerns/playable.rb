@@ -14,7 +14,6 @@ module Playable
 
     def enter_play
       enter_play_tasks
-      self
     end
 
     private

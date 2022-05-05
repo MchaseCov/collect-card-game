@@ -1,4 +1,5 @@
 require 'rails_helper'
+require './spec/models/concerns/playable'
 
 RSpec.describe Card, type: :model do
   subject { FactoryBot.create(:card, type: 'PartyCard') } # Type is arbitrary for these tests
@@ -21,4 +22,6 @@ RSpec.describe Card, type: :model do
   describe 'Validation Numericality' do
     it { should validate_numericality_of(:cost) }
   end
+
+  it_behaves_like 'playable'
 end
