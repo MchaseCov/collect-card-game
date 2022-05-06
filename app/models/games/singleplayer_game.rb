@@ -1,34 +1,22 @@
 class SingleplayerGame < Game
-  include SingleplayerAi
+  include HasAi
 
   alias_attribute :human_player, :player_one
   alias_attribute :ai_player, :player_two
 
   # METHODS (PUBLIC) ==================================================================
 
-  #========|Game Creation|======
-  # Start of game creation. Input 2 decks. Output created
-  def self.form_game(queued_deck)
+  def self.form_game(queued_deck_one, queued_deck_two = ai_default_deck)
     new_game = SingleplayerGame.create!
-    ai_deck = new_game.initialize_ai
-    new_game.send(:populate_players, queued_deck, ai_deck)
-    new_game.send(:populate_decks, queued_deck, ai_deck)
-    new_game.send(:draw_mulligan_cards)
-    new_game.ai_mulligan and return new_game
+    new_game.begin_game(queued_deck_one, queued_deck_two)
+    new_game
   end
 
-  def broadcast_card_draw_animations(card)
-    touch
-    if card.player == human_player
-      broadcast_animations('fp_draw_card', { tag: 'fp', card: card })
-    else
-      broadcast_animations('op_draw_card', { tag: 'op' })
-    end
-  end
-
-  def broadcast_basic_update(card = nil)
-    touch
-    broadcast_perspective_for(card)
+  def begin_game(queued_deck_one, queued_deck_two)
+    super
+    reload
+    ai_player.user = self.class.ai_user_account
+    do_ai_mulligan
   end
 
   #========|Turn Changing|======
@@ -44,40 +32,7 @@ class SingleplayerGame < Game
 
   private
 
-  ## BROADCAST RELATED PRIVATE FUNCTIONS
-
-  def broadcast_battle_animations(attacker, defender, dead_cards)
-    touch
-    broadcast_animations('battle',
-                         { attacker: { attacker.class.name => attacker.id },
-                           defender: { defender.class.name => defender.id },
-                           dead_cards: dead_cards })
-  end
-
-  def broadcast_card_play_animations(card, position)
-    hand = card.player == human_player ? 'fp' : 'op'
-
-    broadcast_animations('from_hand', { hand: hand, played_card_id: card.id, target_id: position })
-  end
-
-  def animate_end_of_mulligan
-    broadcast_animations('end_mulligan', { count: ai_player.cards.in_hand.size })
-  end
-
-  # Broadcast game over websocket
-  def broadcast_perspective_for(last_played_card = nil)
-    broadcast_replace_later_to [self, human_player.user], partial: 'games/game',
-                                                          target: "game_#{id}_for_#{human_player.user.id}",
-                                                          locals: { game: self,
-                                                                    first_person_player: human_player,
-                                                                    opposing_player: ai_player,
-                                                                    last_played_card: last_played_card }
-  end
-
-  def broadcast_animations(animation_type, locals)
-    broadcast_update_later_to [self, human_player.user],
-                              partial: "games/animations/#{animation_type}",
-                              target: 'animation-data',
-                              locals: locals
+  def broadcast_to_players(broadcast_method, **data)
+    broadcast_method.call(human_player, **data)
   end
 end
