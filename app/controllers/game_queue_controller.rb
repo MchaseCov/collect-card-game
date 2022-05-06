@@ -42,7 +42,7 @@ class GameQueueController < ApplicationController
 
   def match_for_game
     match_data = @@multiplayer_queue.sort_by { |entry| entry[:time_entered] }.first(2)
-    game = Game.form_game(match_data.first[:deck], match_data.second[:deck])
+    game = MultiplayerGame.form_game(match_data.first[:deck], match_data.second[:deck])
     (@@multiplayer_queue -= match_data) && stream_started_game(game) if game
   end
 

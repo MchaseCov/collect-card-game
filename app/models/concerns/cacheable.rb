@@ -59,51 +59,28 @@ module Cacheable
         } }
     end
 
-    def curate_cache_for_perspective(uid, cached_data)
+    def curate_json_for_perspective(uid, cached_data)
+      cached_data = cached_data.deep_symbolize_keys
       case uid
       when cached_data[:player_two][:uid]
-        return_player_perspective(
-          cached_data[:player_two], cached_data[:player_one]
+        return_personalized_json(
+          cached_data, :player_two
         )
       else
-        return_player_perspective(
-          cached_data[:player_one], cached_data[:player_two]
+        return_personalized_json(
+          cached_data, :player_one
         )
       end
     end
 
-    def return_player_perspective(first_person, opponent)
-      {
-        first_person_player: first_person[:player_data],
-        first_person_player_cards: first_person[:cards],
-        opposing_player: opponent[:player_data],
-        opposing_player_cards: opponent[:cards],
-        opposing_player_cards_in_hand: opponent[:cards][:in_hand].pluck(:id)
-      }
+    def return_personalized_json(cached_data, player)
+      opponent = (player == :player_one ? :player_two : :player_one)
+      personalization = { player => :player, opponent => :opponent }
+
+      cached_data.keys.each { |k| cached_data[personalization[k]] = cached_data.delete(k) if personalization[k] }
+      cached_data[:opponent][:cards][:in_hand] = cached_data[:opponent][:cards][:in_hand].pluck(:id)
+      cached_data[:player][:cards][:in_hand] = cached_data[:player][:cards][:in_hand].map(&:attributes)
+      cached_data.to_json
     end
-  end
-
-  def curate_json_for_perspective(uid, cached_data)
-    cached_data = cached_data.deep_symbolize_keys
-    case uid
-    when cached_data[:player_two][:uid]
-      return_personalized_json(
-        cached_data, :player_two
-      )
-    else
-      return_personalized_json(
-        cached_data, :player_one
-      )
-    end
-  end
-
-  def return_personalized_json(cached_data, player)
-    opponent = (player == :player_one ? :player_two : :player_one)
-    personalization = { player => :player, opponent => :opponent }
-
-    cached_data.keys.each { |k| cached_data[personalization[k]] = cached_data.delete(k) if personalization[k] }
-    cached_data[:opponent][:cards][:in_hand] = cached_data[:opponent][:cards][:in_hand].pluck(:id)
-    cached_data[:player][:cards][:in_hand] = cached_data[:player][:cards][:in_hand].map(&:attributes)
-    cached_data.to_json
   end
 end

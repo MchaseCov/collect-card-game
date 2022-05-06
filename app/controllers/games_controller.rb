@@ -15,7 +15,6 @@ class GamesController < ApplicationController
 
   def submit_mulligan
     @player = @game.players.find_by(user: current_user)
-    # "Turns" do not take effect yet, so we don't use the current_users_turn gat
 
     return unless @player&.status_mulligan?
 
@@ -75,28 +74,20 @@ class GamesController < ApplicationController
   end
 
   def set_game
-    @game_data = Rails.cache.fetch("game_#{params[:id]}", expires_in: 2.hours) do
+    @game = Rails.cache.fetch("game_#{params[:id]}", expires_in: 2.hours) do
       Game.find(params[:id]).return_cache_data
-    end
-    @game = @game_data[:game]
+    end[:game]
   end
 
   def set_perspective
+    # To add 'spectate mode', add an alternative condition to set a player to watch
     @first_person_player = @game.players.find_by(user_id: current_user.id)
-    return
-    @first_person_player,
-    @first_person_player_cards,
-    @opposing_player,
-    @opposing_player_cards,
-    @opposing_player_cards_in_hand = @game.curate_cache_for_perspective(current_user.id, @game_data).values
   end
 
   def conduct_mulligan
-    @player = @game.players.find_by(user_id: current_user.id)
-    # Safety check for if game is in mulligan but player does not have any mulligan cards.
-    return if @player.cards.in_mulligan.any?
+    return if @first_person_player.cards.in_mulligan.any?
 
-    @player.draw_mulligan_cards
+    @first_person_player.draw_mulligan_cards
   end
 
   def current_users_turn
