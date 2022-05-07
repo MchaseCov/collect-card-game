@@ -54,9 +54,9 @@ const createBattlefield = forwardRef((props, ref) => {
   const opponentCards = props.opponentCards
   const friendlyCards = props.friendlyCards
 
-  let lastPlayedCardElement = (() => {
+ let lastPlayedCardElement = (() => {
     if (props.lastPlayedCard) {
-      const card = props.lastPlayedCard
+      const card = props.lastPlayedCard 
       return html`<${StandardCard} id="animated-card"
       cardConstant=${card.cardConstant}
       health=${card.health}
@@ -66,6 +66,7 @@ const createBattlefield = forwardRef((props, ref) => {
       keywords=${card.keywords}
       cost=${card.cost}
       key=${card.id}
+      type=${card.type}
      />`
     } else {
       return ''

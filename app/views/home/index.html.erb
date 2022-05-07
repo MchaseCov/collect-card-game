@@ -10,6 +10,15 @@
     <% end %>
     <%= link_to "My most recent game", @game, {data: {turbo: false}, class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"}%>
   </div>
+  <h2 class="mt-6 text-2xl font-bold">Singleplayer Mode:</h2>
+  <div class="flex flex-col">
+    Queue one of your decks, make sure it has 30 cards!
+    You will be placed against an (extremely basic) AI to try the game out with
+    <%= form_with url: "/singleplayer_games", method: :post, id:"single-player-queue", data: { turbo: false }  do |f| %>
+      <%= f.collection_select :deck_one_id, @decks.order(:name),:id, :name, include_blank: false %>
+      <%= f.submit "Play this deck against a (very basic) AI", class: "bg-card-blue text-white px-2 py-3 rounded-xl"%>
+    <% end %>
+  </div>
   <h3 class="mt-6 text-2xl font-bold">My account:</h3>
   <div class="flex flex-col">
     <%= link_to  "View My Decks", account_decks_path, {class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"} %>

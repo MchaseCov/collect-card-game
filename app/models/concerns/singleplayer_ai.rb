@@ -1,3 +1,4 @@
+# This file is no longer for use, but rather for reference
 module SingleplayerAi
   def initialize_ai
     ai_user = User.find_by(email: 'ai@bot.com')
