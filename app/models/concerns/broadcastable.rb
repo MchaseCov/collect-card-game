@@ -26,7 +26,7 @@ module Broadcastable
 
     def broadcast_basic_update(last_played_card = nil)
       fetch_game_data
-      broadcast_to_players(method(:broadcast_perspective_for), animation_data: last_played_card)
+      broadcast_to_players(method(:broadcast_perspective_for), card: last_played_card)
     end
 
     def broadcast_card_play_animations(card)
@@ -152,7 +152,7 @@ module Broadcastable
     def broadcast_perspective_for(player, **data)
       fetch_game_data unless @game_data.present?
       game_json = JSON.parse(curate_json_for_perspective(player.user_id, @game_data))
-      game_json['lastPlayedCard'] = data[:card] if data[:card]
+      game_json['lastPlayedCard'] = data[:card].attributes if data[:card]
       GameChannel.broadcast_to([self, player], {
                                  streamPurpose: 'basicUpdate',
                                  gameData: game_json
@@ -163,7 +163,7 @@ module Broadcastable
     # Will also pass along updated game data if @game_data is initialized before this call.
     def broadcast_animations(player, **data)
       game_json = JSON.parse(curate_json_for_perspective(player.user_id, @game_data)) if @game_data
-      game_json['lastPlayedCard'] = data[:card] if data[:card]
+      game_json['lastPlayedCard'] = data[:card].attributes if data[:card]
       GameChannel.broadcast_to([self, player], {
                                  streamPurpose: 'animation',
                                  animationData: data[:animation_data],
