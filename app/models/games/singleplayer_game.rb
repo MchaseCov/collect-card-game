@@ -25,7 +25,7 @@ class SingleplayerGame < Game
   # Current_player attributes updated for new turn
   def end_turn
     super
-    begin_ai_turn if current_player == ai_player
+    ai_take_turn if current_player == ai_player
   end
 
   # METHODS (PRIVATE) ==================================================================

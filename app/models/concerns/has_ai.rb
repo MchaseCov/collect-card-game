@@ -13,28 +13,50 @@ module HasAi
       ai_player.draw_mulligan_cards
     end
 
-    def begin_ai_turn
-      sleep 1
-      @ai_has_playable_party_cards = ai_has_playable_party_cards?
-      ai_play_a_party_card while @ai_has_playable_party_cards
+    def ai_take_turn
+      analyze_current_gamestate
+      determine_ai_options
+      ai_turn_cycle if @ai_options.any? { |_k, v| v }
       end_turn
     end
 
+    def determine_ai_options
+      @ai_options = {
+        ai_has_playable_party_cards: ai_has_playable_party_cards?
+      }
+    end
+
+    def ai_turn_cycle
+      sleep 1
+      ai_decide_a_play
+      determine_ai_options
+      ai_turn_cycle if @ai_options.any? { |_k, v| v }
+    end
+
+    def ai_decide_a_play
+      return ai_play_a_party_card if @ai_options[:ai_has_playable_party_cards]
+    end
+
+    def analyze_current_gamestate
+      @ai_health_score = 2 * Math.sqrt(ai_player.health_current)
+      @player_health_score = 2 * Math.sqrt(human_player.health_current)
+      @ai_hand_score = (1..ai_player.cards.in_hand.size).each.inject(0) { |sum, num| sum + (num <= 4 ? 3 : 2) }
+      @player_hand_score = (1..human_player.cards.in_hand.size).each.inject(0) { |sum, num| sum + (num <= 4 ? 3 : 2) }
+    end
+
     def ai_has_playable_party_cards?
-      return false if ai_player.party_cards.in_battlefield.size <= 7
+      return false if ai_player.party_cards.in_battlefield.size >= 7
 
       @playable_party_cards = ai_player.party_cards.in_hand.where('cost <= ?', ai_player.cost_current)
       @playable_party_cards.any?
     end
 
     def ai_play_a_party_card
-      sleep 1
       analyzed_card = @playable_party_cards.first # temporary just grab one
       max_position = ai_player.party_cards.in_battlefield&.pluck(:position)&.max || 1
       chosen_position = rand(0..max_position)
       analyzed_card.chosen_position = chosen_position
       play_card(analyzed_card)
-      @ai_has_playable_party_cards = ai_has_playable_party_cards?
     end
   end
 
