@@ -44,6 +44,16 @@ module HasAi
       @player_hand_score = (1..human_player.cards.in_hand.size).each.inject(0) { |sum, num| sum + (num <= 4 ? 3 : 2) }
     end
 
+    def ai_endangered?
+      (human_player.cards.in_battlefield.pluck(:attack).sum >= (0.8 * ai_player.health_current))
+    end
+
+    def ai_is_losing_tempo?
+      ai_stats_in_play = ai_player.cards.in_battlefield.pluck(:attack, :health).flatten.sum.to_f
+      human_stats_in_play = human_player.cards.in_battlefield.pluck(:attack, :health).flatten.sum
+      (human_stats_in_play / ai_stats_in_play + 0.01) >= 1.6
+    end
+
     def ai_has_playable_party_cards?
       return false if ai_player.party_cards.in_battlefield.size >= 7
 
