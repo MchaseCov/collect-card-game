@@ -22,12 +22,13 @@ module HasAi
 
     def determine_ai_options
       @ai_options = {
-        ai_has_playable_party_cards: ai_has_playable_party_cards?
+        ai_has_playable_party_cards: ai_has_playable_party_cards?,
+        ai_has_attacking_card_in_play: ai_has_attacking_card_in_play?
       }
     end
 
     def ai_turn_cycle
-      sleep 1
+      sleep 2
       ai_decide_a_play
       determine_ai_options
       ai_turn_cycle if @ai_options.any? { |_k, v| v }
@@ -35,6 +36,7 @@ module HasAi
 
     def ai_decide_a_play
       return ai_play_a_party_card if @ai_options[:ai_has_playable_party_cards]
+      return ai_attack_a_target if @ai_options[:ai_has_attacking_card_in_play]
     end
 
     def analyze_current_gamestate
@@ -61,12 +63,33 @@ module HasAi
       @playable_party_cards.any?
     end
 
+    def ai_has_attacking_card_in_play?
+      @attack_ready_cards = ai_player.party_cards.in_battlefield.status_attack_ready
+      @attack_ready_cards.any?
+    end
+
     def ai_play_a_party_card
-      analyzed_card = @playable_party_cards.first # temporary just grab one
+      analyzed_card = @playable_party_cards.sample
       max_position = ai_player.party_cards.in_battlefield&.pluck(:position)&.max || 1
-      chosen_position = rand(0..max_position)
+      chosen_position = rand(1..max_position)
       analyzed_card.chosen_position = chosen_position
       play_card(analyzed_card)
+    end
+
+    def ai_attack_a_target
+      valid_targets =
+        if human_player.taunting_cards.any?
+          human_player.taunting_cards
+        elsif ai_endangered?
+          human_player.party_cards.in_battlefield
+        else
+          human_player.party_cards.in_battlefield + [human_player]
+        end
+
+      target_to_attack = valid_targets.sample
+      attacker = @attack_ready_cards.where('attack >= ?',
+                                           target_to_attack.health).order(:attack).first || @attack_ready_cards.order(:attack).last
+      conduct_attack(attacker, target_to_attack)
     end
   end
 
