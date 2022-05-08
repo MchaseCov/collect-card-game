@@ -3,7 +3,7 @@ class AccountDecksController < ApplicationController
   before_action :set_card, only: %i[insert_card remove_card]
 
   def index
-    @account_decks = current_user.account_decks.all
+    @account_decks = current_user.account_decks.includes(:archetype, :race).all
   end
 
   def show; end
@@ -22,7 +22,7 @@ class AccountDecksController < ApplicationController
     else
       puts @account_deck.errors.full_messages
       @races = Race.all
-      @archetypes = Archetype.where.not(name: 'Neutral').all
+      @archetypes = Archetype.where.not(name: 'Neutral').where.not(name: 'Token').where.not(name: 'Barbarian').all
       render :new, status: :unprocessable_entity
     end
   end

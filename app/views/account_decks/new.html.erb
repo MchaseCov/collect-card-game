@@ -1,20 +1,20 @@
 <%=form_with model:@account_deck do |form| %>
-  <div>
+  <div class="mt-4 ml-4">
     <h1 class="text-4xl font-bold">Creating A Deck:</h1>
-    <p>Name:</p>
+    <p>Deck Name:</p>
     <%= form.text_field :name %>
-    <p>Choose your race:</p>
+    <p>Choose your race: (This gives you a small racial bonus)</p>
     <%@races.each do |race|%>
       <div>
         <%= form.radio_button :race_id, race.id %> <%=race.name%>: <%=race.description%>
       </div>
     <% end %>
-    <p>Choose your archetype:</p>
+    <p>Choose your archetype: (This changes the cards you can put in your deck)</p>
     <%@archetypes.each do |archetype|%>
       <div>
         <%= form.radio_button :archetype_id, archetype.id %><%=archetype.name%>: <%=archetype.description%>
       </div>
     <% end %>
-    <%= form.submit %>
+    <%= form.submit class:'bg-card-blue text-white px-2 py-3 mt-4 rounded-xl mt-8' %>
   </div>
 <% end %>

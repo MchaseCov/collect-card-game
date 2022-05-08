@@ -8,7 +8,9 @@
       <%= f.collection_select :deck_id, @decks.order(:name),:id, :name, include_blank: false %>
       <%= f.submit "Queue this deck!", class: "bg-card-blue text-white px-2 py-3 rounded-xl", id:"queue-button" %>
     <% end %>
-    <%= link_to "My most recent game", @game, {data: {turbo: false}, class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"}%>
+    <%if @game%>
+      <%= link_to "My most recent game", @game, {data: {turbo: false}, class: "bg-card-blue text-white px-1 py-3 rounded-xl w-max mt-3"}%>
+    <%end%>
   </div>
   <h2 class="mt-6 text-2xl font-bold">Singleplayer Mode:</h2>
   <div class="flex flex-col">
