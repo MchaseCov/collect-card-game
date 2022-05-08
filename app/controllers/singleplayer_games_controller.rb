@@ -19,6 +19,8 @@ class SingleplayerGamesController < GamesController
   private
 
   def validate_decks_for_game_creation
+    redirect_to root_path and return unless params[:deck_one_id]
+
     @queued_deck = AccountDeck.includes(:archetype, :race).find(params[:deck_one_id])
     redirect_to root_path and return if @queued_deck.card_count != 30
   end

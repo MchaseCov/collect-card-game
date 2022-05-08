@@ -1,7 +1,23 @@
-<div>
+<div class="ml-[10%] basis-1/5 top-0 flex-none mr-5">
   <h1 class="text-4xl font-bold">List of my decks:</h1>
-  <%@account_decks.each do |deck|%>
-    <%=link_to deck.name, deck%> <br>
-  <% end %>
-  <%= link_to "Create A Deck", new_account_deck_path %>
+  <div class="my-4">
+    <%@account_decks.each do |deck|%>
+      <%=link_to deck do%>
+        <div class="relative border-2 has-tooltip bg-<%=deck.archetype.color%>-700 border-blackish text-white mb-2">
+          <section class="absolute text-white border-2 rounded tooltip -right-64 w-60 border-blackish bg-card-blue">
+            <p>Starting Health: <%=deck.race.health_modifier + 30 %></p>
+            <p>Starting Gold: <%=deck.race.cost_modifier + 1 %></p>
+            <p>Starting <%=deck.archetype.resource_name%>: <%=deck.race.resource_modifier + 1 %></p>
+          </section>
+          <h1 class="text-4xl font-bold"><%=deck.name%></h1>
+          <div class="flex flex-row items-end">
+            <h2><%=deck.race.name%> <%=deck.archetype.name%></h2>
+            <p class="ml-auto"><%=deck.card_count%> of 30 Cards </p>
+          </div>
+        </div>
+      <%end%>
+    <% end %>
+  </div>
+  <%= link_to "Create A Deck", new_account_deck_path, class:'bg-card-blue text-white px-2 py-3 mt-4 rounded-xl mt-8' %>
+  <%= link_to "Back to Home", root_path, class:'bg-card-blue text-white px-2 py-3 mt-4 rounded-xl mt-8' %>
 </div>
