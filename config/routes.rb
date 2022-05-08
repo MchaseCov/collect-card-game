@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get 'battlecry/:id/targets', to: 'battlecries#targets', as: 'battlecry_targets'
   resources :account_decks do
     member do
+      post 'destroy_all_cards'
       post 'insert_card'
       post 'remove_card'
     end

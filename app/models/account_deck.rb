@@ -39,4 +39,9 @@ class AccountDeck < ApplicationRecord
     account_deck_card_references.find_by(card_reference: card).destroy
     touch
   end
+
+  def destroy_all_cards
+    account_deck_card_references.destroy_all
+    touch
+  end
 end
