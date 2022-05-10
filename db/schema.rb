@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_10_162053) do
+ActiveRecord::Schema.define(version: 2022_05_10_170314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,13 @@ ActiveRecord::Schema.define(version: 2022_05_10_162053) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "random", default: 0
+  end
+
+  create_table "abilities_buffs", id: false, force: :cascade do |t|
+    t.bigint "ability_id"
+    t.bigint "buff_id"
+    t.index ["ability_id"], name: "index_abilities_buffs_on_ability_id"
+    t.index ["buff_id"], name: "index_abilities_buffs_on_buff_id"
   end
 
   create_table "ability_triggers", force: :cascade do |t|

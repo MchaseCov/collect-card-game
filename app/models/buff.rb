@@ -14,4 +14,6 @@ class Buff < ApplicationRecord
   validates_uniqueness_of :name
   has_and_belongs_to_many :keywords
   has_many :active_buffs
+
+  has_and_belongs_to_many :abilities
 end

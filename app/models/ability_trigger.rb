@@ -2,6 +2,8 @@ class AbilityTrigger < ApplicationRecord
   belongs_to :ability
   belongs_to :card_constant
 
+  validates :trigger, uniqueness: { scope: :card_constant_id }
+
   scope :battlecry, -> { where(trigger: 'instant') }
 
   enum trigger: { passive: 0,
@@ -31,7 +33,7 @@ class AbilityTrigger < ApplicationRecord
     'tribe,Beast': 0
   }
 
-  def trigger(triggering_card)
+  def trigger_abilty(triggering_card)
     @triggering_card = triggering_card
     targets = find_targets
     ability.trigger(targets)
@@ -45,10 +47,10 @@ class AbilityTrigger < ApplicationRecord
 
     # Select a team by alignment and then specify the group by key
     target_group = method(alignment).call[target_type.to_sym].flatten
+    # Additional optional scoping
+    target_group = additionally_scope(target_group) if additional_scoping
     # Scope the group
-    scoped_target = method(target_scope).call(target_group)
-    # Additional optional scoping before returning target(s)
-    additional_scoping ? additionally_scope(scoped_target) : scoped_target
+    method(target_scope).call(target_group)
   end
 
   def friendly_team
