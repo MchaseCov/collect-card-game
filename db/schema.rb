@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_07_180734) do
+ActiveRecord::Schema.define(version: 2022_05_10_162053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,18 +21,22 @@ ActiveRecord::Schema.define(version: 2022_05_07_180734) do
     t.string "body_text"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "random", default: 0
   end
 
   create_table "ability_triggers", force: :cascade do |t|
     t.bigint "ability_id", null: false
-    t.integer "ability_type", default: 0
-    t.integer "ability_trigger", default: 0
-    t.integer "ability_group", default: 0
-    t.integer "ability_alignment", default: 0
-    t.integer "ability_target_type", default: 0
+    t.integer "trigger", default: 0
+    t.integer "target_scope", default: 0
+    t.integer "alignment", default: 0
+    t.integer "target_type", default: 0
+    t.integer "additional_scoping"
+    t.bigint "card_constant_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["ability_id"], name: "index_ability_triggers_on_ability_id"
+    t.index ["card_constant_id"], name: "index_ability_triggers_on_card_constant_id"
+    t.index ["trigger"], name: "index_ability_triggers_on_trigger"
   end
 
   create_table "account_deck_card_references", force: :cascade do |t|
@@ -243,6 +247,7 @@ ActiveRecord::Schema.define(version: 2022_05_07_180734) do
   end
 
   add_foreign_key "ability_triggers", "abilities"
+  add_foreign_key "ability_triggers", "card_constants"
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
