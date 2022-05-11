@@ -10,10 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_23_165602) do
+ActiveRecord::Schema.define(version: 2022_05_10_170314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "abilities", force: :cascade do |t|
+    t.string "action"
+    t.integer "modifier"
+    t.string "body_text"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "random", default: 0
+  end
+
+  create_table "abilities_buffs", id: false, force: :cascade do |t|
+    t.bigint "ability_id"
+    t.bigint "buff_id"
+    t.index ["ability_id"], name: "index_abilities_buffs_on_ability_id"
+    t.index ["buff_id"], name: "index_abilities_buffs_on_buff_id"
+  end
+
+  create_table "ability_triggers", force: :cascade do |t|
+    t.bigint "ability_id", null: false
+    t.integer "trigger", default: 0
+    t.integer "target_scope", default: 0
+    t.integer "alignment", default: 0
+    t.integer "target_type", default: 0
+    t.integer "additional_scoping"
+    t.bigint "card_constant_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["ability_id"], name: "index_ability_triggers_on_ability_id"
+    t.index ["card_constant_id"], name: "index_ability_triggers_on_card_constant_id"
+    t.index ["trigger"], name: "index_ability_triggers_on_trigger"
+  end
 
   create_table "account_deck_card_references", force: :cascade do |t|
     t.bigint "account_deck_id", null: false
@@ -222,6 +253,8 @@ ActiveRecord::Schema.define(version: 2022_04_23_165602) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "ability_triggers", "abilities"
+  add_foreign_key "ability_triggers", "card_constants"
   add_foreign_key "account_decks", "archetypes"
   add_foreign_key "account_decks", "races"
   add_foreign_key "account_decks", "users"
